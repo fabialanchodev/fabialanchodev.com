@@ -1,12 +1,95 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
-  <title>Mi Web de Videojuegos - Fabialancho</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La Web de Fabialancho</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            color: white;
+            background-color: #000;
+            background-image: url('fondodeaurasalanochecer.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente para el contenido */
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            max-width: 800px;
+            width: 90%;
+            margin-top: auto;
+            margin-bottom: auto;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px #000000;
+        }
+
+        .game-link {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 1.2em;
+            margin-top: 20px;
+            transition: background-color 0.3s ease;
+        }
+
+        .game-link:hover {
+            background-color: #0056b3;
+        }
+
+        .social-handle {
+            position: fixed;
+            text-shadow: 1px 1px 2px #000;
+            font-weight: bold;
+            font-size: 1.1em;
+            z-index: 100;
+        }
+
+        .top-right {
+            top: 20px;
+            right: 20px;
+        }
+
+        .bottom-right {
+            bottom: 20px;
+            right: 20px;
+        }
+
+    </style>
 </head>
 <body>
 
-  <h1>¡Hola a todos! Soy Fabialancho.</h1>
-  <p>Esta es mi primera página web, donde pronto subiré mis videojuegos.</p>
+    <p class="social-handle top-right">@fabialancho</p>
+    <p class="social-handle bottom-right">@fabialancho</p>
+
+    <div class="container">
+        <h1>¡Hola! Soy Fabialancho</h1>
+        <p>¡Bienvenido a mi página web! Aquí puedes descargar mi videojuego:</p>
+
+        <p>
+            <b>¡Cleip Escapa! v0.9.5.8 by fabialancho</b>
+        </p>
+        <a href="https://www.mediafire.com/file/3oulz8llhw5hd9p/%25C2%25A1Cleip_Escapa%2521_v0.9.5.8_by_fabialancho.zip/file" class="game-link" target="_blank">
+            ¡Descarga mi juego aquí!
+        </a>
+    </div>
 
 </body>
 </html>
