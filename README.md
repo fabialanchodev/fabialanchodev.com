@@ -1,2 +1,2 @@
-# fabialanchogames.github.io
+# fabialanchogames
 A page of my proyects
