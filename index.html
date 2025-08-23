@@ -1,129 +1,61 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Web de Fabialancho - Mis Juegos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            color: #fff;
-            background-color: #000;
-            background-image: url('fondodeaurasalanochecer.jpeg');
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente para el contenido */
-            padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
-            max-width: 900px;
-            width: 90%;
-            margin-top: auto;
-            margin-bottom: auto;
-        }
-
-        h1 {
-            font-size: 3em;
-            text-shadow: 3px 3px 6px #000;
-            margin-bottom: 10px;
-        }
-
-        .game-list {
-            list-style: none;
-            padding: 0;
-            margin-top: 30px;
-        }
-
-        .game-item {
-            margin-bottom: 25px;
-        }
-
-        .game-link {
-            display: inline-block;
-            background-color: #007bff;
-            color: white;
-            padding: 15px 30px;
-            text-decoration: none;
-            border-radius: 8px;
-            font-size: 1.2em;
-            font-weight: bold;
-            transition: transform 0.2s ease, background-color 0.3s ease;
-        }
-
-        .game-link:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
-        }
-
-        .social-handle {
-            position: fixed;
-            font-size: 1.5em;
-            text-shadow: 2px 2px 4px #000;
-            font-weight: bold;
-            z-index: 100;
-        }
-
-        .top-left {
-            top: 20px;
-            left: 20px;
-        }
-
-        .top-right {
-            top: 20px;
-            right: 20px;
-        }
-
-        .bottom-left {
-            bottom: 20px;
-            left: 20px;
-        }
-
-        .bottom-right {
-            bottom: 20px;
-            right: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fabialancho Games 🎮</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
+<body class="bg-gradient-to-b from-gray-900 to-black text-white font-sans">
 
-    <p class="social-handle top-left">@fabialancho</p>
-    <p class="social-handle top-right">@fabialancho</p>
-    <p class="social-handle bottom-left">@fabialancho</p>
-    <p class="social-handle bottom-right">@fabialancho</p>
+  <!-- Header -->
+  <header class="text-center py-8 bg-gradient-to-r from-indigo-600 to-purple-600 shadow-lg">
+    <h1 class="text-4xl font-bold">🔥 Fabialancho Games 🔥</h1>
+    <p class="text-lg mt-2">Tus juegos y apps cheeetaaaa en un solo lugar 🚀</p>
+  </header>
 
-    <div class="container">
-        <h1>¡Hola! Soy Fabialancho</h1>
-        <p>¡Bienvenido a mi web! Aquí puedes descargar y probar mis videojuegos:</p>
+  <!-- Sección Juegos -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h2 class="text-3xl font-bold mb-6 text-center">🎮 Mis Juegos</h2>
+    <div class="grid gap-8 md:grid-cols-2">
+      
+      <!-- Juego 1 -->
+      <div class="bg-gray-800 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+        <h3 class="text-2xl font-bold mb-2">🚀 Cleip Escapa!</h3>
+        <span class="bg-green-600 text-white text-xs px-2 py-1 rounded-full">Nuevo</span>
+        <p class="text-gray-300 mb-4">Versión v0.9.5.8 • La última actualización con poderes secretos 😏</p>
+        <a href="TU_ENLACE_AQUI" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Descargar</a>
+      </div>
 
-        <ul class="game-list">
-            <li class="game-item">
-                <a href="https://www.mediafire.com/file/lsknbybi8nfdth1/Clipisito_tu_amiguito_v0.10_by_fabialancho.zip/file" class="game-link" target="_blank">
-                    Clipisito tu amiguito v0.10
-                </a>
-            </li>
-            <li class="game-item">
-                <a href="https://www.mediafire.com/file/3oulz8llhw5hd9p/%25C2%25A1Cleip_Escapa%2521_v0.9.5.8_by_fabialancho.zip/file" class="game-link" target="_blank">
-                    ¡Cleip Escapa! v0.9.5.8
-                </a>
-            </li>
-            <li class="game-item">
-                <a href="https://www.mediafire.com/file/y137dt3j2zi0u84/%25C2%25A1Cleip_Escapa%2521_v0.9.5.7_by_fabialancho.zip/file" class="game-link" target="_blank">
-                    ¡Cleip Escapa! v0.9.5.7
-                </a>
-            </li>
-        </ul>
+      <!-- Juego 2 -->
+      <div class="bg-gray-800 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+        <h3 class="text-2xl font-bold mb-2">🚀 Cleip Escapa!</h3>
+        <p class="text-gray-300 mb-4">Versión v0.9.5.7 • La clásica que empezó todo 😎</p>
+        <a href="TU_ENLACE_AQUI" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Descargar</a>
+      </div>
+
     </div>
+  </section>
+
+  <!-- Sección Apps -->
+  <section class="max-w-5xl mx-auto px-4 py-12">
+    <h2 class="text-3xl font-bold mb-6 text-center">🤖 Mis Apps</h2>
+    <div class="grid gap-8 md:grid-cols-1">
+      
+      <!-- Clipisito -->
+      <div class="bg-gray-800 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+        <h3 class="text-2xl font-bold mb-2">🌀 Clipisito tu amiguito</h3>
+        <p class="text-gray-300 mb-4">Versión v0.10 • Te manda mensajes motivadores 💪, te tira chistes 😂 y a veces te pregunta cosas de informática 💻.</p>
+        <a href="TU_ENLACE_AQUI" class="bg-indigo-500 hover:bg-indigo-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Descargar</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center py-6 bg-gray-900 text-gray-500 text-sm">
+    © 2025 Fabialancho Games | Creado con ❤️ y mucho estilo cheetaaa 😎
+  </footer>
 
 </body>
 </html>
