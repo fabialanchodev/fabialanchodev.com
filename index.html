@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>La Web de Fabialancho</title>
+    <title>La Web de Fabialancho - Mis Juegos</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            color: white;
+            color: #fff;
             background-color: #000;
             background-image: url('fondodeaurasalanochecer.jpeg');
             background-size: cover;
@@ -24,18 +24,29 @@
 
         .container {
             background-color: rgba(0, 0, 0, 0.7); /* Fondo semi-transparente para el contenido */
-            padding: 30px;
+            padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-            max-width: 800px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.6);
+            max-width: 900px;
             width: 90%;
             margin-top: auto;
             margin-bottom: auto;
         }
 
         h1 {
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px #000000;
+            font-size: 3em;
+            text-shadow: 3px 3px 6px #000;
+            margin-bottom: 10px;
+        }
+
+        .game-list {
+            list-style: none;
+            padding: 0;
+            margin-top: 30px;
+        }
+
+        .game-item {
+            margin-bottom: 25px;
         }
 
         .game-link {
@@ -44,22 +55,28 @@
             color: white;
             padding: 15px 30px;
             text-decoration: none;
-            border-radius: 5px;
+            border-radius: 8px;
             font-size: 1.2em;
-            margin-top: 20px;
-            transition: background-color 0.3s ease;
+            font-weight: bold;
+            transition: transform 0.2s ease, background-color 0.3s ease;
         }
 
         .game-link:hover {
             background-color: #0056b3;
+            transform: scale(1.05);
         }
 
         .social-handle {
             position: fixed;
-            text-shadow: 1px 1px 2px #000;
+            font-size: 1.5em;
+            text-shadow: 2px 2px 4px #000;
             font-weight: bold;
-            font-size: 1.1em;
             z-index: 100;
+        }
+
+        .top-left {
+            top: 20px;
+            left: 20px;
         }
 
         .top-right {
@@ -67,28 +84,45 @@
             right: 20px;
         }
 
+        .bottom-left {
+            bottom: 20px;
+            left: 20px;
+        }
+
         .bottom-right {
             bottom: 20px;
             right: 20px;
         }
-
     </style>
 </head>
 <body>
 
+    <p class="social-handle top-left">@fabialancho</p>
     <p class="social-handle top-right">@fabialancho</p>
+    <p class="social-handle bottom-left">@fabialancho</p>
     <p class="social-handle bottom-right">@fabialancho</p>
 
     <div class="container">
         <h1>¡Hola! Soy Fabialancho</h1>
-        <p>¡Bienvenido a mi página web! Aquí puedes descargar mi videojuego:</p>
+        <p>¡Bienvenido a mi web! Aquí puedes descargar y probar mis videojuegos:</p>
 
-        <p>
-            <b>¡Cleip Escapa! v0.9.5.8 by fabialancho</b>
-        </p>
-        <a href="https://www.mediafire.com/file/3oulz8llhw5hd9p/%25C2%25A1Cleip_Escapa%2521_v0.9.5.8_by_fabialancho.zip/file" class="game-link" target="_blank">
-            ¡Descarga mi juego aquí!
-        </a>
+        <ul class="game-list">
+            <li class="game-item">
+                <a href="https://www.mediafire.com/file/lsknbybi8nfdth1/Clipisito_tu_amiguito_v0.10_by_fabialancho.zip/file" class="game-link" target="_blank">
+                    Clipisito tu amiguito v0.10
+                </a>
+            </li>
+            <li class="game-item">
+                <a href="https://www.mediafire.com/file/3oulz8llhw5hd9p/%25C2%25A1Cleip_Escapa%2521_v0.9.5.8_by_fabialancho.zip/file" class="game-link" target="_blank">
+                    ¡Cleip Escapa! v0.9.5.8
+                </a>
+            </li>
+            <li class="game-item">
+                <a href="https://www.mediafire.com/file/y137dt3j2zi0u84/%25C2%25A1Cleip_Escapa%2521_v0.9.5.7_by_fabialancho.zip/file" class="game-link" target="_blank">
+                    ¡Cleip Escapa! v0.9.5.7
+                </a>
+            </li>
+        </ul>
     </div>
 
 </body>
