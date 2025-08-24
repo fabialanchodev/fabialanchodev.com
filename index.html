@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fabialancho Games 🎮</title>
-  <!-- Favicon -->
   <link rel="icon" href="fabialanchogameslogo.jpg" type="image/jpeg">
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     body {
@@ -17,7 +15,7 @@
 </head>
 <body class="text-white font-sans">
 
-  <!-- Header con logo redondo y transparente -->
+  <!-- Header -->
   <header class="flex flex-col md:flex-row items-center justify-center gap-6 py-10 bg-black/50">
     <img src="fabialanchogameslogo.jpg" alt="Fabialancho Games Logo" class="w-24 rounded-full opacity-92">
     <div class="text-center md:text-left">
@@ -28,72 +26,119 @@
     </div>
   </header>
 
-  <!-- Juegos Cleip Escapa -->
-  <section class="max-w-6xl mx-auto px-6 py-12">
-    <h2 class="text-4xl font-bold mb-8 text-center">🎮 Mis Juegos</h2>
-    <div class="grid gap-8 md:grid-cols-3">
+  <div class="flex max-w-7xl mx-auto mt-10 px-6 gap-8">
 
-      <!-- Cleip 0.9.5.7 -->
-      <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-        <h3 class="text-2xl font-bold mb-2">🚀 Cleip Escapa! v0.9.5.7</h3>
-        <p class="text-gray-300 mb-4">Versión antigua disponible para descargar 😏</p>
-        <div class="grid gap-2">
-          <a href="https://www.mediafire.com/file/y137dt3j2zi0u84/¡Cleip_Escapa!_v0.9.5.7_by_fabialancho.zip/file" 
-             class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
-          <a href="https://drive.google.com/file/d/1_UZniGGfZeJrHLQUqATMPYTOG_H0W7Or/view?usp=drive_link" 
-             class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
+    <!-- Contenido principal -->
+    <main class="flex-1">
+
+      <!-- Juegos -->
+      <section id="juegos" class="category">
+        <h2 class="text-4xl font-bold mb-8 text-center">🎮 Mis Juegos</h2>
+        <div class="grid gap-8 md:grid-cols-3">
+
+          <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+            <h3 class="text-2xl font-bold mb-2">🚀 Cleip Escapa! v0.9.5.7</h3>
+            <p class="text-gray-300 mb-4">Versión antigua disponible para descargar 😏</p>
+            <div class="grid gap-2">
+              <a href="https://www.mediafire.com/file/y137dt3j2zi0u84/¡Cleip_Escapa!_v0.9.5.7_by_fabialancho.zip/file" 
+                 class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
+              <a href="https://drive.google.com/file/d/1_UZniGGfZeJrHLQUqATMPYTOG_H0W7Or/view?usp=drive_link" 
+                 class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
+            </div>
+          </div>
+
+          <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+            <h3 class="text-2xl font-bold mb-2">🚀 Cleip Escapa! v0.9.5.8</h3>
+            <span class="bg-green-600 text-white text-xs px-2 py-1 rounded-full">Nuevo</span>
+            <p class="text-gray-300 mb-4">Última actualización con poderes secretos 😏</p>
+            <div class="grid gap-2">
+              <a href="https://www.mediafire.com/file/3oulz8llhw5hd9p/¡Cleip_Escapa!_v0.9.5.8_by_fabialancho.zip/file" 
+                 class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
+              <a href="https://drive.google.com/file/d/17vXTU6AE8E2SFwAstjOQKcwwExYwneOd/view?usp=drive_link" 
+                 class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
+            </div>
+          </div>
+
+          <div class="bg-gray-800/50 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition opacity-70">
+            <h3 class="text-2xl font-bold mb-2">🚀 Cleip Escapa! v0.9.5.9</h3>
+            <span class="bg-yellow-500 text-black text-xs px-2 py-1 rounded-full">Muy pronto</span>
+            <p class="text-gray-300 mb-4">Estoy trabajando, no estamos listos 💻</p>
+            <button disabled class="bg-gray-600 px-4 py-2 rounded-lg font-bold block text-center cursor-not-allowed">⏳ Disponible pronto</button>
+          </div>
+
         </div>
-      </div>
+      </section>
 
-      <!-- Cleip 0.9.5.8 -->
-      <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-        <h3 class="text-2xl font-bold mb-2">🚀 Cleip Escapa! v0.9.5.8</h3>
-        <span class="bg-green-600 text-white text-xs px-2 py-1 rounded-full">Nuevo</span>
-        <p class="text-gray-300 mb-4">Última actualización con poderes secretos 🤑</p>
-        <div class="grid gap-2">
-          <a href="https://www.mediafire.com/file/3oulz8llhw5hd9p/¡Cleip_Escapa!_v0.9.5.8_by_fabialancho.zip/file" 
-             class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
-          <a href="https://drive.google.com/file/d/17vXTU6AE8E2SFwAstjOQKcwwExYwneOd/view?usp=drive_link" 
-             class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
+      <!-- Apps -->
+      <section id="apps" class="category hidden">
+        <h2 class="text-4xl font-bold mb-8 text-center">🤖 Mis Apps</h2>
+        <div class="grid gap-8 md:grid-cols-1">
+          <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+            <h3 class="text-2xl font-bold mb-2">🌀 Clipisito tu amiguito v0.10</h3>
+            <p class="text-gray-300 mb-4">
+              Fanmade para revivir Cleip Escapa 😎. Te motiva 💪, cuenta chistes 😂, y hace preguntas de informática 💻.
+            </p>
+            <div class="grid gap-2">
+              <a href="https://www.mediafire.com/file/lsknbybi8nfdth1/Clipisito_tu_amiguito_v0.10_by_fabialancho.zip/file" 
+                 class="bg-indigo-500 hover:bg-indigo-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
+              <a href="https://drive.google.com/file/d/1AHgKZidtMcSRTpp0JsOh8xuKG1DHUBHY/view?usp=drive_link" 
+                 class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <!-- Cleip 0.9.5.9 -->
-      <div class="bg-gray-800/50 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition opacity-70">
-        <h3 class="text-2xl font-bold mb-2">🚀 Cleip Escapa! v0.9.5.9</h3>
-        <span class="bg-yellow-500 text-black text-xs px-2 py-1 rounded-full">Muy pronto</span>
-        <p class="text-gray-300 mb-4">Estoy trabajando, no estamos listos 💻</p>
-        <button disabled class="bg-gray-600 px-4 py-2 rounded-lg font-bold block text-center cursor-not-allowed">⏳ Disponible pronto</button>
-      </div>
+      <!-- Webs Random -->
+      <section id="webs-random" class="category hidden">
+        <h2 class="text-4xl font-bold mb-8 text-center">🌐 Webs Random</h2>
+        <ul class="space-y-2">
+          <li><a href="https://neal.fun/progress/" target="_blank" class="hover:text-yellow-400">Progresos random</a></li>
+          <li><a href="https://www.myandroid.org/run/start.php" target="_blank" class="hover:text-yellow-400">Emulador Android</a></li>
+          <li><a href="https://zodogo.com/guimp.com/" target="_blank" class="hover:text-yellow-400">Zodogo / Guimp</a></li>
+          <li><a href="https://lab.hakim.se/textify/" target="_blank" class="hover:text-yellow-400">Textify</a></li>
+          <li><a href="https://sketchtoy.com/" target="_blank" class="hover:text-yellow-400">Sketch Toy</a></li>
+          <li><a href="https://spinnergame.xyz/es/home/" target="_blank" class="hover:text-yellow-400">Spinner Online</a></li>
+          <li><a href="https://www.minecraft-crafting.net/" target="_blank" class="hover:text-yellow-400">Crafting MC</a></li>
+          <li><a href="https://neal.fun/design-the-next-iphone/" target="_blank" class="hover:text-yellow-400">Diseña tu celular</a></li>
+          <li><a href="https://bookshelfs.art/" target="_blank" class="hover:text-yellow-400">Bookshelf MC</a></li>
+          <li><a href="https://classic.minecraft.net/" target="_blank" class="hover:text-yellow-400">Minecraft Classic</a></li>
+          <li><a href="https://eaglercraft.com/" target="_blank" class="hover:text-yellow-400">Eaglercraft</a></li>
+          <li><a href="https://androidify-io-2016.appspot.com/en/#/" target="_blank" class="hover:text-yellow-400">Androidify</a></li>
+        </ul>
+      </section>
 
-    </div>
-  </section>
+    </main>
 
-  <!-- Clipisito App -->
-  <section class="max-w-6xl mx-auto px-6 py-12">
-    <h2 class="text-4xl font-bold mb-8 text-center">🤖 Mis Apps</h2>
-    <div class="grid gap-8 md:grid-cols-1">
+    <!-- Barra lateral derecha -->
+    <aside class="w-72 bg-black/50 rounded-2xl p-6 flex-shrink-0">
+      <h2 class="text-2xl font-bold mb-4">📂 Categorías</h2>
+      <ul class="space-y-3">
+        <li><button class="category-btn w-full text-left hover:text-yellow-400 font-semibold" data-target="juegos">🎮 Juegos</button></li>
+        <li><button class="category-btn w-full text-left hover:text-yellow-400 font-semibold" data-target="apps">🤖 Apps</button></li>
+        <li><button class="category-btn w-full text-left hover:text-yellow-400 font-semibold" data-target="webs-random">🌐 Webs / Random</button></li>
+      </ul>
+    </aside>
 
-      <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-        <h3 class="text-2xl font-bold mb-2">🌀 Clipisito tu amiguito v0.10</h3>
-        <p class="text-gray-300 mb-4">
-          Fanmade para revivir Cleip Escapa 😎. Te motiva 💪, cuenta chistes 😂, y hace preguntas de informática 💻.
-        </p>
-        <div class="grid gap-2">
-          <a href="https://www.mediafire.com/file/lsknbybi8nfdth1/Clipisito_tu_amiguito_v0.10_by_fabialancho.zip/file" 
-             class="bg-indigo-500 hover:bg-indigo-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
-          <a href="https://drive.google.com/file/d/1AHgKZidtMcSRTpp0JsOh8xuKG1DHUBHY/view?usp=drive_link" 
-             class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
-        </div>
-      </div>
+  </div>
 
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="text-center py-6 bg-black/50 text-gray-400 text-sm">
-    © 2025 Fabialancho Games | Creado con ❤️ y estilo 😎
+  <footer class="text-center py-6 bg-black/50 text-gray-400 text-sm mt-10">
+    © 2025 Fabialancho Games | Creado con ❤️ y mucho estilo chetardo 😎
   </footer>
+
+  <script>
+    const buttons = document.querySelectorAll('.category-btn');
+    const categories = document.querySelectorAll('.category');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target');
+        categories.forEach(cat => {
+          if(cat.id === target) cat.classList.remove('hidden');
+          else cat.classList.add('hidden');
+        });
+      });
+    });
+  </script>
 
 </body>
 </html>
