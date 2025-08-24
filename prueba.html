@@ -7,7 +7,7 @@
     <style>
         @font-face {
             font-family: 'PixelatedFont';
-            src: url('https://raw.githubusercontent.com/user/repo/main/fuentes/fuente_8bit.ttf') format('truetype');
+            src: url('fuente_8bit.ttf') format('truetype');
         }
 
         body {
@@ -120,12 +120,12 @@
 <body>
 
 <audio id="background-music" loop>
-    <source src="http://googleusercontent.com/file_content/0" type="audio/mpeg">
+    <source src="cleip_escapa_soundtrack.mp3" type="audio/mpeg">
 </audio>
 
 <div id="start-screen" class="screen">
     <canvas id="start-background-canvas" style="position: absolute; top: 0; left: 0; z-index: 1;"></canvas>
-    <img id="logo" src="https://raw.githubusercontent.com/user/repo/main/fabi_alancho_games.png" alt="Fabian Alancho Games Logo">
+    <img id="logo" src="fabi_alancho_games.png" alt="Fabian Alancho Games Logo">
     <h2>¡CLEIP ESCAPA!</h2>
     <button id="play-button" class="game-button">JUGAR</button>
 </div>
@@ -190,9 +190,9 @@
 
     const images = {};
     const imagePaths = {
-        cleip: 'https://raw.githubusercontent.com/user/repo/main/cleip.png',
-        enemigo: 'https://raw.githubusercontent.com/user/repo/main/enemigo.png',
-        heart: 'https://raw.githubusercontent.com/user/repo/main/corazon.png'
+        cleip: 'cleip.png',
+        enemigo: 'enemigo.png',
+        heart: 'corazon.png'
     };
 
     let imagesLoaded = 0;
