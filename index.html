@@ -43,6 +43,21 @@
 
     <main class="flex-1">
 
+      <section id="demo-jugar" class="category hidden">
+        <h2 class="text-4xl font-bold mb-8 text-center">🎮 ¡CLEIP ESCAPA! DEMO</h2>
+        <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 flex flex-col items-center">
+            <h3 class="text-2xl font-bold mb-2">¡Te gustaría probar desde tu navegador mi juego?</h3>
+            <p class="text-gray-300 mb-4">¡Sobrevive a los 60 segundos del enemigo! (Demo optimizada para PC)</p>
+            
+            <div id="demo-container" class="w-full">
+                <div class="sm:hidden p-4 text-center text-red-400 bg-red-900/50 rounded-lg">
+                    <p>Este juego está optimizado para PC. ¡Visítanos en tu computadora para jugar!</p>
+                </div>
+                <iframe src="demo.html" class="hidden sm:block w-full aspect-[4/3] rounded-lg mt-4" frameborder="0"></iframe>
+            </div>
+        </div>
+      </section>
+
       <section id="juegos" class="category show">
         <h2 class="text-4xl font-bold mb-8 text-center">🎮 Mis Juegos</h2>
         <div class="grid gap-8 md:grid-cols-3">
@@ -210,6 +225,7 @@
     <aside class="w-60 sticky top-6 flex flex-col gap-4">
       <button class="category-btn bg-gray-800/70 p-3 rounded-lg font-bold hover:bg-gray-700" data-target="juegos">🎮 Juegos</button>
       <button class="category-btn bg-gray-800/70 p-3 rounded-lg font-bold hover:bg-gray-700" data-target="apps">🤖 Apps</button>
+      <button class="category-btn bg-gray-800/70 p-3 rounded-lg font-bold hover:bg-gray-700" data-target="demo-jugar">🕹️ Jugar demo (nuevo)</button>
       <button class="category-btn bg-gray-800/70 p-3 rounded-lg font-bold hover:bg-gray-700" data-target="webs-random">🌐 Webs Random</button>
     </aside>
 
