@@ -167,7 +167,7 @@
     <canvas id="game-canvas"></canvas>
     
     <div id="tutorial">
-        <span id="tutorial-text">Usa WASD para moverte.</span>
+        <span id="tutorial-text">Usa WASD para moverte y 'P' para pausar. Sobrevive 60 segundos evitando al enemigo. ¡Buena suerte!</span>
         <button id="tutorial-ok-btn" class="game-button">OK</button>
     </div>
     
@@ -290,9 +290,9 @@
 
         if (images.cleip) {
             backgroundCleips.forEach(cleip => {
-                cleip.x += cleip.speed;
-                if (cleip.x > startBgCanvas.width) {
-                    cleip.x = -cleip.size;
+                cleip.x -= cleip.speed;
+                if (cleip.x + cleip.size < 0) {
+                    cleip.x = startBgCanvas.width;
                     cleip.y = Math.random() * startBgCanvas.height;
                 }
                 startBgCtx.drawImage(images.cleip, cleip.x, cleip.y, cleip.size, cleip.size);
@@ -306,7 +306,6 @@
         ctx.fillStyle = "#1a1a1a";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Player drawing with blinking effect
         if (player.isInvincible) {
             if (Date.now() - lastPlayerBlink > BLINK_INTERVAL) {
                 lastPlayerBlink = Date.now();
@@ -318,12 +317,10 @@
             ctx.drawImage(images.cleip, player.x, player.y, player.width, player.height);
         }
 
-        // Enemy drawing
         if (images.enemigo) {
             ctx.drawImage(images.enemigo, enemy.x, enemy.y, enemy.width, enemy.height);
         }
 
-        // UI Drawing at the bottom
         if (images.heart) {
             for (let i = 0; i < player.lives; i++) {
                 ctx.drawImage(images.heart, 10 + i * 35, canvas.height - 40, 30, 30);
@@ -362,7 +359,6 @@
                     player.isInvincible = false;
                 }, INVINCIBILITY_DURATION);
                 
-                // Teleport enemy
                 enemy.x = Math.random() * (canvas.width - enemy.width);
                 enemy.y = Math.random() * (canvas.height - enemy.height);
 
@@ -427,6 +423,12 @@
         clearInterval(timerInterval);
         isPlaying = false;
         music.pause();
+        
+        // REINICIA LA MÚSICA SI ESTABA ACTIVADA
+        if (isMusicPlaying) {
+            music.play();
+        }
+
         endScreen.style.display = 'none';
         gameContainer.style.display = 'none';
         startScreen.style.display = 'flex';
@@ -520,9 +522,7 @@
         isMusicPlaying = !isMusicPlaying;
         if (isMusicPlaying) {
             musicToggleButton.textContent = 'MÚSICA: ON';
-            if (isPlaying && !isPaused) {
-                music.play();
-            }
+            music.play().catch(e => console.log("La música no se pudo reproducir."));
         } else {
             musicToggleButton.textContent = 'MÚSICA: OFF';
             music.pause();
