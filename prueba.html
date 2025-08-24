@@ -75,7 +75,7 @@
             font-size: 1.5em;
             cursor: pointer;
             transition: border-color 0.3s ease, color 0.3s ease;
-            margin-top: 40px;
+            margin-top: 20px;
             font-family: 'PixelatedFont', sans-serif;
             z-index: 2;
         }
@@ -95,7 +95,21 @@
             height: 100%;
             z-index: 10;
         }
-        
+
+        #pause-screen {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
         #end-message {
             font-size: 2.5em;
             color: #fff;
@@ -128,11 +142,17 @@
     <img id="logo" src="fabi_alancho_games.png" alt="Fabian Alancho Games Logo">
     <h2>¡CLEIP ESCAPA!</h2>
     <button id="play-button" class="game-button">JUGAR</button>
+    <button id="music-toggle-button" class="game-button">MÚSICA: ON</button>
 </div>
 
 <div id="game-container">
     <canvas id="game-canvas"></canvas>
-    <div id="tutorial">Usa las flechas para moverte.</div>
+    <div id="tutorial">Usa WASD para moverte.</div>
+    
+    <div id="pause-screen">
+        <h3 class="text-4xl font-bold mb-8">PAUSA</h3>
+        <button id="resume-button" class="game-button">REANUDAR</button>
+    </div>
 </div>
 
 <div id="end-screen" class="screen">
@@ -143,8 +163,11 @@
 <script>
     const startScreen = document.getElementById('start-screen');
     const endScreen = document.getElementById('end-screen');
+    const pauseScreen = document.getElementById('pause-screen');
     const playButton = document.getElementById('play-button');
     const endButton = document.getElementById('end-button');
+    const resumeButton = document.getElementById('resume-button');
+    const musicToggleButton = document.getElementById('music-toggle-button');
     const music = document.getElementById('background-music');
     const gameContainer = document.getElementById('game-container');
     const canvas = document.getElementById('game-canvas');
@@ -164,6 +187,7 @@
     const ENEMY_SPEED = 2.5;
     const DEMO_TIME = 60;
     const TUTORIAL_DURATION = 3000;
+    const INVINCIBILITY_DURATION = 2000;
 
     let player = {
         x: canvas.width / 2,
@@ -172,7 +196,8 @@
         height: 44,
         dx: 0,
         dy: 0,
-        lives: 3
+        lives: 3,
+        isInvincible: false
     };
 
     let enemy = {
@@ -185,8 +210,11 @@
     let timer = DEMO_TIME;
     let timerInterval;
     let isPlaying = false;
+    let isPaused = false;
+    let isMusicPlaying = true;
     let lastHitTime = 0;
-    const HIT_COOLDOWN = 2000;
+    let lastPlayerBlink = 0;
+    const BLINK_INTERVAL = 100;
 
     const images = {};
     const imagePaths = {
@@ -199,7 +227,7 @@
     const totalImages = Object.keys(imagePaths).length;
 
     let backgroundCleips = [];
-    const NUM_BACKGROUND_CLEIPS = 20;
+    const NUM_BACKGROUND_CLEIPS = 50;
 
     function loadImages() {
         for (const key in imagePaths) {
@@ -217,6 +245,7 @@
 
     function initBackgroundCleips() {
         if (!images.cleip) return;
+        backgroundCleips = [];
         for (let i = 0; i < NUM_BACKGROUND_CLEIPS; i++) {
             backgroundCleips.push({
                 x: Math.random() * startBgCanvas.width,
@@ -252,25 +281,38 @@
         ctx.fillStyle = "#1a1a1a";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        if (images.cleip && images.enemigo) {
+        // Player drawing with blinking effect
+        if (player.isInvincible) {
+            if (Date.now() - lastPlayerBlink > BLINK_INTERVAL) {
+                lastPlayerBlink = Date.now();
+            }
+            if (Math.floor(Date.now() / BLINK_INTERVAL) % 2 === 0) {
+                ctx.drawImage(images.cleip, player.x, player.y, player.width, player.height);
+            }
+        } else {
             ctx.drawImage(images.cleip, player.x, player.y, player.width, player.height);
+        }
+
+        // Enemy drawing
+        if (images.enemigo) {
             ctx.drawImage(images.enemigo, enemy.x, enemy.y, enemy.width, enemy.height);
         }
 
+        // UI Drawing at the bottom
         if (images.heart) {
             for (let i = 0; i < player.lives; i++) {
-                ctx.drawImage(images.heart, 10 + i * 35, 10, 30, 30);
+                ctx.drawImage(images.heart, 10 + i * 35, canvas.height - 40, 30, 30);
             }
         }
 
         ctx.fillStyle = "#ffffff";
-        ctx.font = "20px sans-serif";
+        ctx.font = "20px PixelatedFont";
         ctx.textAlign = "right";
-        ctx.fillText(`Tiempo: ${timer}s`, canvas.width - 10, 30);
+        ctx.fillText(`Tiempo: ${timer}s`, canvas.width - 10, canvas.height - 20);
     }
 
     function update() {
-        if (!isPlaying) return;
+        if (!isPlaying || isPaused) return;
 
         player.x += player.dx;
         player.y += player.dy;
@@ -285,11 +327,20 @@
         enemy.y += Math.sin(angle) * ENEMY_SPEED;
 
         const currentTime = Date.now();
-        if (currentTime - lastHitTime > HIT_COOLDOWN) {
+        if (!player.isInvincible && currentTime - lastHitTime > INVINCIBILITY_DURATION) {
             const distance = Math.sqrt(Math.pow(player.x - enemy.x, 2) + Math.pow(player.y - enemy.y, 2));
             if (distance < (player.width + enemy.width) / 2) {
                 player.lives--;
+                player.isInvincible = true;
                 lastHitTime = currentTime;
+                setTimeout(() => {
+                    player.isInvincible = false;
+                }, INVINCIBILITY_DURATION);
+                
+                // Teleport enemy
+                enemy.x = Math.random() * (canvas.width - enemy.width);
+                enemy.y = Math.random() * (canvas.height - enemy.height);
+
                 if (player.lives <= 0) {
                     endGame("¡Juego terminado! Te quedaste sin vidas.");
                 }
@@ -305,14 +356,19 @@
         gameContainer.style.display = 'block';
         canvas.style.display = 'block';
         isPlaying = true;
+        isPaused = false;
+        pauseScreen.style.display = 'none';
+        endScreen.style.display = 'none';
 
         player.lives = 3;
         player.x = canvas.width / 2;
         player.y = canvas.height / 2;
-        enemy.x = 100;
-        enemy.y = 100;
+        enemy.x = Math.random() * (canvas.width - enemy.width);
+        enemy.y = Math.random() * (canvas.height - enemy.height);
 
-        music.play().catch(e => console.log("La música no se pudo reproducir."));
+        if (isMusicPlaying) {
+            music.play().catch(e => console.log("La música no se pudo reproducir."));
+        }
 
         tutorialMessage.style.display = 'block';
         setTimeout(() => {
@@ -321,9 +377,11 @@
 
         timer = DEMO_TIME;
         timerInterval = setInterval(() => {
-            timer--;
-            if (timer <= 0) {
-                endGame("¡Felicidades! Lograste sobrevivir 60 segundos.");
+            if (!isPaused) {
+                timer--;
+                if (timer <= 0) {
+                    endGame("¡Felicidades! Lograste sobrevivir 60 segundos.");
+                }
             }
         }, 1000);
 
@@ -338,33 +396,55 @@
         document.getElementById('end-message').textContent = message;
     }
 
+    function togglePause() {
+        isPaused = !isPaused;
+        if (isPaused) {
+            pauseScreen.style.display = 'flex';
+            music.pause();
+        } else {
+            pauseScreen.style.display = 'none';
+            if (isMusicPlaying) {
+                music.play();
+            }
+            requestAnimationFrame(update);
+        }
+    }
+
     document.addEventListener('keydown', e => {
-        if (!isPlaying) return;
-        switch(e.key) {
-            case 'ArrowUp':
+        if (!isPlaying || isPaused) {
+            if (e.key === 'p' || e.key === 'P') {
+                togglePause();
+            }
+            return;
+        }
+        switch(e.key.toLowerCase()) {
+            case 'w':
                 player.dy = -PLAYER_SPEED;
                 break;
-            case 'ArrowDown':
+            case 's':
                 player.dy = PLAYER_SPEED;
                 break;
-            case 'ArrowLeft':
+            case 'a':
                 player.dx = -PLAYER_SPEED;
                 break;
-            case 'ArrowRight':
+            case 'd':
                 player.dx = PLAYER_SPEED;
+                break;
+            case 'p':
+                togglePause();
                 break;
         }
     });
 
     document.addEventListener('keyup', e => {
-        if (!isPlaying) return;
-        switch(e.key) {
-            case 'ArrowUp':
-            case 'ArrowDown':
+        if (!isPlaying || isPaused) return;
+        switch(e.key.toLowerCase()) {
+            case 'w':
+            case 's':
                 player.dy = 0;
                 break;
-            case 'ArrowLeft':
-            case 'ArrowRight':
+            case 'a':
+            case 'd':
                 player.dx = 0;
                 break;
         }
@@ -383,6 +463,23 @@
         startScreen.style.display = 'flex';
         initBackgroundCleips();
         animateStartScreen();
+    });
+
+    resumeButton.addEventListener('click', () => {
+        togglePause();
+    });
+
+    musicToggleButton.addEventListener('click', () => {
+        isMusicPlaying = !isMusicPlaying;
+        if (isMusicPlaying) {
+            musicToggleButton.textContent = 'MÚSICA: ON';
+            if (isPlaying && !isPaused) {
+                music.play();
+            }
+        } else {
+            musicToggleButton.textContent = 'MÚSICA: OFF';
+            music.pause();
+        }
     });
     
     window.addEventListener('resize', () => {
