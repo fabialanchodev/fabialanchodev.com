@@ -11,6 +11,20 @@
       background: url("fondodeaurasalanochecer.jpeg") no-repeat center center fixed;
       background-size: cover;
     }
+
+    /* Animación slide para categorías */
+    .category {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.5s ease-in-out;
+      display: none;
+    }
+
+    .category.show {
+      display: block;
+      opacity: 1;
+      transform: translateX(0);
+    }
   </style>
 </head>
 <body class="text-white font-sans">
@@ -32,7 +46,7 @@
     <main class="flex-1">
 
       <!-- Juegos -->
-      <section id="juegos" class="category">
+      <section id="juegos" class="category show">
         <h2 class="text-4xl font-bold mb-8 text-center">🎮 Mis Juegos</h2>
         <div class="grid gap-8 md:grid-cols-3">
 
@@ -93,6 +107,7 @@
         <h2 class="text-4xl font-bold mb-8 text-center">🌐 Webs Random</h2>
         <div class="grid gap-8 md:grid-cols-3">
 
+          <!-- Lista completa de webs con tarjetas -->
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-2xl font-bold mb-2">📊 Progresos random</h3>
             <p class="text-gray-300 mb-4">Progresos de casi todo tipo de cosas, puro random 😎</p>
@@ -172,20 +187,20 @@
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🦥 Busca al perezoso</h3>
-            <p class="text-gray-300 mb-4">Busca al perezoso y recibe una sorpresa 🦥</p>
-            <a href="https://whereisthesloth.com/" target="_blank" class="bg-yellow-500 hover:bg-yellow-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <h3 class="text-2xl font-bold mb-2">🦥 Where is the sloth?</h3>
+            <p class="text-gray-300 mb-4">Busca al perezoso y encuentra una sorpresa 😏</p>
+            <a href="https://whereisthesloth.com/" target="_blank" class="bg-pink-500 hover:bg-pink-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-2xl font-bold mb-2">🐄 Encuentra la vaca invisible</h3>
-            <p class="text-gray-300 mb-4">Encuentra la vaca perdida escuchando su grito 🐄</p>
-            <a href="https://findtheinvisiblecow.com/" target="_blank" class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <p class="text-gray-300 mb-4">Escucha el grito y encuentra la vaca perdida 🐄</p>
+            <a href="https://findtheinvisiblecow.com/" target="_blank" class="bg-orange-500 hover:bg-orange-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-2xl font-bold mb-2">🎵 Music Lab</h3>
-            <p class="text-gray-300 mb-4">Laboratorio secreto de música de Google 🎵</p>
+            <p class="text-gray-300 mb-4">Laboratorio secreto de música de Google 🎶</p>
             <a href="https://musiclab.chromeexperiments.com/" target="_blank" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
@@ -195,20 +210,13 @@
     </main>
 
     <!-- Barra lateral derecha -->
-    <aside class="w-72 bg-black/50 rounded-2xl p-6 flex-shrink-0">
-      <h2 class="text-2xl font-bold mb-4">📂 Categorías</h2>
-      <ul class="space-y-3">
-        <li><button class="category-btn w-full text-left hover:text-yellow-400 font-semibold" data-target="juegos">🎮 Juegos</button></li>
-        <li><button class="category-btn w-full text-left hover:text-yellow-400 font-semibold" data-target="apps">🤖 Apps</button></li>
-        <li><button class="category-btn w-full text-left hover:text-yellow-400 font-semibold" data-target="webs-random">🌐 Webs / Random</button></li>
-      </ul>
+    <aside class="w-60 sticky top-6 flex flex-col gap-4">
+      <button class="category-btn bg-gray-800/70 p-3 rounded-lg font-bold hover:bg-gray-700" data-target="juegos">🎮 Juegos</button>
+      <button class="category-btn bg-gray-800/70 p-3 rounded-lg font-bold hover:bg-gray-700" data-target="apps">🤖 Apps</button>
+      <button class="category-btn bg-gray-800/70 p-3 rounded-lg font-bold hover:bg-gray-700" data-target="webs-random">🌐 Webs Random</button>
     </aside>
 
   </div>
-
-  <footer class="text-center py-6 bg-black/50 text-gray-400 text-sm mt-10">
-    © 2025 Fabialancho Games | Creado con ❤️ y mucho estilo chetardo 😎
-  </footer>
 
   <script>
     const buttons = document.querySelectorAll('.category-btn');
@@ -218,8 +226,11 @@
       btn.addEventListener('click', () => {
         const target = btn.getAttribute('data-target');
         categories.forEach(cat => {
-          if(cat.id === target) cat.classList.remove('hidden');
-          else cat.classList.add('hidden');
+          if(cat.id === target) {
+            cat.classList.add('show');
+          } else {
+            cat.classList.remove('show');
+          }
         });
       });
     });
