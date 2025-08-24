@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡CLEIP ESCAPA! Demo</title>
+    <style>
+        @font-face {
+            font-family: 'PixelatedFont';
+            src: url('https://raw.githubusercontent.com/user/repo/main/fuentes/fuente_8bit.ttf') format('truetype');
+        }
+
+        body {
+            font-family: 'PixelatedFont', sans-serif;
+            background-color: #0d0d0d;
+            color: #ffffff;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        #game-container {
+            position: relative;
+        }
+
+        #game-canvas {
+            border: 2px solid #ffffff;
+            background-color: #1a1a1a;
+            max-width: 95%;
+            max-height: 80vh;
+            display: none;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+            position: relative;
+            background-color: #1a1a1a;
+        }
+        
+        #start-screen {
+            display: flex;
+        }
+
+        #logo {
+            width: 250px;
+            height: auto;
+            margin-bottom: 20px;
+            z-index: 2;
+        }
+
+        h2 {
+            font-size: 2em;
+            color: #ffcc00;
+            z-index: 2;
+        }
+
+        .game-button {
+            background-color: transparent;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.5em;
+            cursor: pointer;
+            transition: border-color 0.3s ease, color 0.3s ease;
+            margin-top: 40px;
+            font-family: 'PixelatedFont', sans-serif;
+            z-index: 2;
+        }
+        
+        .game-button:hover {
+            border-color: #00bfff;
+            color: #00bfff;
+        }
+
+        #end-screen {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+        
+        #end-message {
+            font-size: 2.5em;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        #tutorial {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 2px solid #fff;
+            padding: 20px;
+            border-radius: 10px;
+            z-index: 5;
+            font-size: 1.5em;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<audio id="background-music" loop>
+    <source src="http://googleusercontent.com/file_content/0" type="audio/mpeg">
+</audio>
+
+<div id="start-screen" class="screen">
+    <canvas id="start-background-canvas" style="position: absolute; top: 0; left: 0; z-index: 1;"></canvas>
+    <img id="logo" src="https://raw.githubusercontent.com/user/repo/main/fabi_alancho_games.png" alt="Fabian Alancho Games Logo">
+    <h2>¡CLEIP ESCAPA!</h2>
+    <button id="play-button" class="game-button">JUGAR</button>
+</div>
+
+<div id="game-container">
+    <canvas id="game-canvas"></canvas>
+    <div id="tutorial">Usa las flechas para moverte.</div>
+</div>
+
+<div id="end-screen" class="screen">
+    <h3 id="end-message"></h3>
+    <button id="end-button" class="game-button">VOLVER A JUGAR</button>
+</div>
+
+<script>
+    const startScreen = document.getElementById('start-screen');
+    const endScreen = document.getElementById('end-screen');
+    const playButton = document.getElementById('play-button');
+    const endButton = document.getElementById('end-button');
+    const music = document.getElementById('background-music');
+    const gameContainer = document.getElementById('game-container');
+    const canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d');
+    const tutorialMessage = document.getElementById('tutorial');
+
+    const startBgCanvas = document.getElementById('start-background-canvas');
+    const startBgCtx = startBgCanvas.getContext('2d');
+
+    canvas.width = 800;
+    canvas.height = 600;
+
+    startBgCanvas.width = window.innerWidth;
+    startBgCanvas.height = window.innerHeight;
+
+    const PLAYER_SPEED = 5;
+    const ENEMY_SPEED = 2.5;
+    const DEMO_TIME = 60;
+    const TUTORIAL_DURATION = 3000;
+
+    let player = {
+        x: canvas.width / 2,
+        y: canvas.height / 2,
+        width: 44,
+        height: 44,
+        dx: 0,
+        dy: 0,
+        lives: 3
+    };
+
+    let enemy = {
+        x: 100,
+        y: 100,
+        width: 44,
+        height: 44
+    };
+
+    let timer = DEMO_TIME;
+    let timerInterval;
+    let isPlaying = false;
+    let lastHitTime = 0;
+    const HIT_COOLDOWN = 2000;
+
+    const images = {};
+    const imagePaths = {
+        cleip: 'https://raw.githubusercontent.com/user/repo/main/cleip.png',
+        enemigo: 'https://raw.githubusercontent.com/user/repo/main/enemigo.png',
+        heart: 'https://raw.githubusercontent.com/user/repo/main/corazon.png'
+    };
+
+    let imagesLoaded = 0;
+    const totalImages = Object.keys(imagePaths).length;
+
+    let backgroundCleips = [];
+    const NUM_BACKGROUND_CLEIPS = 20;
+
+    function loadImages() {
+        for (const key in imagePaths) {
+            images[key] = new Image();
+            images[key].onload = () => {
+                imagesLoaded++;
+                if (imagesLoaded === totalImages) {
+                    initBackgroundCleips();
+                    animateStartScreen();
+                }
+            };
+            images[key].src = imagePaths[key];
+        }
+    }
+
+    function initBackgroundCleips() {
+        if (!images.cleip) return;
+        for (let i = 0; i < NUM_BACKGROUND_CLEIPS; i++) {
+            backgroundCleips.push({
+                x: Math.random() * startBgCanvas.width,
+                y: Math.random() * startBgCanvas.height,
+                size: 20 + Math.random() * 40,
+                speed: 0.2 + Math.random() * 0.5
+            });
+        }
+    }
+
+    function animateStartScreen() {
+        startBgCtx.fillStyle = '#1a1a1a';
+        startBgCtx.fillRect(0, 0, startBgCanvas.width, startBgCanvas.height);
+
+        if (images.cleip) {
+            backgroundCleips.forEach(cleip => {
+                cleip.x += cleip.speed;
+                if (cleip.x > startBgCanvas.width) {
+                    cleip.x = -cleip.size;
+                    cleip.y = Math.random() * startBgCanvas.height;
+                }
+                startBgCtx.drawImage(images.cleip, cleip.x, cleip.y, cleip.size, cleip.size);
+            });
+        }
+
+        if (!isPlaying) {
+            requestAnimationFrame(animateStartScreen);
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        if (images.cleip && images.enemigo) {
+            ctx.drawImage(images.cleip, player.x, player.y, player.width, player.height);
+            ctx.drawImage(images.enemigo, enemy.x, enemy.y, enemy.width, enemy.height);
+        }
+
+        if (images.heart) {
+            for (let i = 0; i < player.lives; i++) {
+                ctx.drawImage(images.heart, 10 + i * 35, 10, 30, 30);
+            }
+        }
+
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "20px sans-serif";
+        ctx.textAlign = "right";
+        ctx.fillText(`Tiempo: ${timer}s`, canvas.width - 10, 30);
+    }
+
+    function update() {
+        if (!isPlaying) return;
+
+        player.x += player.dx;
+        player.y += player.dy;
+
+        if (player.x < 0) player.x = 0;
+        if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+        if (player.y < 0) player.y = 0;
+        if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+
+        let angle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+        enemy.x += Math.cos(angle) * ENEMY_SPEED;
+        enemy.y += Math.sin(angle) * ENEMY_SPEED;
+
+        const currentTime = Date.now();
+        if (currentTime - lastHitTime > HIT_COOLDOWN) {
+            const distance = Math.sqrt(Math.pow(player.x - enemy.x, 2) + Math.pow(player.y - enemy.y, 2));
+            if (distance < (player.width + enemy.width) / 2) {
+                player.lives--;
+                lastHitTime = currentTime;
+                if (player.lives <= 0) {
+                    endGame("¡Juego terminado! Te quedaste sin vidas.");
+                }
+            }
+        }
+
+        draw();
+        requestAnimationFrame(update);
+    }
+
+    function startGame() {
+        startScreen.style.display = 'none';
+        gameContainer.style.display = 'block';
+        canvas.style.display = 'block';
+        isPlaying = true;
+
+        player.lives = 3;
+        player.x = canvas.width / 2;
+        player.y = canvas.height / 2;
+        enemy.x = 100;
+        enemy.y = 100;
+
+        music.play().catch(e => console.log("La música no se pudo reproducir."));
+
+        tutorialMessage.style.display = 'block';
+        setTimeout(() => {
+            tutorialMessage.style.display = 'none';
+        }, TUTORIAL_DURATION);
+
+        timer = DEMO_TIME;
+        timerInterval = setInterval(() => {
+            timer--;
+            if (timer <= 0) {
+                endGame("¡Felicidades! Lograste sobrevivir 60 segundos.");
+            }
+        }, 1000);
+
+        requestAnimationFrame(update);
+    }
+
+    function endGame(message) {
+        clearInterval(timerInterval);
+        isPlaying = false;
+        music.pause();
+        endScreen.style.display = 'flex';
+        document.getElementById('end-message').textContent = message;
+    }
+
+    document.addEventListener('keydown', e => {
+        if (!isPlaying) return;
+        switch(e.key) {
+            case 'ArrowUp':
+                player.dy = -PLAYER_SPEED;
+                break;
+            case 'ArrowDown':
+                player.dy = PLAYER_SPEED;
+                break;
+            case 'ArrowLeft':
+                player.dx = -PLAYER_SPEED;
+                break;
+            case 'ArrowRight':
+                player.dx = PLAYER_SPEED;
+                break;
+        }
+    });
+
+    document.addEventListener('keyup', e => {
+        if (!isPlaying) return;
+        switch(e.key) {
+            case 'ArrowUp':
+            case 'ArrowDown':
+                player.dy = 0;
+                break;
+            case 'ArrowLeft':
+            case 'ArrowRight':
+                player.dx = 0;
+                break;
+        }
+    });
+    
+    playButton.addEventListener('click', () => {
+        if (imagesLoaded === totalImages) {
+            startGame();
+        } else {
+            alert("Cargando imágenes... Por favor, espera un momento.");
+        }
+    });
+
+    endButton.addEventListener('click', () => {
+        endScreen.style.display = 'none';
+        startScreen.style.display = 'flex';
+        initBackgroundCleips();
+        animateStartScreen();
+    });
+    
+    window.addEventListener('resize', () => {
+        startBgCanvas.width = window.innerWidth;
+        startBgCanvas.height = window.innerHeight;
+    });
+
+    loadImages();
+</script>
+
+</body>
+</html>
