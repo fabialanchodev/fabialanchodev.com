@@ -78,6 +78,8 @@
             margin-top: 20px;
             font-family: 'PixelatedFont', sans-serif;
             z-index: 2;
+            width: fit-content;
+            text-align: center;
         }
         
         .game-button:hover {
@@ -96,6 +98,16 @@
             z-index: 10;
         }
 
+        #end-screen h3 {
+            font-size: 2.5em;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        #end-screen button {
+            margin: 10px;
+        }
+
         #pause-screen {
             display: none;
             background-color: rgba(0, 0, 0, 0.7);
@@ -110,12 +122,6 @@
             align-items: center;
         }
 
-        #end-message {
-            font-size: 2.5em;
-            color: #fff;
-            margin-bottom: 20px;
-        }
-
         #tutorial {
             position: absolute;
             top: 50%;
@@ -128,6 +134,18 @@
             z-index: 5;
             font-size: 1.5em;
             display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #tutorial-text {
+            margin-bottom: 20px;
+        }
+
+        #tutorial-ok-btn {
+            padding: 10px 20px;
+            font-size: 1.2em;
         }
     </style>
 </head>
@@ -142,22 +160,28 @@
     <img id="logo" src="fabi_alancho_games.png" alt="Fabian Alancho Games Logo">
     <h2>¡CLEIP ESCAPA!</h2>
     <button id="play-button" class="game-button">JUGAR</button>
-    <button id="music-toggle-button" class="game-button">MÚSICA: ON</button>
+    <button id="music-toggle-button" class="game-button">MÚSICA: OFF</button>
 </div>
 
 <div id="game-container">
     <canvas id="game-canvas"></canvas>
-    <div id="tutorial">Usa WASD para moverte.</div>
+    
+    <div id="tutorial">
+        <span id="tutorial-text">Usa WASD para moverte.</span>
+        <button id="tutorial-ok-btn" class="game-button">OK</button>
+    </div>
     
     <div id="pause-screen">
         <h3 class="text-4xl font-bold mb-8">PAUSA</h3>
         <button id="resume-button" class="game-button">REANUDAR</button>
+        <button id="exit-pause-button" class="game-button">SALIR AL MENÚ</button>
     </div>
 </div>
 
 <div id="end-screen" class="screen">
     <h3 id="end-message"></h3>
-    <button id="end-button" class="game-button">VOLVER A JUGAR</button>
+    <button id="end-play-again-button" class="game-button">VOLVER A JUGAR</button>
+    <button id="end-exit-button" class="game-button">SALIR AL MENÚ</button>
 </div>
 
 <script>
@@ -165,14 +189,17 @@
     const endScreen = document.getElementById('end-screen');
     const pauseScreen = document.getElementById('pause-screen');
     const playButton = document.getElementById('play-button');
-    const endButton = document.getElementById('end-button');
+    const endPlayAgainButton = document.getElementById('end-play-again-button');
+    const endExitButton = document.getElementById('end-exit-button');
     const resumeButton = document.getElementById('resume-button');
+    const exitPauseButton = document.getElementById('exit-pause-button');
     const musicToggleButton = document.getElementById('music-toggle-button');
     const music = document.getElementById('background-music');
     const gameContainer = document.getElementById('game-container');
     const canvas = document.getElementById('game-canvas');
     const ctx = canvas.getContext('2d');
     const tutorialMessage = document.getElementById('tutorial');
+    const tutorialOkButton = document.getElementById('tutorial-ok-btn');
 
     const startBgCanvas = document.getElementById('start-background-canvas');
     const startBgCtx = startBgCanvas.getContext('2d');
@@ -211,7 +238,7 @@
     let timerInterval;
     let isPlaying = false;
     let isPaused = false;
-    let isMusicPlaying = true;
+    let isMusicPlaying = false;
     let lastHitTime = 0;
     let lastPlayerBlink = 0;
     const BLINK_INTERVAL = 100;
@@ -228,6 +255,7 @@
 
     let backgroundCleips = [];
     const NUM_BACKGROUND_CLEIPS = 50;
+    let animationFrame;
 
     function loadImages() {
         for (const key in imagePaths) {
@@ -270,10 +298,7 @@
                 startBgCtx.drawImage(images.cleip, cleip.x, cleip.y, cleip.size, cleip.size);
             });
         }
-
-        if (!isPlaying) {
-            requestAnimationFrame(animateStartScreen);
-        }
+        animationFrame = requestAnimationFrame(animateStartScreen);
     }
 
     function draw() {
@@ -342,50 +367,51 @@
                 enemy.y = Math.random() * (canvas.height - enemy.height);
 
                 if (player.lives <= 0) {
-                    endGame("¡Juego terminado! Te quedaste sin vidas.");
+                    endGame("¡JUEGO TERMINADO! Te quedaste sin vidas.");
                 }
             }
         }
 
         draw();
-        requestAnimationFrame(update);
+        animationFrame = requestAnimationFrame(update);
     }
 
     function startGame() {
         startScreen.style.display = 'none';
         gameContainer.style.display = 'block';
         canvas.style.display = 'block';
-        isPlaying = true;
-        isPaused = false;
-        pauseScreen.style.display = 'none';
-        endScreen.style.display = 'none';
-
+        
         player.lives = 3;
         player.x = canvas.width / 2;
         player.y = canvas.height / 2;
         enemy.x = Math.random() * (canvas.width - enemy.width);
         enemy.y = Math.random() * (canvas.height - enemy.height);
 
+        tutorialMessage.style.display = 'flex';
+    }
+
+    function startActualGame() {
+        isPlaying = true;
+        isPaused = false;
+        pauseScreen.style.display = 'none';
+        endScreen.style.display = 'none';
+        tutorialMessage.style.display = 'none';
+
         if (isMusicPlaying) {
             music.play().catch(e => console.log("La música no se pudo reproducir."));
         }
-
-        tutorialMessage.style.display = 'block';
-        setTimeout(() => {
-            tutorialMessage.style.display = 'none';
-        }, TUTORIAL_DURATION);
 
         timer = DEMO_TIME;
         timerInterval = setInterval(() => {
             if (!isPaused) {
                 timer--;
                 if (timer <= 0) {
-                    endGame("¡Felicidades! Lograste sobrevivir 60 segundos.");
+                    endGame("¡FELICIDADES! Lograste sobrevivir 60 segundos.");
                 }
             }
         }, 1000);
 
-        requestAnimationFrame(update);
+        animationFrame = requestAnimationFrame(update);
     }
 
     function endGame(message) {
@@ -394,6 +420,18 @@
         music.pause();
         endScreen.style.display = 'flex';
         document.getElementById('end-message').textContent = message;
+    }
+
+    function returnToStartScreen() {
+        cancelAnimationFrame(animationFrame);
+        clearInterval(timerInterval);
+        isPlaying = false;
+        music.pause();
+        endScreen.style.display = 'none';
+        gameContainer.style.display = 'none';
+        startScreen.style.display = 'flex';
+        initBackgroundCleips();
+        animateStartScreen();
     }
 
     function togglePause() {
@@ -406,7 +444,7 @@
             if (isMusicPlaying) {
                 music.play();
             }
-            requestAnimationFrame(update);
+            animationFrame = requestAnimationFrame(update);
         }
     }
 
@@ -458,15 +496,24 @@
         }
     });
 
-    endButton.addEventListener('click', () => {
-        endScreen.style.display = 'none';
-        startScreen.style.display = 'flex';
-        initBackgroundCleips();
-        animateStartScreen();
+    tutorialOkButton.addEventListener('click', () => {
+        startActualGame();
+    });
+
+    endPlayAgainButton.addEventListener('click', () => {
+        startGame();
+    });
+
+    endExitButton.addEventListener('click', () => {
+        returnToStartScreen();
     });
 
     resumeButton.addEventListener('click', () => {
         togglePause();
+    });
+
+    exitPauseButton.addEventListener('click', () => {
+        returnToStartScreen();
     });
 
     musicToggleButton.addEventListener('click', () => {
