@@ -25,33 +25,40 @@
       opacity: 1;
       transform: translateX(0);
     }
+    
+    @media (max-width: 767px) {
+        .mobile-warning {
+            display: block;
+        }
+    }
   </style>
 </head>
 <body class="text-white font-sans">
 
   <header class="flex flex-col md:flex-row items-center justify-center gap-6 py-10 bg-black/50">
-    <img src="fabialanchogameslogo.jpg" alt="Fabialancho Games Logo" class="w-40 rounded-full opacity-92">
+    <img src="fabialanchogameslogo.jpg" alt="Fabialancho Games Logo" class="w-64 rounded-full opacity-92">
     <div class="text-center md:text-left">
       <h1 class="text-5xl font-extrabold">
         🔥 Fabialancho Games 🔥
       </h1>
-      <p class="text-xl mt-2">Tus juegos y apps chetardas en un solo lugar 🚀</p>
+      <p class="text-xl mt-2">Tus juegos y apps geniales en un solo lugar 🚀</p>
     </div>
   </header>
 
-  <div class="flex max-w-7xl mx-auto mt-10 px-6 gap-8">
+  <div class="flex flex-col md:flex-row max-w-7xl mx-auto mt-10 px-6 gap-8">
 
     <main class="flex-1">
 
       <section id="demo-jugar" class="category hidden">
         <h2 class="text-4xl font-bold mb-8 text-center">🎮 ¡CLEIP ESCAPA! DEMO</h2>
         <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 flex flex-col items-center">
-            <h3 class="text-2xl font-bold mb-2">¡Te gustaría probar desde tu navegador mi juego?</h3>
+            <h3 class="text-2xl font-bold mb-2">¿Te gustaría probar mi juego en tu navegador?</h3>
             <p class="text-gray-300 mb-4">¡Sobrevive a los 60 segundos del enemigo! (Demo optimizada para PC)</p>
             
             <div id="demo-container" class="w-full">
                 <div class="sm:hidden p-4 text-center text-red-400 bg-red-900/50 rounded-lg">
-                    <p>Este juego está optimizado para PC. ¡Visítanos en tu computadora para jugar!</p>
+                    <p>⚠️ **ATENCIÓN: PELIGRO** ⚠️</p>
+                    <p>Esta demo solo funciona con teclado. Si no tienes uno, no podrás jugar.</p>
                 </div>
                 <iframe src="prueba.html" class="hidden sm:block w-full aspect-[4/3] rounded-lg mt-4" frameborder="0"></iframe>
             </div>
@@ -75,7 +82,7 @@
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-2xl font-bold mb-2">🚀 Cleip Escapa! v0.9.5.8</h3>
-            <p class="text-gray-300 mb-4">Versión anterior de este jueguitazo 👻</p>
+            <p class="text-gray-300 mb-4">Versión anterior de este juegazo 👻</p>
             <div class="grid gap-2">
               <a href="https://www.mediafire.com/file/3oulz8llhw5hd9p/¡Cleip_Escapa!_v0.9.5.8_by_fabialancho.zip/file" 
                  class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
@@ -189,7 +196,7 @@
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-2xl font-bold mb-2">🤖 Androidify</h3>
-            <p class="text-gray-300 mb-4">Crea tu avatar animado estilo mascot de Android 🤖</p>
+            <p class="text-gray-300 mb-4">Crea tu avatar animado estilo mascota de Android 🤖</p>
             <a href="https://androidify-io-2016.appspot.com/en/#/" target="_blank" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
@@ -222,7 +229,7 @@
 
     </main>
 
-    <aside class="w-60 sticky top-6 flex flex-col gap-4">
+    <aside class="w-full md:w-60 sticky top-6 flex flex-col gap-4">
       <button class="category-btn bg-gray-800/70 p-3 rounded-lg font-bold hover:bg-gray-700" data-target="juegos">🎮 Juegos</button>
       <button class="category-btn bg-gray-800/70 p-3 rounded-lg font-bold hover:bg-gray-700" data-target="apps">🤖 Apps</button>
       <button class="category-btn bg-gray-800/70 p-3 rounded-lg font-bold hover:bg-gray-700" data-target="demo-jugar">🕹️ Jugar demo (nuevo)</button>
