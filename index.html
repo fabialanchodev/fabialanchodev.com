@@ -4,8 +4,10 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fabialancho Games 🎮</title>
+  <!-- Favicon -->
+  <link rel="icon" href="fabialanchogameslogo.jpg" type="image/jpeg">
+  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
   <style>
     body {
       background: url("fondodeaurasalanochecer.jpeg") no-repeat center center fixed;
@@ -91,33 +93,6 @@
   <footer class="text-center py-6 bg-black/50 text-gray-400 text-sm">
     © 2025 Fabialancho Games | Creado con ❤️ y mucho estilo chetardo 😎
   </footer>
-
-  <!-- Huevo de pascua con scroll -->
-  <script>
-    let scrollSteps = 0;
-    let lastScrollTop = window.scrollY;
-
-    window.addEventListener("scroll", () => {
-      let currentScroll = window.scrollY;
-
-      // Detecta cambio de dirección arriba/abajo
-      if ((currentScroll > lastScrollTop && scrollSteps >= 0) || (currentScroll < lastScrollTop && scrollSteps <= 0)) {
-        scrollSteps += (currentScroll > lastScrollTop) ? 1 : -1;
-      }
-
-      lastScrollTop = currentScroll;
-
-      // Si se mueve 15 veces consecutivas, sale confeti
-      if (Math.abs(scrollSteps) >= 15) {
-        confetti({
-          particleCount: 200,
-          spread: 90,
-          origin: { y: 0.6 }
-        });
-        scrollSteps = 0; // reinicia
-      }
-    });
-  </script>
 
 </body>
 </html>
