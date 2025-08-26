@@ -26,13 +26,20 @@
 
         #game-container {
             position: relative;
+            max-width: 100%; /* Permite que el contenedor se adapte */
+            max-height: 100vh;
+            display: none;
+            flex-grow: 1; /* Permite que ocupe espacio disponible */
+            display: flex; /* Añadido para centrar el canvas */
+            justify-content: center;
+            align-items: center;
         }
 
         #game-canvas {
             border: 2px solid #ffffff;
             background-color: #1a1a1a;
-            max-width: 95%;
-            max-height: 80vh;
+            max-width: 95vw; /* Usa el ancho de la ventana */
+            max-height: 80vh; /* Usa la altura de la ventana */
             display: none;
         }
 
@@ -47,6 +54,7 @@
             box-sizing: border-box;
             position: relative;
             background-color: #1a1a1a;
+            font-size: 1em; /* Tamaño de fuente base adaptable */
         }
         
         #start-screen {
@@ -204,8 +212,20 @@
     const startBgCanvas = document.getElementById('start-background-canvas');
     const startBgCtx = startBgCanvas.getContext('2d');
 
-    canvas.width = 800;
-    canvas.height = 600;
+    // Modificado para hacer el canvas del juego adaptable
+    let gameCanvasWidth = 800;
+    let gameCanvasHeight = 600;
+
+    let initialWidth = window.innerWidth;
+    let initialHeight = window.innerHeight;
+
+    if (initialWidth < gameCanvasWidth) {
+        gameCanvasWidth = initialWidth * 0.95;
+        gameCanvasHeight = (initialWidth * 0.95) * (600 / 800);
+    }
+    
+    canvas.width = gameCanvasWidth;
+    canvas.height = gameCanvasHeight;
 
     startBgCanvas.width = window.innerWidth;
     startBgCanvas.height = window.innerHeight;
@@ -213,7 +233,6 @@
     const PLAYER_SPEED = 5;
     const ENEMY_SPEED = 2.5;
     const DEMO_TIME = 60;
-    const TUTORIAL_DURATION = 3000;
     const INVINCIBILITY_DURATION = 2000;
 
     let player = {
@@ -247,7 +266,10 @@
     const imagePaths = {
         cleip: 'cleip.png',
         enemigo: 'enemigo.png',
-        heart: 'corazon.png'
+        heart: 'corazon.png',
+        // Se añadieron las dos imágenes de los cleips para los archivos cargados
+        jos_seti: 'jos_seti.png',
+        jo_setito: 'jo_setito.png'
     };
 
     let imagesLoaded = 0;
@@ -279,7 +301,9 @@
                 x: Math.random() * startBgCanvas.width,
                 y: Math.random() * startBgCanvas.height,
                 size: 20 + Math.random() * 40,
-                speed: 0.2 + Math.random() * 0.5
+                speed: 0.2 + Math.random() * 0.5,
+                angle: Math.random() * 2 * Math.PI, // Ángulo inicial de rotación
+                rotationSpeed: (Math.random() - 0.5) * 0.02 // Velocidad de rotación
             });
         }
     }
@@ -295,7 +319,15 @@
                     cleip.x = startBgCanvas.width;
                     cleip.y = Math.random() * startBgCanvas.height;
                 }
-                startBgCtx.drawImage(images.cleip, cleip.x, cleip.y, cleip.size, cleip.size);
+                
+                // Actualiza el ángulo de rotación
+                cleip.angle += cleip.rotationSpeed;
+                
+                startBgCtx.save();
+                startBgCtx.translate(cleip.x + cleip.size / 2, cleip.y + cleip.size / 2);
+                startBgCtx.rotate(cleip.angle);
+                startBgCtx.drawImage(images.cleip, -cleip.size / 2, -cleip.size / 2, cleip.size, cleip.size);
+                startBgCtx.restore();
             });
         }
         animationFrame = requestAnimationFrame(animateStartScreen);
@@ -374,7 +406,7 @@
 
     function startGame() {
         startScreen.style.display = 'none';
-        gameContainer.style.display = 'block';
+        gameContainer.style.display = 'flex'; // Cambiado a flex para centrar el canvas
         canvas.style.display = 'block';
         
         player.lives = 3;
@@ -422,9 +454,7 @@
         cancelAnimationFrame(animationFrame);
         clearInterval(timerInterval);
         isPlaying = false;
-        music.pause();
         
-        // REINICIA LA MÚSICA SI ESTABA ACTIVADA
         if (isMusicPlaying) {
             music.play();
         }
@@ -502,6 +532,7 @@
         startActualGame();
     });
 
+    // Se modificó para corregir el bug y reiniciar el juego correctamente
     endPlayAgainButton.addEventListener('click', () => {
         startGame();
     });
@@ -532,6 +563,18 @@
     window.addEventListener('resize', () => {
         startBgCanvas.width = window.innerWidth;
         startBgCanvas.height = window.innerHeight;
+        // Ajusta el tamaño del canvas del juego al redimensionar la ventana
+        let newWidth = window.innerWidth;
+        if (newWidth < 800) {
+            canvas.width = newWidth * 0.95;
+            canvas.height = (newWidth * 0.95) * (600 / 800);
+        } else {
+            canvas.width = 800;
+            canvas.height = 600;
+        }
+        // Reposiciona al jugador en el centro del nuevo canvas
+        player.x = canvas.width / 2;
+        player.y = canvas.height / 2;
     });
 
     loadImages();
