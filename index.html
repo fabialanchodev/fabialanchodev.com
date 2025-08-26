@@ -32,7 +32,7 @@
         }
         /* Estilos para la barra de opciones en móviles */
         .mobile-nav {
-            order: -1; /* Mueve la barra al principio en móviles */
+            order: -1;
             width: 100%;
             flex-direction: row;
             justify-content: center;
@@ -72,14 +72,16 @@
         <h2 class="text-4xl font-bold mb-8 text-center">🎮 ¡CLEIP ESCAPA! DEMO</h2>
         <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 flex flex-col items-center">
             <h3 class="text-2xl font-bold mb-2">¿Te gustaría probar mi juego en tu navegador?</h3>
-            <p class="text-gray-300 mb-4">¡Sobrevive a los 60 segundos del enemigo! (Demo optimizada para PC)</p>
+            <p class="text-gray-300 mb-4">¡Sobrevive a los 60 segundos del enemigo!</p>
             
-            <div id="demo-container" class="w-full">
-                <div class="sm:hidden p-4 text-center text-red-400 bg-red-900/50 rounded-lg">
-                    <p>⚠️ **ATENCIÓN: PELIGRO** ⚠️</p>
-                    <p>Esta demo solo funciona con teclado. Si no tienes uno, no podrás jugar.</p>
-                </div>
-                <iframe src="prueba.html" class="hidden sm:block w-full aspect-[4/3] rounded-lg mt-4" frameborder="0"></iframe>
+            <div id="demo-container" class="w-full grid md:grid-cols-2 gap-4">
+                <a href="prueba.html" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">
+                    Estoy en PC
+                </a>
+                <a href="prueba_movil.html" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center relative">
+                    Estoy en Celular
+                    <span class="bg-green-600 text-white text-xs px-2 py-1 rounded-full absolute -top-2 -right-2 transform rotate-12">Nuevo</span>
+                </a>
             </div>
         </div>
       </section>
@@ -88,6 +90,15 @@
         <h2 class="text-4xl font-bold mb-8 text-center">🎮 Mis Juegos</h2>
         <div class="grid gap-8 md:grid-cols-3">
 
+          <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+            <h3 class="text-2xl font-bold mb-2">📱 Cleip Escapa! Pocket Edition</h3>
+            <span class="bg-purple-600 text-white text-xs px-2 py-1 rounded-full">¡Muy pronto!</span>
+            <p class="text-gray-300 mb-4">¡La versión para celular de Cleip Escapa! próximamente disponible con características épicas.</p>
+            <div class="grid gap-2">
+              <a href="#" class="bg-gray-500 cursor-not-allowed px-4 py-2 rounded-lg font-bold block text-center">En desarrollo</a>
+            </div>
+          </div>
+          
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-2xl font-bold mb-2">🚀 Cleip Escapa! v0.9.5.7</h3>
             <p class="text-gray-300 mb-4">Versión antigua disponible para descargar 😏</p>

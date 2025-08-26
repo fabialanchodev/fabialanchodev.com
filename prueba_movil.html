@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>¡CLEIP ESCAPA! Demo PC</title>
+    <title>¡CLEIP ESCAPA! Demo Celular</title>
     <style>
         @font-face {
             font-family: 'PixelatedFont';
@@ -161,6 +161,54 @@
             padding: 10px 20px;
             font-size: 1.2em;
         }
+        
+        /* Estilos específicos para la versión móvil */
+        .mobile-controls {
+            display: none;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none; /* Permite que los toques pasen a los elementos debajo */
+        }
+        
+        #joystick-container {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            width: 150px;
+            height: 150px;
+            pointer-events: all;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.7;
+            touch-action: none; /* Previene el comportamiento por defecto del navegador */
+        }
+        
+        #joystick-handle {
+            width: 70px;
+            height: 70px;
+            cursor: grab;
+        }
+
+        #pause-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            opacity: 0.7;
+            pointer-events: all;
+        }
+
+        #tutorial.mobile-tutorial {
+            font-size: 1.2em;
+        }
+
+        #tutorial.mobile-tutorial #tutorial-text {
+            font-size: 1em;
+        }
     </style>
 </head>
 <body>
@@ -173,7 +221,7 @@
     <canvas id="start-background-canvas" style="position: absolute; top: 0; left: 0; z-index: 1;"></canvas>
     <img id="logo" src="fabi_alancho_games.png" alt="Fabian Alancho Games Logo">
     <h2>¡CLEIP ESCAPA!</h2>
-    <p>Demo para PC</p>
+    <p>Demo para Celular</p>
     <button id="play-button" class="game-button">JUGAR</button>
     <button id="music-toggle-button" class="game-button">MÚSICA: OFF</button>
 </div>
@@ -181,8 +229,15 @@
 <div id="game-container">
     <canvas id="game-canvas"></canvas>
     
+    <div class="mobile-controls">
+        <img id="pause-button" src="pause_botton.png" alt="Botón de Pausa">
+        <div id="joystick-container">
+            <img id="joystick-handle" src="jo_setito.png" alt="Joystick">
+        </div>
+    </div>
+    
     <div id="tutorial">
-        <span id="tutorial-text">Usa WASD para moverte y 'P' para pausar. Sobrevive 60 segundos evitando al enemigo. ¡Buena suerte!</span>
+        <span id="tutorial-text">Toca el joystick para moverte y el botón de pausa para detener el juego. ¡Buena suerte!</span>
         <button id="tutorial-ok-btn" class="game-button">OK</button>
     </div>
     
@@ -216,6 +271,10 @@
     const ctx = canvas.getContext('2d');
     const tutorialMessage = document.getElementById('tutorial');
     const tutorialOkButton = document.getElementById('tutorial-ok-btn');
+    const mobileControls = document.querySelector('.mobile-controls');
+    const pauseButton = document.getElementById('pause-button');
+    const joystickHandle = document.getElementById('joystick-handle');
+    const joystickContainer = document.getElementById('joystick-container');
 
     const startBgCanvas = document.getElementById('start-background-canvas');
     const startBgCtx = startBgCanvas.getContext('2d');
@@ -268,6 +327,13 @@
     let lastHitTime = 0;
     let lastPlayerBlink = 0;
     const BLINK_INTERVAL = 100;
+
+    // Variables para el joystick
+    let joystickActive = false;
+    let joystickTouchId = null;
+    let joystickCenterX = 0;
+    let joystickCenterY = 0;
+    let joystickRadius = 0;
 
     const images = {};
     const imagePaths = {
@@ -413,6 +479,7 @@
         startScreen.style.display = 'none';
         gameContainer.style.display = 'flex';
         canvas.style.display = 'block';
+        mobileControls.style.display = 'block'; // Mostrar los controles móviles
         
         player.lives = 3;
         player.x = canvas.width / 2;
@@ -467,6 +534,7 @@
         endScreen.style.display = 'none';
         gameContainer.style.display = 'none';
         startScreen.style.display = 'flex';
+        mobileControls.style.display = 'none'; // Ocultar los controles móviles
         initBackgroundCleips();
         animateStartScreen();
     }
@@ -484,47 +552,80 @@
             animationFrame = requestAnimationFrame(update);
         }
     }
-
-    document.addEventListener('keydown', e => {
-        if (!isPlaying || isPaused) {
-            if (e.key === 'p' || e.key === 'P') {
-                togglePause();
-            }
-            return;
-        }
-        switch(e.key.toLowerCase()) {
-            case 'w':
-                player.dy = -PLAYER_SPEED;
-                break;
-            case 's':
-                player.dy = PLAYER_SPEED;
-                break;
-            case 'a':
-                player.dx = -PLAYER_SPEED;
-                break;
-            case 'd':
-                player.dx = PLAYER_SPEED;
-                break;
-            case 'p':
-                togglePause();
-                break;
-        }
+    
+    // Joystick controls
+    joystickContainer.addEventListener('touchstart', (e) => {
+        if (!isPlaying || isPaused) return;
+        e.preventDefault();
+        const touch = e.changedTouches[0];
+        const rect = joystickContainer.getBoundingClientRect();
+        
+        // Guardar la posición inicial del toque
+        joystickCenterX = rect.left + rect.width / 2;
+        joystickCenterY = rect.top + rect.height / 2;
+        joystickRadius = rect.width / 2;
+        
+        joystickActive = true;
+        joystickTouchId = touch.identifier;
     });
 
-    document.addEventListener('keyup', e => {
-        if (!isPlaying || isPaused) return;
-        switch(e.key.toLowerCase()) {
-            case 'w':
-            case 's':
-                player.dy = 0;
+    joystickContainer.addEventListener('touchmove', (e) => {
+        if (!joystickActive || !isPlaying || isPaused) return;
+        e.preventDefault();
+        
+        let touch = null;
+        for (let i = 0; i < e.touches.length; i++) {
+            if (e.touches[i].identifier === joystickTouchId) {
+                touch = e.touches[i];
                 break;
-            case 'a':
-            case 'd':
-                player.dx = 0;
-                break;
+            }
         }
+
+        if (!touch) return;
+        
+        // Calcular la distancia y ángulo del toque con respecto al centro
+        const touchX = touch.clientX - joystickCenterX;
+        const touchY = touch.clientY - joystickCenterY;
+        const distance = Math.sqrt(touchX * touchX + touchY * touchY);
+        const angle = Math.atan2(touchY, touchX);
+
+        // Limitar la posición del handle dentro del contenedor
+        const maxDistance = joystickRadius - joystickHandle.offsetWidth / 2;
+        const clampedDistance = Math.min(distance, maxDistance);
+        
+        const handleX = clampedDistance * Math.cos(angle);
+        const handleY = clampedDistance * Math.sin(angle);
+        
+        // Mover el handle del joystick
+        joystickHandle.style.transform = `translate(${handleX}px, ${handleY}px)`;
+        
+        // Calcular la dirección del jugador
+        player.dx = Math.cos(angle) * PLAYER_SPEED;
+        player.dy = Math.sin(angle) * PLAYER_SPEED;
     });
     
+    joystickContainer.addEventListener('touchend', (e) => {
+        if (!joystickActive || !isPlaying || isPaused) return;
+        e.preventDefault();
+        
+        let touchFound = false;
+        for (let i = 0; i < e.touches.length; i++) {
+            if (e.touches[i].identifier === joystickTouchId) {
+                touchFound = true;
+                break;
+            }
+        }
+        
+        if (!touchFound) {
+            joystickActive = false;
+            joystickTouchId = null;
+            joystickHandle.style.transform = `translate(0, 0)`;
+            player.dx = 0;
+            player.dy = 0;
+        }
+    });
+
+    // Event listeners para los botones
     playButton.addEventListener('click', () => {
         if (imagesLoaded === totalImages) {
             startGame();
@@ -551,6 +652,10 @@
 
     exitPauseButton.addEventListener('click', () => {
         returnToStartScreen();
+    });
+    
+    pauseButton.addEventListener('click', () => {
+        togglePause();
     });
 
     musicToggleButton.addEventListener('click', () => {
