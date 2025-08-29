@@ -27,20 +27,16 @@
 
         #game-container {
             position: relative;
-            max-width: 100%;
-            max-height: 100vh;
+            width: 100%;
+            height: 100%;
             display: none;
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         #game-canvas {
             border: 2px solid #ffffff;
             background-color: #1a1a1a;
-            max-width: 95vw;
-            max-height: 80vh;
+            width: 95vw;
+            height: 80vh;
             display: none;
         }
 
@@ -51,249 +47,111 @@
             align-items: center;
             width: 100%;
             height: 100vh;
-            padding: 20px;
-            box-sizing: border-box;
             position: relative;
             background-color: #1a1a1a;
-            font-size: 1em;
         }
 
-        #start-screen {
-            display: flex;
-        }
-
-        #logo {
-            width: 250px;
-            height: auto;
-            margin-bottom: 20px;
-            z-index: 2;
-        }
-
-        h2 {
-            font-size: 2em;
-            color: #ffcc00;
-            z-index: 2;
-        }
-
+        #start-screen { display: flex; }
+        #logo { width: 250px; margin-bottom: 20px; }
+        h2 { font-size: 2em; color: #ffcc00; }
         .game-button {
-            background-color: transparent;
-            color: #ffffff;
-            border: 2px solid #ffffff;
-            padding: 15px 40px;
-            border-radius: 10px;
-            font-size: 1.5em;
-            cursor: pointer;
-            transition: border-color 0.3s ease, color 0.3s ease;
-            margin-top: 20px;
-            font-family: 'PixelatedFont', sans-serif;
-            z-index: 2;
-            width: fit-content;
-            text-align: center;
-        }
-
-        .game-button:hover {
-            border-color: #00bfff;
-            color: #00bfff;
-        }
-
-        #end-screen {
-            display: none;
-            background-color: rgba(0, 0, 0, 0.7);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-        }
-
-        #end-screen h3 {
-            font-size: 2.5em;
-            color: #fff;
-            margin-bottom: 20px;
-        }
-
-        #end-screen p {
-            font-size: 1.2em;
-            color: #fff;
-            margin-bottom: 30px;
-        }
-
-        #end-screen button {
-            margin: 10px;
-        }
-
-        #pause-screen {
-            display: none;
-            background-color: rgba(0, 0, 0, 0.7);
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 10;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-
-        #tutorial {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: rgba(0, 0, 0, 0.8);
+            background: transparent;
             border: 2px solid #fff;
-            padding: 20px;
-            border-radius: 10px;
-            z-index: 5;
+            color: #fff;
+            padding: 15px 40px;
             font-size: 1.5em;
-            display: none;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        #tutorial-text {
-            margin-bottom: 20px;
-        }
-
-        #tutorial-ok-btn {
-            padding: 10px 20px;
-            font-size: 1.2em;
-        }
-
-        .mobile-controls {
-            display: none;
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-        }
-
-        #joystick-container {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            width: 150px;
-            height: 150px;
-            pointer-events: all;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            opacity: 0.7;
-            touch-action: none;
-        }
-
-        #joystick-base {
-            position: absolute;
-            width: 150px;
-            height: 150px;
-            z-index: 1;
-        }
-
-        #joystick-handle {
-            width: 70px;
-            height: 70px;
-            cursor: grab;
-            position: relative;
-            z-index: 2;
-        }
-
-        #pause-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
+            margin-top: 20px;
             cursor: pointer;
-            opacity: 0.7;
-            pointer-events: all;
         }
+
+        #end-screen { position: absolute; top:0; left:0; width:100%; height:100%; display:none; background:rgba(0,0,0,0.7); }
     </style>
 </head>
 <body>
-<audio id="background-music" loop>
-    <source src="cleip_escapa_soundtrack.mp3" type="audio/mpeg">
-</audio>
-
 <div id="start-screen" class="screen">
-    <canvas id="start-background-canvas" style="position: absolute; top: 0; left: 0; z-index: 1;"></canvas>
-    <img id="logo" src="fabi_alancho_games.png" alt="Fabian Alancho Games Logo">
+    <canvas id="start-background" width="800" height="600" style="position:absolute;top:0;left:0;z-index:0;"></canvas>
+    <img id="logo" src="fabi_alancho_games.png" alt="Logo">
     <h2>¡CLEIP ESCAPA!</h2>
-    <p>Demo para Celular</p>
     <button id="play-button" class="game-button">JUGAR</button>
-    <button id="music-toggle-button" class="game-button">MÚSICA: OFF</button>
 </div>
 
 <div id="game-container">
-    <canvas id="game-canvas"></canvas>
-    <div class="mobile-controls">
-        <img id="pause-button" src="pause_botton.png" alt="Botón de Pausa">
-        <div id="joystick-container">
-            <img id="joystick-base" src="jos_seti.png" alt="Joystick Base">
-            <img id="joystick-handle" src="jo_setito.png" alt="Joystick Handle">
-        </div>
-    </div>
-
-    <div id="tutorial">
-        <span id="tutorial-text">Toca el joystick para moverte y el botón de pausa para detener el juego. ¡Buena suerte!</span>
-        <button id="tutorial-ok-btn" class="game-button">OK</button>
-    </div>
-
-    <div id="pause-screen">
-        <h3>PAUSA</h3>
-        <button id="resume-button" class="game-button">REANUDAR</button>
-        <button id="exit-pause-button" class="game-button">SALIR AL MENÚ</button>
-    </div>
+    <canvas id="game-canvas" width="1200" height="900"></canvas>
 </div>
 
 <div id="end-screen" class="screen">
     <h3 id="end-message"></h3>
-    <p>¡Descarga la versión completa para disfrutar de más características épicas!</p>
     <button id="end-play-again-button" class="game-button">VOLVER A JUGAR</button>
-    <button id="end-exit-button" class="game-button">SALIR AL MENÚ</button>
 </div>
 
 <script>
-    const canvas = document.getElementById('game-canvas');
-    const ctx = canvas.getContext('2d');
+const startScreen=document.getElementById("start-screen");
+const endScreen=document.getElementById("end-screen");
+const gameContainer=document.getElementById("game-container");
+const playButton=document.getElementById("play-button");
+const endPlayAgain=document.getElementById("end-play-again-button");
+const startBg=document.getElementById("start-background");
+const sbCtx=startBg.getContext("2d");
+const canvas=document.getElementById("game-canvas");
+const ctx=canvas.getContext("2d");
 
-    // Hacemos el mapa más grande
-    canvas.width = 1200;
-    canvas.height = 900;
+let cleips=[];
+function initCleips(){
+  cleips=[];
+  for(let i=0;i<30;i++){
+    cleips.push({x:Math.random()*startBg.width,y:Math.random()*startBg.height,dx:Math.random()*2-1,dy:Math.random()*2-1});
+  }
+}
+function animateStart(){
+  sbCtx.fillStyle="#1a1a1a";
+  sbCtx.fillRect(0,0,startBg.width,startBg.height);
+  sbCtx.fillStyle="white";
+  cleips.forEach(c=>{
+    c.x+=c.dx;c.y+=c.dy;
+    if(c.x<0) c.x=startBg.width;
+    if(c.y<0) c.y=startBg.height;
+    if(c.x>startBg.width) c.x=0;
+    if(c.y>startBg.height) c.y=0;
+    sbCtx.fillRect(c.x,c.y,10,10);
+  });
+  requestAnimationFrame(animateStart);
+}
+initCleips();animateStart();
 
-    let player = {x: canvas.width/2, y: canvas.height/2, width:44, height:44, dx:0, dy:0, lives:3};
-    let enemy = {x:100, y:100, width:44, height:44};
+let player,enemy,timer,interval,isPlaying=false;
+function startGame(){
+  startScreen.style.display="none";
+  gameContainer.style.display="block";
+  canvas.style.display="block";
+  resetGame();
+}
+function resetGame(){
+  player={x:canvas.width/2,y:canvas.height/2,w:40,h:40,dx:0,dy:0,lives:3};
+  enemy={x:100,y:100,w:40,h:40};
+  timer=60;
+  isPlaying=true;
+  if(interval) clearInterval(interval);
+  interval=setInterval(()=>{timer--;if(timer<=0){endGame("¡GANASTE!");}},1000);
+  update();
+}
+function update(){
+  if(!isPlaying) return;
+  ctx.fillStyle="#1a1a1a";ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="white";ctx.fillRect(player.x,player.y,player.w,player.h);
+  ctx.fillStyle="red";ctx.fillRect(enemy.x,enemy.y,enemy.w,enemy.h);
+  ctx.fillStyle="yellow";ctx.fillText("Tiempo: "+timer,canvas.width-100,20);
+  requestAnimationFrame(update);
+}
+function endGame(msg){
+  isPlaying=false;
+  clearInterval(interval);
+  endScreen.style.display="flex";
+  document.getElementById("end-message").textContent=msg;
+}
 
-    let timer;
-    let animationFrame;
-
-    function startActualGame(){
-        cancelAnimationFrame(animationFrame);
-        clearInterval(timer);
-        player = {x: canvas.width/2, y: canvas.height/2, width:44, height:44, dx:0, dy:0, lives:3};
-        enemy = {x:100, y:100, width:44, height:44};
-        timer = setInterval(()=>{},1000);
-        update();
-    }
-
-    function update(){
-        ctx.clearRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = "#1a1a1a";
-        ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = "white";
-        ctx.fillRect(player.x,player.y,player.width,player.height);
-        ctx.fillStyle = "red";
-        ctx.fillRect(enemy.x,enemy.y,enemy.width,enemy.height);
-        animationFrame = requestAnimationFrame(update);
-    }
-
-    document.getElementById("end-play-again-button").addEventListener("click", ()=>{
-        document.getElementById("end-screen").style.display = "none";
-        document.getElementById("game-container").style.display = "flex";
-        startActualGame();
-    });
+playButton.onclick=startGame;
+endPlayAgain.onclick=()=>{endScreen.style.display="none";resetGame();};
 </script>
 </body>
 </html>
+
