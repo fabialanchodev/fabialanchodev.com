@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>¡CLEIP ESCAPA! Demo Celular</title>
+    <link rel="icon" type="image/png" href="cleip_milo.png">
     <style>
         @font-face {
             font-family: 'PixelatedFont';
@@ -56,7 +57,7 @@
             background-color: #1a1a1a;
             font-size: 1em;
         }
-        
+
         #start-screen {
             display: flex;
         }
@@ -89,7 +90,7 @@
             width: fit-content;
             text-align: center;
         }
-        
+
         .game-button:hover {
             border-color: #00bfff;
             color: #00bfff;
@@ -111,7 +112,7 @@
             color: #fff;
             margin-bottom: 20px;
         }
-        
+
         #end-screen p {
             font-size: 1.2em;
             color: #fff;
@@ -152,7 +153,7 @@
             align-items: center;
             justify-content: center;
         }
-        
+
         #tutorial-text {
             margin-bottom: 20px;
         }
@@ -161,16 +162,15 @@
             padding: 10px 20px;
             font-size: 1.2em;
         }
-        
-        /* Estilos específicos para la versión móvil */
+
         .mobile-controls {
             display: none;
             position: absolute;
             width: 100%;
             height: 100%;
-            pointer-events: none; /* Permite que los toques pasen a los elementos debajo */
+            pointer-events: none;
         }
-        
+
         #joystick-container {
             position: absolute;
             bottom: 20px;
@@ -182,13 +182,22 @@
             justify-content: center;
             align-items: center;
             opacity: 0.7;
-            touch-action: none; /* Previene el comportamiento por defecto del navegador */
+            touch-action: none;
         }
-        
+
+        #joystick-base {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            z-index: 1;
+        }
+
         #joystick-handle {
             width: 70px;
             height: 70px;
             cursor: grab;
+            position: relative;
+            z-index: 2;
         }
 
         #pause-button {
@@ -201,18 +210,9 @@
             opacity: 0.7;
             pointer-events: all;
         }
-
-        #tutorial.mobile-tutorial {
-            font-size: 1.2em;
-        }
-
-        #tutorial.mobile-tutorial #tutorial-text {
-            font-size: 1em;
-        }
     </style>
 </head>
 <body>
-
 <audio id="background-music" loop>
     <source src="cleip_escapa_soundtrack.mp3" type="audio/mpeg">
 </audio>
@@ -228,19 +228,19 @@
 
 <div id="game-container">
     <canvas id="game-canvas"></canvas>
-    
     <div class="mobile-controls">
         <img id="pause-button" src="pause_botton.png" alt="Botón de Pausa">
         <div id="joystick-container">
-            <img id="joystick-handle" src="jo_setito.png" alt="Joystick">
+            <img id="joystick-base" src="jos_seti.png" alt="Joystick Base">
+            <img id="joystick-handle" src="jo_setito.png" alt="Joystick Handle">
         </div>
     </div>
-    
+
     <div id="tutorial">
         <span id="tutorial-text">Toca el joystick para moverte y el botón de pausa para detener el juego. ¡Buena suerte!</span>
         <button id="tutorial-ok-btn" class="game-button">OK</button>
     </div>
-    
+
     <div id="pause-screen">
         <h3>PAUSA</h3>
         <button id="resume-button" class="game-button">REANUDAR</button>
@@ -256,436 +256,44 @@
 </div>
 
 <script>
-    const startScreen = document.getElementById('start-screen');
-    const endScreen = document.getElementById('end-screen');
-    const pauseScreen = document.getElementById('pause-screen');
-    const playButton = document.getElementById('play-button');
-    const endPlayAgainButton = document.getElementById('end-play-again-button');
-    const endExitButton = document.getElementById('end-exit-button');
-    const resumeButton = document.getElementById('resume-button');
-    const exitPauseButton = document.getElementById('exit-pause-button');
-    const musicToggleButton = document.getElementById('music-toggle-button');
-    const music = document.getElementById('background-music');
-    const gameContainer = document.getElementById('game-container');
     const canvas = document.getElementById('game-canvas');
     const ctx = canvas.getContext('2d');
-    const tutorialMessage = document.getElementById('tutorial');
-    const tutorialOkButton = document.getElementById('tutorial-ok-btn');
-    const mobileControls = document.querySelector('.mobile-controls');
-    const pauseButton = document.getElementById('pause-button');
-    const joystickHandle = document.getElementById('joystick-handle');
-    const joystickContainer = document.getElementById('joystick-container');
 
-    const startBgCanvas = document.getElementById('start-background-canvas');
-    const startBgCtx = startBgCanvas.getContext('2d');
+    // Hacemos el mapa más grande
+    canvas.width = 1200;
+    canvas.height = 900;
 
-    let gameCanvasWidth = 800;
-    let gameCanvasHeight = 600;
+    let player = {x: canvas.width/2, y: canvas.height/2, width:44, height:44, dx:0, dy:0, lives:3};
+    let enemy = {x:100, y:100, width:44, height:44};
 
-    let initialWidth = window.innerWidth;
-    let initialHeight = window.innerHeight;
-
-    if (initialWidth < gameCanvasWidth) {
-        gameCanvasWidth = initialWidth * 0.95;
-        gameCanvasHeight = (initialWidth * 0.95) * (600 / 800);
-    }
-    
-    canvas.width = gameCanvasWidth;
-    canvas.height = gameCanvasHeight;
-
-    startBgCanvas.width = window.innerWidth;
-    startBgCanvas.height = window.innerHeight;
-
-    const PLAYER_SPEED = 5;
-    const ENEMY_SPEED = 2.5;
-    const DEMO_TIME = 60;
-    const INVINCIBILITY_DURATION = 2000;
-
-    let player = {
-        x: canvas.width / 2,
-        y: canvas.height / 2,
-        width: 44,
-        height: 44,
-        dx: 0,
-        dy: 0,
-        lives: 3,
-        isInvincible: false
-    };
-
-    let enemy = {
-        x: 100,
-        y: 100,
-        width: 44,
-        height: 44
-    };
-
-    let timer = DEMO_TIME;
-    let timerInterval;
-    let isPlaying = false;
-    let isPaused = false;
-    let isMusicPlaying = false;
-    let lastHitTime = 0;
-    let lastPlayerBlink = 0;
-    const BLINK_INTERVAL = 100;
-
-    // Variables para el joystick
-    let joystickActive = false;
-    let joystickTouchId = null;
-    let joystickCenterX = 0;
-    let joystickCenterY = 0;
-    let joystickRadius = 0;
-
-    const images = {};
-    const imagePaths = {
-        cleip: 'cleip.png',
-        enemigo: 'enemigo.png',
-        heart: 'corazon.png',
-        jos_seti: 'jos_seti.png',
-        jo_setito: 'jo_setito.png'
-    };
-
-    let imagesLoaded = 0;
-    const totalImages = Object.keys(imagePaths).length;
-
-    let backgroundCleips = [];
-    const NUM_BACKGROUND_CLEIPS = 50;
+    let timer;
     let animationFrame;
 
-    function loadImages() {
-        for (const key in imagePaths) {
-            images[key] = new Image();
-            images[key].onload = () => {
-                imagesLoaded++;
-                if (imagesLoaded === totalImages) {
-                    initBackgroundCleips();
-                    animateStartScreen();
-                }
-            };
-            images[key].src = imagePaths[key];
-        }
-    }
-
-    function initBackgroundCleips() {
-        if (!images.cleip) return;
-        backgroundCleips = [];
-        for (let i = 0; i < NUM_BACKGROUND_CLEIPS; i++) {
-            backgroundCleips.push({
-                x: Math.random() * startBgCanvas.width,
-                y: Math.random() * startBgCanvas.height,
-                size: 20 + Math.random() * 40,
-                speed: 0.2 + Math.random() * 0.5,
-                angle: Math.random() * 2 * Math.PI,
-                rotationSpeed: (Math.random() - 0.5) * 0.02
-            });
-        }
-    }
-
-    function animateStartScreen() {
-        startBgCtx.fillStyle = '#1a1a1a';
-        startBgCtx.fillRect(0, 0, startBgCanvas.width, startBgCanvas.height);
-
-        if (images.cleip) {
-            backgroundCleips.forEach(cleip => {
-                cleip.x -= cleip.speed;
-                if (cleip.x + cleip.size < 0) {
-                    cleip.x = startBgCanvas.width;
-                    cleip.y = Math.random() * startBgCanvas.height;
-                }
-                
-                cleip.angle += cleip.rotationSpeed;
-                
-                startBgCtx.save();
-                startBgCtx.translate(cleip.x + cleip.size / 2, cleip.y + cleip.size / 2);
-                startBgCtx.rotate(cleip.angle);
-                startBgCtx.drawImage(images.cleip, -cleip.size / 2, -cleip.size / 2, cleip.size, cleip.size);
-                startBgCtx.restore();
-            });
-        }
-        animationFrame = requestAnimationFrame(animateStartScreen);
-    }
-
-    function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#1a1a1a";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-        if (player.isInvincible) {
-            if (Date.now() - lastPlayerBlink > BLINK_INTERVAL) {
-                lastPlayerBlink = Date.now();
-            }
-            if (Math.floor(Date.now() / BLINK_INTERVAL) % 2 === 0) {
-                ctx.drawImage(images.cleip, player.x, player.y, player.width, player.height);
-            }
-        } else {
-            ctx.drawImage(images.cleip, player.x, player.y, player.width, player.height);
-        }
-
-        if (images.enemigo) {
-            ctx.drawImage(images.enemigo, enemy.x, enemy.y, enemy.width, enemy.height);
-        }
-
-        if (images.heart) {
-            for (let i = 0; i < player.lives; i++) {
-                ctx.drawImage(images.heart, 10 + i * 35, canvas.height - 40, 30, 30);
-            }
-        }
-
-        ctx.fillStyle = "#ffffff";
-        ctx.font = "20px PixelatedFont";
-        ctx.textAlign = "right";
-        ctx.fillText(`Tiempo: ${timer}s`, canvas.width - 10, canvas.height - 20);
-    }
-
-    function update() {
-        if (!isPlaying || isPaused) return;
-
-        player.x += player.dx;
-        player.y += player.dy;
-
-        if (player.x < 0) player.x = 0;
-        if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
-        if (player.y < 0) player.y = 0;
-        if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
-
-        let angle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
-        enemy.x += Math.cos(angle) * ENEMY_SPEED;
-        enemy.y += Math.sin(angle) * ENEMY_SPEED;
-
-        const currentTime = Date.now();
-        if (!player.isInvincible && currentTime - lastHitTime > INVINCIBILITY_DURATION) {
-            const distance = Math.sqrt(Math.pow(player.x - enemy.x, 2) + Math.pow(player.y - enemy.y, 2));
-            if (distance < (player.width + enemy.width) / 2) {
-                player.lives--;
-                player.isInvincible = true;
-                lastHitTime = currentTime;
-                setTimeout(() => {
-                    player.isInvincible = false;
-                }, INVINCIBILITY_DURATION);
-                
-                enemy.x = Math.random() * (canvas.width - enemy.width);
-                enemy.y = Math.random() * (canvas.height - enemy.height);
-
-                if (player.lives <= 0) {
-                    endGame("¡JUEGO TERMINADO! Te quedaste sin vidas.");
-                }
-            }
-        }
-
-        draw();
-        animationFrame = requestAnimationFrame(update);
-    }
-
-    function startGame() {
-        startScreen.style.display = 'none';
-        gameContainer.style.display = 'flex';
-        canvas.style.display = 'block';
-        mobileControls.style.display = 'block'; // Mostrar los controles móviles
-        
-        player.lives = 3;
-        player.x = canvas.width / 2;
-        player.y = canvas.height / 2;
-        enemy.x = Math.random() * (canvas.width - enemy.width);
-        enemy.y = Math.random() * (canvas.height - enemy.height);
-
-        tutorialMessage.style.display = 'flex';
-    }
-
-    function startActualGame() {
-        isPlaying = true;
-        isPaused = false;
-        pauseScreen.style.display = 'none';
-        endScreen.style.display = 'none';
-        tutorialMessage.style.display = 'none';
-
-        if (isMusicPlaying) {
-            music.play().catch(e => console.log("La música no se pudo reproducir."));
-        }
-
-        timer = DEMO_TIME;
-        timerInterval = setInterval(() => {
-            if (!isPaused) {
-                timer--;
-                if (timer <= 0) {
-                    endGame("¡FELICIDADES! Lograste sobrevivir 60 segundos.");
-                }
-            }
-        }, 1000);
-
-        animationFrame = requestAnimationFrame(update);
-    }
-
-    function endGame(message) {
-        clearInterval(timerInterval);
-        isPlaying = false;
-        music.pause();
-        endScreen.style.display = 'flex';
-        document.getElementById('end-message').textContent = message;
-    }
-
-    function returnToStartScreen() {
+    function startActualGame(){
         cancelAnimationFrame(animationFrame);
-        clearInterval(timerInterval);
-        isPlaying = false;
-        
-        if (isMusicPlaying) {
-            music.play();
-        }
-
-        endScreen.style.display = 'none';
-        gameContainer.style.display = 'none';
-        startScreen.style.display = 'flex';
-        mobileControls.style.display = 'none'; // Ocultar los controles móviles
-        initBackgroundCleips();
-        animateStartScreen();
+        clearInterval(timer);
+        player = {x: canvas.width/2, y: canvas.height/2, width:44, height:44, dx:0, dy:0, lives:3};
+        enemy = {x:100, y:100, width:44, height:44};
+        timer = setInterval(()=>{},1000);
+        update();
     }
 
-    function togglePause() {
-        isPaused = !isPaused;
-        if (isPaused) {
-            pauseScreen.style.display = 'flex';
-            music.pause();
-        } else {
-            pauseScreen.style.display = 'none';
-            if (isMusicPlaying) {
-                music.play();
-            }
-            animationFrame = requestAnimationFrame(update);
-        }
+    function update(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = "#1a1a1a";
+        ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.fillStyle = "white";
+        ctx.fillRect(player.x,player.y,player.width,player.height);
+        ctx.fillStyle = "red";
+        ctx.fillRect(enemy.x,enemy.y,enemy.width,enemy.height);
+        animationFrame = requestAnimationFrame(update);
     }
-    
-    // Joystick controls
-    joystickContainer.addEventListener('touchstart', (e) => {
-        if (!isPlaying || isPaused) return;
-        e.preventDefault();
-        const touch = e.changedTouches[0];
-        const rect = joystickContainer.getBoundingClientRect();
-        
-        // Guardar la posición inicial del toque
-        joystickCenterX = rect.left + rect.width / 2;
-        joystickCenterY = rect.top + rect.height / 2;
-        joystickRadius = rect.width / 2;
-        
-        joystickActive = true;
-        joystickTouchId = touch.identifier;
-    });
 
-    joystickContainer.addEventListener('touchmove', (e) => {
-        if (!joystickActive || !isPlaying || isPaused) return;
-        e.preventDefault();
-        
-        let touch = null;
-        for (let i = 0; i < e.touches.length; i++) {
-            if (e.touches[i].identifier === joystickTouchId) {
-                touch = e.touches[i];
-                break;
-            }
-        }
-
-        if (!touch) return;
-        
-        // Calcular la distancia y ángulo del toque con respecto al centro
-        const touchX = touch.clientX - joystickCenterX;
-        const touchY = touch.clientY - joystickCenterY;
-        const distance = Math.sqrt(touchX * touchX + touchY * touchY);
-        const angle = Math.atan2(touchY, touchX);
-
-        // Limitar la posición del handle dentro del contenedor
-        const maxDistance = joystickRadius - joystickHandle.offsetWidth / 2;
-        const clampedDistance = Math.min(distance, maxDistance);
-        
-        const handleX = clampedDistance * Math.cos(angle);
-        const handleY = clampedDistance * Math.sin(angle);
-        
-        // Mover el handle del joystick
-        joystickHandle.style.transform = `translate(${handleX}px, ${handleY}px)`;
-        
-        // Calcular la dirección del jugador
-        player.dx = Math.cos(angle) * PLAYER_SPEED;
-        player.dy = Math.sin(angle) * PLAYER_SPEED;
-    });
-    
-    joystickContainer.addEventListener('touchend', (e) => {
-        if (!joystickActive || !isPlaying || isPaused) return;
-        e.preventDefault();
-        
-        let touchFound = false;
-        for (let i = 0; i < e.touches.length; i++) {
-            if (e.touches[i].identifier === joystickTouchId) {
-                touchFound = true;
-                break;
-            }
-        }
-        
-        if (!touchFound) {
-            joystickActive = false;
-            joystickTouchId = null;
-            joystickHandle.style.transform = `translate(0, 0)`;
-            player.dx = 0;
-            player.dy = 0;
-        }
-    });
-
-    // Event listeners para los botones
-    playButton.addEventListener('click', () => {
-        if (imagesLoaded === totalImages) {
-            startGame();
-        } else {
-            alert("Cargando imágenes... Por favor, espera un momento.");
-        }
-    });
-
-    tutorialOkButton.addEventListener('click', () => {
+    document.getElementById("end-play-again-button").addEventListener("click", ()=>{
+        document.getElementById("end-screen").style.display = "none";
+        document.getElementById("game-container").style.display = "flex";
         startActualGame();
     });
-
-    endPlayAgainButton.addEventListener('click', () => {
-        startGame();
-    });
-
-    endExitButton.addEventListener('click', () => {
-        returnToStartScreen();
-    });
-
-    resumeButton.addEventListener('click', () => {
-        togglePause();
-    });
-
-    exitPauseButton.addEventListener('click', () => {
-        returnToStartScreen();
-    });
-    
-    pauseButton.addEventListener('click', () => {
-        togglePause();
-    });
-
-    musicToggleButton.addEventListener('click', () => {
-        isMusicPlaying = !isMusicPlaying;
-        if (isMusicPlaying) {
-            musicToggleButton.textContent = 'MÚSICA: ON';
-            music.play().catch(e => console.log("La música no se pudo reproducir."));
-        } else {
-            musicToggleButton.textContent = 'MÚSICA: OFF';
-            music.pause();
-        }
-    });
-    
-    window.addEventListener('resize', () => {
-        startBgCanvas.width = window.innerWidth;
-        startBgCanvas.height = window.innerHeight;
-        let newWidth = window.innerWidth;
-        if (newWidth < 800) {
-            canvas.width = newWidth * 0.95;
-            canvas.height = (newWidth * 0.95) * (600 / 800);
-        } else {
-            canvas.width = 800;
-            canvas.height = 600;
-        }
-        player.x = canvas.width / 2;
-        player.y = canvas.height / 2;
-    });
-
-    loadImages();
 </script>
-
 </body>
 </html>
