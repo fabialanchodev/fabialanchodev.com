@@ -103,18 +103,23 @@
             width: 120px;
             height: 120px;
             z-index: 20;
+            display: none; /* Oculto por defecto */
         }
         #joystick-base {
             position: absolute;
             width: 100%;
             height: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
         #joystick-handle {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            top: 30px;
-            left: 30px;
+            width: 50%; /* 60px de 120px */
+            height: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
 
         #pause-button {
@@ -130,6 +135,7 @@
             color: white;
             font-size: 30px;
             line-height: 45px;
+            display: none; /* Oculto por defecto */
         }
     </style>
 </head>
@@ -188,6 +194,8 @@
     const tutorialOkButton = document.getElementById('tutorial-ok-btn');
     const startBgCanvas = document.getElementById('start-background-canvas'), startBgCtx = startBgCanvas.getContext('2d');
     const pauseButton = document.getElementById('pause-button');
+    const joystick = document.getElementById('joystick-container'), handle = document.getElementById('joystick-handle');
+
 
     // Configuración del Canvas
     function resizeCanvas() {
@@ -311,6 +319,8 @@
         endScreen.style.display = 'none';
         gameContainer.style.display = 'flex';
         canvas.style.display = 'block';
+        joystick.style.display = 'block'; // Mostrar joystick
+        pauseButton.style.display = 'block'; // Mostrar botón de pausa
         
         player = { x: canvas.width / 2, y: canvas.height / 2, width: 44, height: 44, dx: 0, dy: 0, lives: 3, isInvincible: false };
         enemy = { x: 100, y: 100, width: 44, height: 44 };
@@ -336,28 +346,36 @@
 
     function endGame(message) {
         clearInterval(timerInterval); isPlaying = false; music.pause();
+        joystick.style.display = 'none'; // Ocultar joystick
+        pauseButton.style.display = 'none'; // Ocultar botón de pausa
         endScreen.style.display = 'flex'; document.getElementById('end-message').textContent = message;
     }
 
     function returnToStartScreen() {
         cancelAnimationFrame(animationFrame); clearInterval(timerInterval); isPlaying = false;
         if (isMusicPlaying) music.play();
+        joystick.style.display = 'none'; // Ocultar joystick
+        pauseButton.style.display = 'none'; // Ocultar botón de pausa
         endScreen.style.display = 'none'; gameContainer.style.display = 'none'; startScreen.style.display = 'flex';
         initBackgroundCleips(); animateStartScreen();
     }
 
     function togglePause() {
         isPaused = !isPaused;
-        if (isPaused) { pauseScreen.style.display = 'flex'; music.pause(); } 
+        if (isPaused) { 
+            pauseScreen.style.display = 'flex'; 
+            music.pause();
+            joystick.style.display = 'none'; // Ocultar joystick en pausa
+        } 
         else {
             pauseScreen.style.display = 'none';
             if (isMusicPlaying) music.play();
+            joystick.style.display = 'block'; // Mostrar joystick al reanudar
             animationFrame = requestAnimationFrame(update);
         }
     }
 
     // Lógica del Joystick
-    const joystick = document.getElementById('joystick-container'), handle = document.getElementById('joystick-handle');
     let joystickActive = false, joystickStartX = 0, joystickStartY = 0;
     const maxJoystickMove = joystick.offsetWidth / 4;
 
@@ -378,8 +396,10 @@
         let angle = Math.atan2(diffY, diffX);
         let distance = Math.min(maxJoystickMove, Math.sqrt(diffX*diffX + diffY*diffY));
         
-        handle.style.left = (30 + distance * Math.cos(angle)) + 'px';
-        handle.style.top = (30 + distance * Math.sin(angle)) + 'px';
+        // Mover el handle usando transform para mantener el centrado
+        let moveX = distance * Math.cos(angle);
+        let moveY = distance * Math.sin(angle);
+        handle.style.transform = `translate(-50%, -50%) translate(${moveX}px, ${moveY}px)`;
 
         player.dx = Math.cos(angle) * PLAYER_SPEED;
         player.dy = Math.sin(angle) * PLAYER_SPEED;
@@ -389,7 +409,8 @@
         e.preventDefault();
         joystickActive = false;
         player.dx = 0; player.dy = 0;
-        handle.style.left = '30px'; handle.style.top = '30px';
+        // Resetear la posición del handle a su centro
+        handle.style.transform = 'translate(-50%, -50%)';
     });
 
     // Event Listeners de botones
