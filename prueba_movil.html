@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>¡CLEIP ESCAPA! Demo Celular</title>
     <link rel="icon" type="image/png" href="cleip_milo.png">
     <style>
@@ -21,6 +21,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            width: 100vw;
             overflow: hidden;
             text-align: center;
         }
@@ -30,13 +31,17 @@
             width: 100%;
             height: 100%;
             display: none;
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         #game-canvas {
             border: 2px solid #ffffff;
             background-color: #1a1a1a;
-            width: 95vw;
-            height: 80vh;
+            max-width: 95vw;
+            max-height: 80vh;
             display: none;
         }
 
@@ -46,112 +51,362 @@
             justify-content: center;
             align-items: center;
             width: 100%;
-            height: 100vh;
+            height: 100%;
+            padding: 20px;
+            box-sizing: border-box;
             position: relative;
             background-color: #1a1a1a;
+            font-size: 1em;
         }
-
+        
         #start-screen { display: flex; }
-        #logo { width: 250px; margin-bottom: 20px; }
-        h2 { font-size: 2em; color: #ffcc00; }
+        #logo { width: 200px; height: auto; margin-bottom: 20px; z-index: 2; }
+        h2 { font-size: 1.8em; color: #ffcc00; z-index: 2; }
+
         .game-button {
-            background: transparent;
-            border: 2px solid #fff;
-            color: #fff;
-            padding: 15px 40px;
-            font-size: 1.5em;
-            margin-top: 20px;
+            background-color: transparent;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.2em;
             cursor: pointer;
+            margin-top: 20px;
+            font-family: 'PixelatedFont', sans-serif;
+            z-index: 2;
+        }
+        .game-button:active { border-color: #00bfff; color: #00bfff; }
+
+        #end-screen, #pause-screen {
+            background-color: rgba(0, 0, 0, 0.7);
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%; z-index: 10;
+        }
+        #end-screen h3, #pause-screen h3 { font-size: 2em; margin-bottom: 20px; }
+        #end-screen p { font-size: 1em; margin-bottom: 30px; }
+        #end-screen button, #pause-screen button { margin: 10px; }
+
+        #tutorial {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            border: 2px solid #fff; padding: 20px; border-radius: 10px; z-index: 5;
+            font-size: 1.2em; display: none; flex-direction: column;
+            align-items: center; justify-content: center; width: 80%;
+        }
+        #tutorial-text { margin-bottom: 20px; }
+
+        /* Estilos para controles táctiles */
+        #joystick-container {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            width: 120px;
+            height: 120px;
+            z-index: 20;
+        }
+        #joystick-base {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+        #joystick-handle {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            top: 30px;
+            left: 30px;
         }
 
-        #end-screen { position: absolute; top:0; left:0; width:100%; height:100%; display:none; background:rgba(0,0,0,0.7); }
+        #pause-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(128, 128, 128, 0.5);
+            border: 2px solid white;
+            border-radius: 5px;
+            z-index: 20;
+            color: white;
+            font-size: 30px;
+            line-height: 45px;
+        }
     </style>
 </head>
 <body>
+
+<audio id="background-music" loop>
+    <source src="cleip_escapa_soundtrack.mp3" type="audio/mpeg">
+</audio>
+
 <div id="start-screen" class="screen">
-    <canvas id="start-background" width="800" height="600" style="position:absolute;top:0;left:0;z-index:0;"></canvas>
+    <canvas id="start-background-canvas" style="position: absolute; top: 0; left: 0; z-index: 1;"></canvas>
     <img id="logo" src="fabi_alancho_games.png" alt="Logo">
     <h2>¡CLEIP ESCAPA!</h2>
+    <p>Demo para Celular</p>
     <button id="play-button" class="game-button">JUGAR</button>
+    <button id="music-toggle-button" class="game-button">MÚSICA: OFF</button>
 </div>
 
 <div id="game-container">
-    <canvas id="game-canvas" width="1200" height="900"></canvas>
+    <canvas id="game-canvas"></canvas>
+    
+    <div id="joystick-container">
+        <img id="joystick-base" src="jos_seti.png">
+        <img id="joystick-handle" src="jo_setito.png">
+    </div>
+    <button id="pause-button">II</button>
+
+    <div id="tutorial">
+        <span id="tutorial-text">Usa el joystick para moverte. Sobrevive 60 segundos. ¡Suerte!</span>
+        <button id="tutorial-ok-btn" class="game-button">OK</button>
+    </div>
+    
+    <div id="pause-screen" class="screen">
+        <h3>PAUSA</h3>
+        <button id="resume-button" class="game-button">REANUDAR</button>
+        <button id="exit-pause-button" class="game-button">SALIR</button>
+    </div>
 </div>
 
 <div id="end-screen" class="screen">
     <h3 id="end-message"></h3>
-    <button id="end-play-again-button" class="game-button">VOLVER A JUGAR</button>
+    <p>¡Descarga la versión completa!</p>
+    <button id="end-play-again-button" class="game-button">REINTENTAR</button>
+    <button id="end-exit-button" class="game-button">SALIR</button>
 </div>
 
 <script>
-const startScreen=document.getElementById("start-screen");
-const endScreen=document.getElementById("end-screen");
-const gameContainer=document.getElementById("game-container");
-const playButton=document.getElementById("play-button");
-const endPlayAgain=document.getElementById("end-play-again-button");
-const startBg=document.getElementById("start-background");
-const sbCtx=startBg.getContext("2d");
-const canvas=document.getElementById("game-canvas");
-const ctx=canvas.getContext("2d");
+    // Referencias a elementos del DOM
+    const startScreen = document.getElementById('start-screen'), endScreen = document.getElementById('end-screen');
+    const pauseScreen = document.getElementById('pause-screen'), playButton = document.getElementById('play-button');
+    const endPlayAgainButton = document.getElementById('end-play-again-button'), endExitButton = document.getElementById('end-exit-button');
+    const resumeButton = document.getElementById('resume-button'), exitPauseButton = document.getElementById('exit-pause-button');
+    const musicToggleButton = document.getElementById('music-toggle-button'), music = document.getElementById('background-music');
+    const gameContainer = document.getElementById('game-container'), canvas = document.getElementById('game-canvas');
+    const ctx = canvas.getContext('2d'), tutorialMessage = document.getElementById('tutorial');
+    const tutorialOkButton = document.getElementById('tutorial-ok-btn');
+    const startBgCanvas = document.getElementById('start-background-canvas'), startBgCtx = startBgCanvas.getContext('2d');
+    const pauseButton = document.getElementById('pause-button');
 
-let cleips=[];
-function initCleips(){
-  cleips=[];
-  for(let i=0;i<30;i++){
-    cleips.push({x:Math.random()*startBg.width,y:Math.random()*startBg.height,dx:Math.random()*2-1,dy:Math.random()*2-1});
-  }
-}
-function animateStart(){
-  sbCtx.fillStyle="#1a1a1a";
-  sbCtx.fillRect(0,0,startBg.width,startBg.height);
-  sbCtx.fillStyle="white";
-  cleips.forEach(c=>{
-    c.x+=c.dx;c.y+=c.dy;
-    if(c.x<0) c.x=startBg.width;
-    if(c.y<0) c.y=startBg.height;
-    if(c.x>startBg.width) c.x=0;
-    if(c.y>startBg.height) c.y=0;
-    sbCtx.fillRect(c.x,c.y,10,10);
-  });
-  requestAnimationFrame(animateStart);
-}
-initCleips();animateStart();
+    // Configuración del Canvas
+    function resizeCanvas() {
+        const aspectRatio = 4 / 3;
+        let newWidth = window.innerWidth * 0.95;
+        let newHeight = newWidth / aspectRatio;
 
-let player,enemy,timer,interval,isPlaying=false;
-function startGame(){
-  startScreen.style.display="none";
-  gameContainer.style.display="block";
-  canvas.style.display="block";
-  resetGame();
-}
-function resetGame(){
-  player={x:canvas.width/2,y:canvas.height/2,w:40,h:40,dx:0,dy:0,lives:3};
-  enemy={x:100,y:100,w:40,h:40};
-  timer=60;
-  isPlaying=true;
-  if(interval) clearInterval(interval);
-  interval=setInterval(()=>{timer--;if(timer<=0){endGame("¡GANASTE!");}},1000);
-  update();
-}
-function update(){
-  if(!isPlaying) return;
-  ctx.fillStyle="#1a1a1a";ctx.fillRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="white";ctx.fillRect(player.x,player.y,player.w,player.h);
-  ctx.fillStyle="red";ctx.fillRect(enemy.x,enemy.y,enemy.w,enemy.h);
-  ctx.fillStyle="yellow";ctx.fillText("Tiempo: "+timer,canvas.width-100,20);
-  requestAnimationFrame(update);
-}
-function endGame(msg){
-  isPlaying=false;
-  clearInterval(interval);
-  endScreen.style.display="flex";
-  document.getElementById("end-message").textContent=msg;
-}
+        if (newHeight > window.innerHeight * 0.80) {
+            newHeight = window.innerHeight * 0.80;
+            newWidth = newHeight * aspectRatio;
+        }
+        canvas.width = newWidth;
+        canvas.height = newHeight;
+        startBgCanvas.width = window.innerWidth;
+        startBgCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-playButton.onclick=startGame;
-endPlayAgain.onclick=()=>{endScreen.style.display="none";resetGame();};
+    // Constantes del juego
+    const PLAYER_SPEED = 4;
+    const ENEMY_SPEED = 2;
+    const DEMO_TIME = 60;
+    const INVINCIBILITY_DURATION = 2000;
+    const BLINK_INTERVAL = 100;
+
+    // Estado del juego
+    let player = {}, enemy = {};
+    let timer = DEMO_TIME;
+    let timerInterval, isPlaying = false, isPaused = false, isMusicPlaying = false;
+    let lastHitTime = 0, lastPlayerBlink = 0;
+
+    // Carga de imágenes
+    const images = {}, imagePaths = { cleip: 'cleip.png', enemigo: 'enemigo.png', heart: 'corazon.png' };
+    let imagesLoaded = 0, totalImages = Object.keys(imagePaths).length;
+    let animationFrame;
+
+    function loadImages() {
+        for (const key in imagePaths) {
+            images[key] = new Image();
+            images[key].onload = () => { if (++imagesLoaded === totalImages) { initBackgroundCleips(); animateStartScreen(); }};
+            images[key].src = imagePaths[key];
+        }
+    }
+
+    // Animación del menú
+    let backgroundCleips = [];
+    function initBackgroundCleips() {
+        backgroundCleips = [];
+        for (let i = 0; i < 50; i++) {
+            backgroundCleips.push({
+                x: Math.random() * startBgCanvas.width, y: Math.random() * startBgCanvas.height,
+                size: 20 + Math.random() * 40, speed: 0.2 + Math.random() * 0.5,
+                angle: Math.random() * 2 * Math.PI, rotationSpeed: (Math.random() - 0.5) * 0.02
+            });
+        }
+    }
+    function animateStartScreen() {
+        startBgCtx.fillStyle = '#1a1a1a';
+        startBgCtx.fillRect(0, 0, startBgCanvas.width, startBgCanvas.height);
+        backgroundCleips.forEach(c => {
+            c.x -= c.speed;
+            if (c.x + c.size < 0) { c.x = startBgCanvas.width; c.y = Math.random() * startBgCanvas.height; }
+            c.angle += c.rotationSpeed;
+            startBgCtx.save();
+            startBgCtx.translate(c.x + c.size / 2, c.y + c.size / 2);
+            startBgCtx.rotate(c.angle);
+            if (images.cleip) startBgCtx.drawImage(images.cleip, -c.size / 2, -c.size / 2, c.size, c.size);
+            startBgCtx.restore();
+        });
+        animationFrame = requestAnimationFrame(animateStartScreen);
+    }
+
+    // Lógica principal del juego
+    function draw() {
+        ctx.fillStyle = "#1a1a1a"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+        if (player.isInvincible) {
+            if (Date.now() - lastPlayerBlink > BLINK_INTERVAL) {
+                lastPlayerBlink = Date.now();
+                if (Math.floor(Date.now() / BLINK_INTERVAL) % 2 === 0) ctx.drawImage(images.cleip, player.x, player.y, player.width, player.height);
+            }
+        } else ctx.drawImage(images.cleip, player.x, player.y, player.width, player.height);
+        
+        ctx.drawImage(images.enemigo, enemy.x, enemy.y, enemy.width, enemy.height);
+        
+        for (let i = 0; i < player.lives; i++) ctx.drawImage(images.heart, 10 + i * 35, 10, 30, 30);
+        
+        ctx.fillStyle = "#ffffff"; ctx.font = "20px PixelatedFont"; ctx.textAlign = "right";
+        ctx.fillText(`Tiempo: ${timer}s`, canvas.width - 10, 30);
+    }
+
+    function update() {
+        if (!isPlaying || isPaused) return;
+        player.x += player.dx; player.y += player.dy;
+
+        if (player.x < 0) player.x = 0;
+        if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+        if (player.y < 0) player.y = 0;
+        if (player.y + player.height > canvas.height) player.y = canvas.height - player.height;
+
+        let angle = Math.atan2(player.y - enemy.y, player.x - enemy.x);
+        enemy.x += Math.cos(angle) * ENEMY_SPEED; enemy.y += Math.sin(angle) * ENEMY_SPEED;
+
+        const currentTime = Date.now();
+        if (!player.isInvincible && currentTime - lastHitTime > INVINCIBILITY_DURATION) {
+            const distance = Math.sqrt(Math.pow(player.x - enemy.x, 2) + Math.pow(player.y - enemy.y, 2));
+            if (distance < (player.width + enemy.width) / 2.5) {
+                player.lives--; player.isInvincible = true; lastHitTime = currentTime;
+                setTimeout(() => player.isInvincible = false, INVINCIBILITY_DURATION);
+                enemy.x = Math.random() * (canvas.width - enemy.width); enemy.y = Math.random() * (canvas.height - enemy.height);
+                if (player.lives <= 0) endGame("¡PERDISTE!");
+            }
+        }
+        draw();
+        animationFrame = requestAnimationFrame(update);
+    }
+
+    // Funciones de estado del juego (Start, End, Pause)
+    function startGame() {
+        startScreen.style.display = 'none';
+        endScreen.style.display = 'none';
+        gameContainer.style.display = 'flex';
+        canvas.style.display = 'block';
+        
+        player = { x: canvas.width / 2, y: canvas.height / 2, width: 44, height: 44, dx: 0, dy: 0, lives: 3, isInvincible: false };
+        enemy = { x: 100, y: 100, width: 44, height: 44 };
+        
+        tutorialMessage.style.display = 'flex';
+    }
+
+    function startActualGame() {
+        isPlaying = true; isPaused = false;
+        pauseScreen.style.display = 'none'; endScreen.style.display = 'none'; tutorialMessage.style.display = 'none';
+        
+        if (isMusicPlaying) music.play().catch(e => {});
+        
+        timer = DEMO_TIME;
+        timerInterval = setInterval(() => {
+            if (!isPaused && isPlaying) {
+                if (--timer <= 0) endGame("¡GANASTE!");
+            }
+        }, 1000);
+        
+        animationFrame = requestAnimationFrame(update);
+    }
+
+    function endGame(message) {
+        clearInterval(timerInterval); isPlaying = false; music.pause();
+        endScreen.style.display = 'flex'; document.getElementById('end-message').textContent = message;
+    }
+
+    function returnToStartScreen() {
+        cancelAnimationFrame(animationFrame); clearInterval(timerInterval); isPlaying = false;
+        if (isMusicPlaying) music.play();
+        endScreen.style.display = 'none'; gameContainer.style.display = 'none'; startScreen.style.display = 'flex';
+        initBackgroundCleips(); animateStartScreen();
+    }
+
+    function togglePause() {
+        isPaused = !isPaused;
+        if (isPaused) { pauseScreen.style.display = 'flex'; music.pause(); } 
+        else {
+            pauseScreen.style.display = 'none';
+            if (isMusicPlaying) music.play();
+            animationFrame = requestAnimationFrame(update);
+        }
+    }
+
+    // Lógica del Joystick
+    const joystick = document.getElementById('joystick-container'), handle = document.getElementById('joystick-handle');
+    let joystickActive = false, joystickStartX = 0, joystickStartY = 0;
+    const maxJoystickMove = joystick.offsetWidth / 4;
+
+    joystick.addEventListener('touchstart', e => {
+        e.preventDefault();
+        joystickActive = true;
+        const touch = e.changedTouches[0];
+        joystickStartX = touch.clientX;
+        joystickStartY = touch.clientY;
+    });
+
+    joystick.addEventListener('touchmove', e => {
+        e.preventDefault();
+        if (!joystickActive) return;
+        const touch = e.changedTouches[0];
+        let diffX = touch.clientX - joystickStartX;
+        let diffY = touch.clientY - joystickStartY;
+        let angle = Math.atan2(diffY, diffX);
+        let distance = Math.min(maxJoystickMove, Math.sqrt(diffX*diffX + diffY*diffY));
+        
+        handle.style.left = (30 + distance * Math.cos(angle)) + 'px';
+        handle.style.top = (30 + distance * Math.sin(angle)) + 'px';
+
+        player.dx = Math.cos(angle) * PLAYER_SPEED;
+        player.dy = Math.sin(angle) * PLAYER_SPEED;
+    });
+
+    joystick.addEventListener('touchend', e => {
+        e.preventDefault();
+        joystickActive = false;
+        player.dx = 0; player.dy = 0;
+        handle.style.left = '30px'; handle.style.top = '30px';
+    });
+
+    // Event Listeners de botones
+    playButton.addEventListener('click', () => { if (imagesLoaded === totalImages) startGame(); else alert("Cargando..."); });
+    tutorialOkButton.addEventListener('click', startActualGame);
+    endPlayAgainButton.addEventListener('click', startGame);
+    endExitButton.addEventListener('click', returnToStartScreen);
+    resumeButton.addEventListener('click', togglePause);
+    exitPauseButton.addEventListener('click', () => { isPaused = false; returnToStartScreen(); });
+    pauseButton.addEventListener('click', togglePause);
+    musicToggleButton.addEventListener('click', () => {
+        isMusicPlaying = !isMusicPlaying;
+        if (isMusicPlaying) { musicToggleButton.textContent = 'MÚSICA: ON'; music.play().catch(e => {}); } 
+        else { musicToggleButton.textContent = 'MÚSICA: OFF'; music.pause(); }
+    });
+
+    loadImages();
 </script>
 </body>
 </html>
-
