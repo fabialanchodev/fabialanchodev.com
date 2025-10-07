@@ -39,8 +39,8 @@
         #game-canvas {
             border: 2px solid #ffffff;
             background-color: #1a1a1a;
-            max-width: 100vw;   /* Cambio: Permitir ancho completo */
-            max-height: 100vh;  /* Cambio: Permitir alto completo */
+            max-width: 100vw;
+            max-height: 100vh;
             display: none;
         }
 
@@ -96,12 +96,13 @@
 
         /* Estilos para controles táctiles */
         #joystick-container {
-            position: fixed; /* Cambio: 'fixed' para que aparezca en cualquier lugar */
+            position: fixed;
+            bottom: 30px;   /* Cambio: Posición fija abajo */
+            left: 30px;     /* Cambio: Posición fija a la izquierda */
             width: 120px;
             height: 120px;
             z-index: 20;
-            display: none; /* Oculto por defecto */
-            pointer-events: none; /* Para no interferir con otros toques */
+            display: none;
         }
         #joystick-base {
             position: absolute;
@@ -195,10 +196,9 @@
     const joystick = document.getElementById('joystick-container'), handle = document.getElementById('joystick-handle');
 
 
-    // Configuración del Canvas
+    // Configuración del Canvas (Mantenemos el mapa grande)
     function resizeCanvas() {
         const aspectRatio = 4 / 3;
-        // Cambio: Hacer el canvas lo más grande posible manteniendo el aspect ratio
         let newWidth = window.innerWidth;
         let newHeight = newWidth / aspectRatio;
 
@@ -320,6 +320,7 @@
         gameContainer.style.display = 'flex';
         canvas.style.display = 'block';
         pauseButton.style.display = 'block';
+        joystick.style.display = 'block'; // Cambio: Mostrar joystick fijo
         
         player = { x: canvas.width / 2, y: canvas.height / 2, width: 44, height: 44, dx: 0, dy: 0, lives: 3, isInvincible: false };
         enemy = { x: 100, y: 100, width: 44, height: 44 };
@@ -345,7 +346,7 @@
 
     function endGame(message) {
         clearInterval(timerInterval); isPlaying = false; music.pause();
-        joystick.style.display = 'none';
+        joystick.style.display = 'none'; // Cambio: Ocultar joystick
         pauseButton.style.display = 'none';
         endScreen.style.display = 'flex'; document.getElementById('end-message').textContent = message;
     }
@@ -353,7 +354,7 @@
     function returnToStartScreen() {
         cancelAnimationFrame(animationFrame); clearInterval(timerInterval); isPlaying = false;
         if (isMusicPlaying) music.play();
-        joystick.style.display = 'none';
+        joystick.style.display = 'none'; // Cambio: Ocultar joystick
         pauseButton.style.display = 'none';
         endScreen.style.display = 'none'; gameContainer.style.display = 'none'; startScreen.style.display = 'flex';
         initBackgroundCleips(); animateStartScreen();
@@ -364,38 +365,31 @@
         if (isPaused) { 
             pauseScreen.style.display = 'flex'; 
             music.pause();
+            joystick.style.display = 'none'; // Cambio: Ocultar en pausa
         } 
         else {
             pauseScreen.style.display = 'none';
             if (isMusicPlaying) music.play();
+            joystick.style.display = 'block'; // Cambio: Mostrar al reanudar
             animationFrame = requestAnimationFrame(update);
         }
     }
 
-    // Lógica del Joystick Dinámico
+    // Cambio: Lógica del Joystick Fijo
     let joystickActive = false, joystickStartX = 0, joystickStartY = 0;
-    const maxJoystickMove = 50; // Aumentado un poco el radio de movimiento
+    const maxJoystickMove = joystick.offsetWidth / 4;
 
-    window.addEventListener('touchstart', e => {
-        if (!isPlaying || isPaused) return;
+    joystick.addEventListener('touchstart', e => {
+        e.preventDefault();
+        joystickActive = true;
         const touch = e.changedTouches[0];
-        
-        // Activa el joystick solo si el toque es en la mitad izquierda de la pantalla
-        if (touch.clientX < window.innerWidth / 2) {
-            joystickActive = true;
-            joystickStartX = touch.clientX;
-            joystickStartY = touch.clientY;
-            
-            // Posiciona y muestra el joystick donde se tocó
-            joystick.style.left = (joystickStartX - joystick.offsetWidth / 2) + 'px';
-            joystick.style.top = (joystickStartY - joystick.offsetHeight / 2) + 'px';
-            joystick.style.display = 'block';
-        }
+        joystickStartX = touch.clientX;
+        joystickStartY = touch.clientY;
     });
 
-    window.addEventListener('touchmove', e => {
-        if (!joystickActive) return;
+    joystick.addEventListener('touchmove', e => {
         e.preventDefault();
+        if (!joystickActive) return;
         const touch = e.changedTouches[0];
         let diffX = touch.clientX - joystickStartX;
         let diffY = touch.clientY - joystickStartY;
@@ -406,20 +400,24 @@
         let moveY = distance * Math.sin(angle);
         handle.style.transform = `translate(-50%, -50%) translate(${moveX}px, ${moveY}px)`;
 
-        player.dx = (moveX / maxJoystickMove) * PLAYER_SPEED;
-        player.dy = (moveY / maxJoystickMove) * PLAYER_SPEED;
-    }, { passive: false });
+        // Normalizar el movimiento para una velocidad constante
+        const normalizedDx = Math.cos(angle) * (distance / maxJoystickMove);
+        const normalizedDy = Math.sin(angle) * (distance / maxJoystickMove);
+        
+        player.dx = normalizedDx * PLAYER_SPEED;
+        player.dy = normalizedDy * PLAYER_SPEED;
+    });
 
-    window.addEventListener('touchend', e => {
+    joystick.addEventListener('touchend', e => {
+        e.preventDefault();
         if (!joystickActive) return;
         
         joystickActive = false;
         player.dx = 0; player.dy = 0;
         
-        // Oculta y resetea el joystick
-        joystick.style.display = 'none';
         handle.style.transform = 'translate(-50%, -50%)';
     });
+
 
     // Event Listeners de botones
     playButton.addEventListener('click', () => { if (imagesLoaded === totalImages) startGame(); else alert("Cargando..."); });
