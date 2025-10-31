@@ -55,11 +55,11 @@
             background: rgba(0, 0, 0, 0.7); /* Fondo un poco más oscuro */
             border-radius: 0.75rem;
             
-            /* Posición fija y transición para el efecto de desvanecimiento */
+            /* Posición fija */
             position: sticky;
             top: 1rem;
             z-index: 10;
-            transition: opacity 0.3s ease-in-out;
+            /* Se eliminó la transición de opacidad */
         }
         
         /* Botones del nav móvil más pequeños */
@@ -141,16 +141,16 @@
         white-space: pre-wrap; /* Mantiene el formato y ajusta líneas */
         word-wrap: break-word;
         font-size: 0.875rem; /* text-sm */
+        line-height: 1.6; /* Interlineado para legibilidad */
     }
     
-    /* Animación de temblor */
-    @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px) rotate(-1deg); }
-      20%, 40%, 60%, 80% { transform: translateX(5px) rotate(1deg); }
+    /* Animación de giro (NUEVA) */
+    @keyframes spin-full {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
     }
-    .shake-page {
-      animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    .spin-page {
+      animation: spin-full 1s ease-in-out;
     }
 
   </style>
@@ -177,7 +177,8 @@
         <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="apps">🤖 Apps</button>
         <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="juegos-web">🕹️ Juegos Web</button>
         <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="webs-random">🌐 Webs Random</button>
-        <button class="category-btn bg-blue-600/90 p-4 rounded-lg font-bold hover:bg-blue-700 transition-colors" data-target="fbquiz-app">📓 FBQuiz</button>
+        <!-- BOTÓN FBQUIZ NORMALIZADO -->
+        <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="fbquiz-app">📓 FBQuiz</button>
         <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="otros">✨ Otros</button>
       </aside>
     </div>
@@ -188,6 +189,7 @@
         <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">🕹️ JUEGOS ONLINE</h2>
         <p class="text-lg md:text-xl text-gray-300 mb-6 text-center">Aquí encontrarás algunos demos de mis juegos y otros juegos online que yo mismo creé, además de algunos geniales de otras páginas web.</p>
         
+        <!-- Demo Cleip Escapa -->
         <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 flex flex-col items-center mb-8">
             <h3 class="text-xl md:text-2xl font-bold mb-2">¿Te gustaría probar mi juego en tu navegador?</h3>
             <p class="text-gray-300 mb-4">¡Sobrevive a los 60 segundos del enemigo!</p>
@@ -200,11 +202,48 @@
                     Estoy en Celular <span class="bg-red-600 text-white text-xs px-2 py-1 rounded-full absolute -top-2 -right-2 transform rotate-12">Inestable</span>
                 </a>
             </div>
-            <!-- Subtítulo "Creado por" -->
             <p class="text-sm text-cyan-400 mt-4">Creado por @fabialancho</p>
         </div>
         
-        <div class="bg-gray-700/70 rounded-2xl shadow-lg p-6 flex flex-col items-center border-2 border-dashed border-gray-500 opacity-80">
+        <h3 class="text-2xl md:text-3xl font-bold mt-12 mb-8 text-center">Más Juegos Web</h3>
+        
+        <!-- Grid de Juegos Web (NUEVOS Y MOVIDOS) -->
+        <div class="grid gap-8 md:grid-cols-3">
+
+          <!-- NUEVO: Stumble Guys -->
+          <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+            <h3 class="text-xl md:text-2xl font-bold mb-2">Stumble Guys</h3>
+            <p class="text-sm text-cyan-400 mb-2">de @scopely</p>
+            <p class="text-gray-300 mb-4">¡Compite en divertidas carreras de obstáculos multijugador y trata de no caerte!</p>
+            <a href="https://stumbleguys.com/play" target="_blank" class="bg-orange-500 hover:bg-orange-700 px-4 py-2 rounded-lg font-bold block text-center">
+              ➡ Jugar
+            </a>
+          </div>
+
+          <!-- NUEVO: Bloxd.io -->
+          <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+            <h3 class="text-xl md:text-2xl font-bold mb-2">Bloxd.io</h3>
+            <p class="text-sm text-gray-400 mb-2">Juego web</p>
+            <p class="text-gray-300 mb-4">Una especie de Minecraft pero online, con muchos modos de juego como parkour y supervivencia.</p>
+            <a href="https://bloxd.io" target="_blank" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">
+              ➡ Jugar
+            </a>
+          </div>
+
+          <!-- MOVIDO: Minecraft Classic -->
+          <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🕹 Minecraft Classic</h3>
+            <p class="text-sm text-cyan-400 mb-2">de @mojang studios</p>
+            <p class="text-gray-300 mb-4">Minecraft en Java, versión clásica antigüísima. ¡Directo en tu navegador!</p>
+            <a href="https://classic.minecraft.net/" target="_blank" class="bg-green-600 hover:bg-green-800 px-4 py-2 rounded-lg font-bold block text-center">
+              ➡ Jugar
+            </a>
+          </div>
+          
+        </div>
+
+        <!-- Muy Pronto -->
+        <div class="bg-gray-700/70 rounded-2xl shadow-lg p-6 flex flex-col items-center border-2 border-dashed border-gray-500 opacity-80 mt-12">
             <h3 class="text-xl md:text-2xl font-bold mb-2 text-gray-400">¡Muy Pronto!</h3>
             <p class="text-gray-300 text-center">Estamos cocinando nuevos minijuegos web para que los disfrutes directamente aquí. 🧑‍🍳</p>
             <span class="text-3xl md:text-4xl mt-4">🕹️...</span>
@@ -217,7 +256,6 @@
         
         <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 mb-8">
           <h3 class="text-xl md:text-2xl font-bold mb-2">🚀 Cleip Escapa! - Selecciona Versión</h3>
-          <!-- Subtítulo "Creado por" -->
           <p class="text-sm text-cyan-400 mb-4">Creado por @fabialancho</p>
           
           <select id="version-selector" class="w-full p-3 rounded-lg bg-gray-700 text-white font-bold mb-4 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500">
@@ -238,19 +276,19 @@
           <div id="links-v0_9_5_9" class="version-links hidden grid gap-2">
             <p class="text-gray-300 mb-4">La versión inmediatamente anterior a la última. Si encuentras algún bug en la v0.9.6.0, ¡prueba esta! 👻</p>
             <a href="https://www.mediafire.com/file/mevhhvbzm4rk2e1/%25C2%25A1Cleip_Escapa%2521_v0.9.5.9_by_fabialancho.zip/file" target="_blank" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
-            <a href="https://drive.google.com/file/d/1ArkM6KQrkX99gngUG3ZA5vJnF2d6j2ob/view?usp=drive_link" target="_blank" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
+            <a href="httpsa://drive.google.com/file/d/1ArkM6KQrkX99gngUG3ZA5vJnF2d6j2ob/view?usp=drive_link" target="_blank" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
           </div>
           
           <div id="links-v0_9_5_8" class="version-links hidden grid gap-2">
              <p class="text-gray-300 mb-4">Una versión anterior con características y correcciones de la etapa inicial de desarrollo. ¡Un poco de historia! 🕹️</p>
-            <a href="https://www.mediafire.com/file/3oulz8llhw5hd9p/¡Cleip_Escapa!_v0.9.5.8_by_fabialancho.zip/file" target="_blank" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
+            <a href="httpsas://www.mediafire.com/file/3oulz8llhw5hd9p/¡Cleip_Escapa!_v0.9.5.8_by_fabialancho.zip/file" target="_blank" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
             <a href="https:key: 'https://drive.google.com/file/d/17vXTU6AE8E2SFwAstjOQKcwwExYwneOd/view?usp=drive_link" target="_blank" class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
           </div>
           
            <div id="links-v0_9_5_7" class="version-links hidden grid gap-2">
             <p class="text-gray-300 mb-4">Una versión de las primeras que publicaste, guardada como recuerdo. ¡Para ver la evolución del juego! 😏</p>
-            <a href="https://www.mediafire.com/file/y137dt3j2zi0u84/¡Cleip_Escapa!_v0.9.5.7_by_fabialancho.zip/file" target="_blank" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
-            <a href="https://drive.google.com/file/d/1_UZniGGfZeJrHLQUqATMPYTOG_H0W7Or/view?usp=drive_link" target="_blank" class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
+            <a href="httpsas://www.mediafire.com/file/y137dt3j2zi0u84/¡Cleip_Escapa!_v0.9.5.7_by_fabialancho.zip/file" target="_blank" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
+            <a href="httpsas://drive.google.com/file/d/1_UZniGGfZeJrHLQUqATMPYTOG_H0W7Or/view?usp=drive_link" target="_blank" class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
           </div>
 
           <div id="links-pocket" class="version-links hidden grid gap-2">
@@ -265,7 +303,6 @@
         <div class="grid gap-8 md:grid-cols-1">
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-xl md:text-2xl font-bold mb-2">🌀 Clipisito tu amiguito v0.10</h3>
-            <!-- Subtítulo "Creado por" -->
             <p class="text-sm text-cyan-400">Creado por @fabialancho</p>
             <p class="text-gray-300 my-4">
               Fanmade para revivir al Clipi del Office 😱💻. Te motiva 💪, cuenta chistes 😂, y hace preguntas de informática 💻.
@@ -273,7 +310,7 @@
             <div class="grid gap-2">
               <a href="https://www.mediafire.com/file/lsknbybi8nfdth1/Clipisito_tu_amiguito_v0.10_by_fabialancho.zip/file" 
                  target="_blank" class="bg-indigo-500 hover:bg-indigo-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
-              <a href="https://drive.google.com/file/d/1AHgKZidtMcSRTpp0JsOh8xuKG1DHUBHY/view?usp=drive_link" 
+              <a href="httpsas://drive.google.com/file/d/1AHgKZidtMcSRTpp0JsOh8xuKG1DHUBHY/view?usp=drive_link" 
                  target="_blank" class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
             </div>
           </div>
@@ -284,13 +321,20 @@
       <section id="webs-random" class="category hidden">
         <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">🌐 Webs Random</h2>
         <div class="grid gap-8 md:grid-cols-3">
-          <!-- Tarjetas de Webs Random (texto más pequeño implícito por el body) -->
+
+          <!-- NUEVO: Win 7 Games -->
+          <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+            <h3 class="text-xl md:text-2xl font-bold mb-2">Win 7 Games</h3>
+            <p class="text-gray-300 mb-4">Descarga los juegos clásicos de Windows 7 (Solitario, Buscaminas...) para Win 8, 10 y 11.</p>
+            <a href="https://win7games.com/#games" target="_blank" class="bg-blue-600 hover:bg-blue-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+          </div>
+          
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-xl md:text-2xl font-bold mb-2">📊 Progresos random</h3>
             <p class="text-gray-300 mb-4">Progresos de casi todo tipo de cosas, puro random 😎</p>
             <a href="https://neal.fun/progress/" target="_blank" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
-          <!-- ... otras tarjetas ... -->
+          
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-xl md:text-2xl font-bold mb-2">🤖 Emulador Android</h3>
             <p class="text-gray-300 mb-4">Corre Android en tu navegador, prueba apps y juegos 📱</p>
@@ -337,12 +381,6 @@
             <h3 class="text-xl md:text-2xl font-bold mb-2">📚 Bookshelf MC</h3>
             <p class="text-gray-300 mb-4">Crea fotos con el estanterío de libros de Minecraft 📖</p>
             <a href="https://bookshelfs.art/" target="_blank" class="bg-red-600 hover:bg-red-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
-          </div>
-
-          <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-xl md:text-2xl font-bold mb-2">🕹 Minecraft Classic</h3>
-            <p class="text-gray-300 mb-4">Minecraft en Java, versión clásica antigüísima 🕹</p>
-            <a href="https://classic.minecraft.net/" target="_blank" class="bg-gray-500 hover:bg-gray-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
@@ -485,12 +523,12 @@
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-xl md:text-2xl font-bold mb-2">Mi Canal de YouTube</h3>
             <p class="text-gray-300 mb-4">¡Suscríbete para ver gameplays, tutoriales de desarrollo y más!</p>
-            <a href="https://www.youtube.com/@fabialancho_oficial" target="_blank" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">
+            <a href="httpsa://www.youtube.com/@fabialancho_oficial" target="_blank" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">
               ➡ Ir a YouTube
             </a>
           </div>
 
-          <!-- NUEVO: Descarga MC -->
+          <!-- Descarga MC -->
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-xl md:text-2xl font-bold mb-2">MC 1.21.114 (Método Recuperado)</h3>
             <p class="text-gray-300 mb-4">Herramienta para desbloquear MC en Windows 10/11. Lee las instrucciones.</p>
@@ -499,7 +537,7 @@
             </button>
           </div>
           
-          <!-- NUEVO: Descarga Office -->
+          <!-- Descarga Office -->
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-xl md:text-2xl font-bold mb-2">Office LTSC 2021 (Archivos)</h3>
             <p class="text-gray-300 mb-4">Archivos de configuración extra para ahorrar tiempo en la instalación de Office LTSC.</p>
@@ -533,7 +571,7 @@
   <!-- Fondo del Modal -->
   <div id="modal-backdrop" class="modal-backdrop"></div>
   
-  <!-- Modal para MC -->
+  <!-- Modal para MC (INFO CORREGIDA Y ORDENADA) -->
   <div id="modal-mc" class="modal-content">
     <h2 class="text-2xl font-bold mb-4">Instrucciones MC 1.21.114</h2>
     
@@ -542,45 +580,63 @@
     </a>
     
     <div class="modal-info">
-✨ Como desbloquear el maicra gratis
+✨ Cómo Desbloquear Minecraft Gratis
 Escrito por: @fabialancho 💻
-Creador de la herramienta M Center: @tinedpakgamer 💻
+Creador M Center: @tinedpakgamer 💻
 
 ━━━━━━━━━━━━━━━━━━━━━━
-⚠️ ATENCIÓN!! 
+⚠️ ¡ATENCIÓN! ⚠️
 ━━━━━━━━━━━━━━━━━━━━━━
 
-Antes de usar la herramienta, por favor lee esto.
-El método de Minecraft solo funciona en PC con Win 10/11 por la compatibilidad y es 100% confiable, libre de virus, tranqui yo mismo lo comprobé :).
-Los demás archivos que no son el .exe y .appx son los archivos que necesita la herramienta que usaremos para desbloquear el MC mejor no los toques para que no se rompa nada ;)
-La razón por la que des e instalar si o si esta versión antigua de Bedrock (1.21.114) es porque en la ultima actualización subida en la Microsoft store, ah daba unos grandes problemas, que nos impide desbloquear el juego con este truco, y lo peor la interfaz de entrada no solo se ve horrible sino también te exige tener cuenta de Microsoft vinculada con minecraft. 
-Así que gracias a que recupere el .appx de la versión antigua podrás seguir disfrutando de MC gratis bien funcional.
-Debes de tener en cuenta todos los pasos a continuación si es que no sabes como usar este truco y si ya sabes como es el truco simplemente instala el .appx y realiza el truco correspondiente.
-Teniendo en cuenta esto ya pude instalar el MC en tu PC sin problemas ^^
+Antes de usar la herramienta, por favor lee esto:
+
+• El método solo funciona en PC con Windows 10/11.
+• Es 100% confiable y libre de virus, comprobado por @fabialancho.
+• Los demás archivos (que no son el .exe y .appx) son necesarios para la herramienta. No los toques para que no se rompa nada.
+• Usamos la versión antigua (1.21.114) porque la más nueva de la Microsoft Store da problemas para desbloquear y obliga a usar una cuenta de Microsoft.
+• Si ya conoces el truco, solo instala el .appx y usa M Center. Si no, sigue los pasos.
 
 ━━━━━━━━━━━━━━━━━━━━━━
-🏆 Como Instalar el MC
+🏆 1. Cómo Instalar el MC
 ━━━━━━━━━━━━━━━━━━━━━━
 
-Si quieres comenzar a tener el minecraft bedrock completamente gratis, debes instalar, ejecutando el archivo .appx que se encuentra en esta carpeta
-(Minecraft for Windows - by fabialancho - 1.21.114.Appx) 
-Solo dale doble clic, y al abrir la app de instalador de paquetes simplemente le das en instalar, solo espera a que instale todo y listo, ya tenes la versión de prueba lista, ahora para desbloquearlo sigue los siguientes pasos.
+1. Ejecuta el archivo (dale doble clic):
+   (Minecraft for Windows - by fabialancho - 1.21.114.Appx)
 
-Para desbloquearlo dale doble clic a el archivo (M Center.exe) para ejecutarlo, se te abrirá un cuadro que te preguntara si quieres que la app haga cambios en el equipo, tranquilo esta apps solo toca dependencia el juego, cuando le pides, para así desbloquearlo.
-Luego de esto, dentro de la app, le das clic a la tercer opción que tiene el logo de cuadros naranjas 🟧 y dentro de ahí seleccionas la opción que tiene un engranaje en el logo ⚙️, y le das clic en desactivar.
+2. En el "Instalador de paquetes" que se abre, dale clic en "Instalar".
 
-Ahora le das en back (salir), y dentro del menú principal, dale clic a la primera opción (Install Cracked DLL), y le das en (Star), ahora solo espera a que la herramienta haga su trabajo, una vez que la herramienta haya terminado simplemente sales de esa app y busca minecraft para jugarlo completamente desbloqueado :D. 
+3. Espera a que termine. Con esto, ya tienes la versión de prueba lista.
 
 ━━━━━━━━━━━━━━━━━━━━━━
-😅 Eso es todo
+🔓 2. Cómo Desbloquearlo
 ━━━━━━━━━━━━━━━━━━━━━━
 
-Facilísimo Verdad!!, así de simple volvemos a tener el maicra completamente desbloqueado en nuestra PC.
-Espero les haya sirva.
+1. Ejecuta el archivo (doble clic):
+   (M Center.exe)
+   Se te abrirá un cuadro preguntando si la app puede hacer cambios. Dale que sí. (Tranquilo, solo modifica dependencias del juego para desbloquearlo).
 
-Y que tengas un lindo día ;)
+2. Dentro de la app "M Center", haz clic en la TERCERA opción (la del logo de cuadros naranjas 🟧).
 
-Atte
+3. Dentro de ahí, selecciona la opción que tiene un engranaje ⚙️ y dale clic en "Desactivar".
+
+4. Dale en "Back" (salir) para volver al menú principal.
+
+5. Ahora, haz clic en la PRIMERA opción (Install Cracked DLL) y luego dale clic en "Star".
+
+6. Espera a que la herramienta termine su trabajo.
+
+7. ¡Listo! Cierra la app y busca Minecraft para jugarlo completamente desbloqueado :D.
+
+━━━━━━━━━━━━━━━━━━━━━━
+😅 ¡Eso es todo!
+━━━━━━━━━━━━━━━━━━━━━━
+
+¡Facilísimo! Así de simple volvemos a tener el Maicra desbloqueado en nuestra PC.
+Espero les haya servido.
+
+¡Que tengas un lindo día!
+
+Atte:
 👾 fabialancho
     </div>
     
@@ -593,12 +649,12 @@ Atte
   <div id="modal-office" class="modal-content">
     <h2 class="text-2xl font-bold mb-4">Archivos Office LTSC 2021</h2>
     
-    <a href="https://www.mediafire.com/file/p2yqj61tmomglms/Office_LTSC_2021_-_Archivos_para_ahorrar_tiempo_-_by_fabialancho%25282%2529.zip/file" target="_blank" class="w-full bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center mb-4">
+    <a href="httpsa://www.mediafire.com/file/p2yqj61tmomglms/Office_LTSC_2021_-_Archivos_para_ahorrar_tiempo_-_by_fabialancho%25282%2529.zip/file" target="_blank" class="w-full bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center mb-4">
       ⬇ Descargar de Mediafire
     </a>
     
     <div class="modal-info">
-      Son archivos de configuración extra para ahorrarse tiempo, contiene el archivo de config. para office ltsc necesarios para ejecutarlo.
+Son archivos de configuración extra para ahorrarse tiempo. Contiene las configuraciones necesarias para ejecutar Office LTSC.
     </div>
     
     <button class="modal-close-btn w-full bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-lg font-bold block text-center mt-4">
@@ -621,8 +677,6 @@ Atte
             cat.classList.remove('show');
           }
         });
-        
-        // Opcional: Quitar foco del botón en móvil tras clic
         btn.blur();
       });
     });
@@ -670,36 +724,17 @@ Atte
             if (Date.now() < end) { requestAnimationFrame(frame); }
           }());
           
-        } else if (code === 'boom') {
-          promoStatus.textContent = '¡BOOM! 💥';
-          promoStatus.className = 'text-sm mt-2 h-4 text-orange-400';
+        } else if (code === 'siguegirando') { // CÓDIGO NUEVO
+          promoStatus.textContent = '¡Wiiii! 💫';
+          promoStatus.className = 'text-sm mt-2 h-4 text-cyan-400';
           
-          // 1. Temblor
-          document.body.classList.add('shake-page');
+          // Añade la clase para girar
+          document.body.classList.add('spin-page');
+          
+          // Quita la clase después de que termine la animación (1s)
           setTimeout(() => {
-            document.body.classList.remove('shake-page');
-          }, 500);
-          
-          // 2. Explosión
-          const end = Date.now() + (1 * 1000); // 1 segundo de explosión
-          const colors = ['#ff0000', '#ffa500', '#ffff00', '#808080', '#333333'];
-
-          (function frame() {
-            confetti({
-              particleCount: 50,
-              startVelocity: 35,
-              spread: 360,
-              origin: { x: Math.random(), y: Math.random() - 0.2 },
-              colors: colors,
-              decay: 0.92, // Desvanecimiento (humo)
-              gravity: 0.6
-            });
-
-            if (Date.now() < end) {
-              requestAnimationFrame(frame);
-            }
-          }());
-
+            document.body.classList.remove('spin-page');
+          }, 1000);
 
         } else {
           // Código no válido
@@ -711,17 +746,7 @@ Atte
       });
     }
     
-    // --- Script para desvanecer nav móvil en scroll ---
-    const mobileNav = document.querySelector('.mobile-nav');
-    if (mobileNav) {
-      window.addEventListener('scroll', () => {
-        if (window.scrollY > 20) {
-          mobileNav.style.opacity = '0.75'; // Se desvanece un poco
-        } else {
-          mobileNav.style.opacity = '1'; // Opacidad completa arriba
-        }
-      });
-    }
+    // --- (Se eliminó el script de desvanecer nav móvil) ---
     
     // --- Script para Modals ---
     const openButtons = document.querySelectorAll('.modal-open-btn');
@@ -764,3 +789,4 @@ Atte
 
 </body>
 </html>
+
