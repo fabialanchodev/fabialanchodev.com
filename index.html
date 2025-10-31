@@ -17,6 +17,15 @@
     body {
       background: url("fondodeaurasalanochecer.jpeg") no-repeat center center fixed;
       background-size: cover;
+      /* Fuente base más pequeña en móviles */
+      font-size: 14px;
+    }
+    
+    /* Fuentes más grandes en pantallas medianas y superiores */
+    @media (min-width: 768px) {
+      body {
+        font-size: 16px;
+      }
     }
 
     /* Animación slide para categorías */
@@ -33,29 +42,38 @@
       transform: translateX(0);
     }
     
+    /* Estilos para la barra de opciones en móviles */
     @media (max-width: 767px) {
-        .mobile-warning {
-            display: block;
-        }
-        /* Estilos para la barra de opciones en móviles */
         .mobile-nav {
-            order: -1;
+            order: -1; /* Pone el nav arriba en móvil */
             width: 100%;
             flex-direction: row;
             justify-content: center;
-            gap: 1rem;
+            gap: 0.5rem; /* Espacio reducido entre botones */
             margin-bottom: 1rem;
-            padding: 1rem;
-            background: rgba(0, 0, 0, 0.5);
+            padding: 0.75rem;
+            background: rgba(0, 0, 0, 0.7); /* Fondo un poco más oscuro */
             border-radius: 0.75rem;
+            
+            /* Posición fija y transición para el efecto de desvanecimiento */
+            position: sticky;
+            top: 1rem;
+            z-index: 10;
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        /* Botones del nav móvil más pequeños */
+        .mobile-nav .category-btn {
+            padding: 0.75rem 0.5rem; /* Padding reducido */
+            font-size: 0.75rem; /* Texto más pequeño */
         }
     }
     
     /* Estilos de fuentes 'Gamer' y espaciado */
     h1, h2, h3 {
       font-family: 'Orbitron', sans-serif;
-      padding-top: 0.5rem; /* Espaciado vertical */
-      padding-bottom: 0.5rem; /* Espaciado vertical */
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
     }
     
     /* Efecto táctil para botones de categoría */
@@ -73,39 +91,105 @@
         background-size: 1.5em 1.5em;
         padding-right: 2.5rem;
     }
+    
+    /* Estilos para el Modal */
+    .modal-backdrop {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 40;
+        display: none; /* Oculto por defecto */
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+    .modal-content {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0.9);
+        background: #1f2937; /* bg-gray-800 */
+        color: white;
+        padding: 1.5rem;
+        border-radius: 1rem; /* rounded-2xl */
+        z-index: 50;
+        width: 90%;
+        max-width: 600px;
+        max-height: 80vh; /* Altura máxima */
+        overflow-y: auto; /* Scroll si el contenido es muy largo */
+        display: none; /* Oculto por defecto */
+        opacity: 0;
+        transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    
+    .modal-backdrop.show, .modal-content.show {
+        display: block;
+        opacity: 1;
+    }
+    .modal-content.show {
+        transform: translate(-50%, -50%) scale(1);
+    }
+    
+    /* Contenido del modal (para el <pre>) */
+    .modal-info {
+        background-color: #374151; /* bg-gray-700 */
+        padding: 1rem;
+        border-radius: 0.5rem;
+        font-family: monospace;
+        white-space: pre-wrap; /* Mantiene el formato y ajusta líneas */
+        word-wrap: break-word;
+        font-size: 0.875rem; /* text-sm */
+    }
+    
+    /* Animación de temblor */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-5px) rotate(-1deg); }
+      20%, 40%, 60%, 80% { transform: translateX(5px) rotate(1deg); }
+    }
+    .shake-page {
+      animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+    }
 
   </style>
 </head>
 <body class="text-white font-sans">
 
   <header class="flex flex-col md:flex-row items-center justify-center gap-6 py-10 bg-black/50">
-    <img src="fabi_alancho_games.png" alt="Fabialancho Games Logo" class="w-64 rounded-full opacity-92">
-    <div class="text-center md:text-left">
-      <h1 class="text-6xl font-extrabold tracking-wider">
+    <img src="fabi_alancho_games.png" alt="Fabialancho Games Logo" class="w-48 md:w-64 rounded-full opacity-92">
+    <div class="text-center md:text-left px-4">
+      <!-- Texto más pequeño en móvil -->
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-wider">
         🔥 Fabialancho Games 🔥
       </h1>
-      <p class="text-xl mt-2">Tus juegos y apps geniales en un solo lugar 🚀</p>
+      <p class="text-lg md:text-xl mt-2">Tus juegos y apps geniales en un solo lugar 🚀</p>
     </div>
   </header>
 
   <div class="flex flex-col md:flex-row max-w-7xl mx-auto mt-10 px-6 gap-8">
     
-    <aside class="w-full md:w-60 sticky top-6 flex flex-col md:flex-col gap-4 mobile-nav">
-      <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="apps">🤖 Apps</button>
-      <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="juegos-web">🕹️ Juegos Web</button>
-      <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="webs-random">🌐 Webs Random</button>
-      <button class="category-btn bg-blue-600/90 p-4 rounded-lg font-bold hover:bg-blue-700 transition-colors" data-target="fbquiz-app">📓 FBQuiz</button>
-      <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="otros">✨ Otros</button>
-    </aside>
+    <!-- Contenedor del Nav para sticky en móvil -->
+    <div class="w-full md:w-60 md:sticky md:top-6">
+      <aside class="w-full flex flex-col md:flex-col gap-4 mobile-nav">
+        <!-- Botones de categoría -->
+        <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="apps">🤖 Apps</button>
+        <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="juegos-web">🕹️ Juegos Web</button>
+        <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="webs-random">🌐 Webs Random</button>
+        <button class="category-btn bg-blue-600/90 p-4 rounded-lg font-bold hover:bg-blue-700 transition-colors" data-target="fbquiz-app">📓 FBQuiz</button>
+        <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="otros">✨ Otros</button>
+      </aside>
+    </div>
 
     <main class="flex-1">
 
       <section id="juegos-web" class="category hidden">
-        <h2 class="text-4xl font-bold mb-8 text-center">🕹️ JUEGOS ONLINE</h2>
-        <p class="text-xl text-gray-300 mb-6 text-center">Aquí encontrarás algunos demos de mis juegos y otros juegos online que yo mismo creé, además de algunos geniales de otras páginas web.</p>
+        <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">🕹️ JUEGOS ONLINE</h2>
+        <p class="text-lg md:text-xl text-gray-300 mb-6 text-center">Aquí encontrarás algunos demos de mis juegos y otros juegos online que yo mismo creé, además de algunos geniales de otras páginas web.</p>
         
         <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 flex flex-col items-center mb-8">
-            <h3 class="text-2xl font-bold mb-2">¿Te gustaría probar mi juego en tu navegador?</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">¿Te gustaría probar mi juego en tu navegador?</h3>
             <p class="text-gray-300 mb-4">¡Sobrevive a los 60 segundos del enemigo!</p>
             
             <div id="demo-container" class="w-full grid md:grid-cols-2 gap-4">
@@ -116,20 +200,25 @@
                     Estoy en Celular <span class="bg-red-600 text-white text-xs px-2 py-1 rounded-full absolute -top-2 -right-2 transform rotate-12">Inestable</span>
                 </a>
             </div>
+            <!-- Subtítulo "Creado por" -->
+            <p class="text-sm text-cyan-400 mt-4">Creado por @fabialancho</p>
         </div>
         
         <div class="bg-gray-700/70 rounded-2xl shadow-lg p-6 flex flex-col items-center border-2 border-dashed border-gray-500 opacity-80">
-            <h3 class="text-2xl font-bold mb-2 text-gray-400">¡Muy Pronto!</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2 text-gray-400">¡Muy Pronto!</h3>
             <p class="text-gray-300 text-center">Estamos cocinando nuevos minijuegos web para que los disfrutes directamente aquí. 🧑‍🍳</p>
-            <span class="text-4xl mt-4">🕹️...</span>
+            <span class="text-3xl md:text-4xl mt-4">🕹️...</span>
         </div>
       </section>
 
+      <!-- SECCIÓN APPS (TÍTULO CAMBIADO) -->
       <section id="apps" class="category show">
-        <h2 class="text-4xl font-bold mb-8 text-center">JUEGOS CREADOS POR MÍ</h2>
+        <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">JUEGOS</h2>
         
         <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 mb-8">
-          <h3 class="text-2xl font-bold mb-4">🚀 Cleip Escapa! - Selecciona Versión</h3>
+          <h3 class="text-xl md:text-2xl font-bold mb-2">🚀 Cleip Escapa! - Selecciona Versión</h3>
+          <!-- Subtítulo "Creado por" -->
+          <p class="text-sm text-cyan-400 mb-4">Creado por @fabialancho</p>
           
           <select id="version-selector" class="w-full p-3 rounded-lg bg-gray-700 text-white font-bold mb-4 appearance-none focus:outline-none focus:ring-2 focus:ring-blue-500">
             <option value="v0_9_6_0">v0.9.6.0 (¡Última versión!)</option>
@@ -139,28 +228,29 @@
             <option value="pocket">Pocket Edition (¡Muy pronto!)</option>
           </select>
 
+          <!-- Links de versiones -->
           <div id="links-v0_9_6_0" class="version-links grid gap-2">
             <p class="text-gray-300 mb-4">¡Es la versión más reciente! Incluye nuevas correcciones de bugs, mejoras de rendimiento y contenido fresco. ¡A escapar! 💥</p>
-            <a href="https://www.mediafire.com/file/y4qai4cs2cwfwfx/%25C2%25A1Cleip_Escapa%2521_v0.9.6.0_by_fabialancho.zip/file" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
-            <a href="https://drive.google.com/file/d/17zstGlP0D5cUJeQcjN3egYo9k9u8-CDx/view?usp=sharing" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
+            <a href="https://www.mediafire.com/file/y4qai4cs2cwfwfx/%25C2%25A1Cleip_Escapa%2521_v0.9.6.0_by_fabialancho.zip/file" target="_blank" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
+            <a href="https://drive.google.com/file/d/17zstGlP0D5cUJeQcjN3egYo9k9u8-CDx/view?usp=sharing" target="_blank" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
           </div>
           
           <div id="links-v0_9_5_9" class="version-links hidden grid gap-2">
             <p class="text-gray-300 mb-4">La versión inmediatamente anterior a la última. Si encuentras algún bug en la v0.9.6.0, ¡prueba esta! 👻</p>
-            <a href="https://www.mediafire.com/file/mevhhvbzm4rk2e1/%25C2%25A1Cleip_Escapa%2521_v0.9.5.9_by_fabialancho.zip/file" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
-            <a href="https://drive.google.com/file/d/1ArkM6KQrkX99gngUG3ZA5vJnF2d6j2ob/view?usp=drive_link" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
+            <a href="https://www.mediafire.com/file/mevhhvbzm4rk2e1/%25C2%25A1Cleip_Escapa%2521_v0.9.5.9_by_fabialancho.zip/file" target="_blank" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
+            <a href="https://drive.google.com/file/d/1ArkM6KQrkX99gngUG3ZA5vJnF2d6j2ob/view?usp=drive_link" target="_blank" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
           </div>
           
           <div id="links-v0_9_5_8" class="version-links hidden grid gap-2">
              <p class="text-gray-300 mb-4">Una versión anterior con características y correcciones de la etapa inicial de desarrollo. ¡Un poco de historia! 🕹️</p>
-            <a href="https://www.mediafire.com/file/3oulz8llhw5hd9p/¡Cleip_Escapa!_v0.9.5.8_by_fabialancho.zip/file" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
-            <a href="httpskey: 'https://drive.google.com/file/d/17vXTU6AE8E2SFwAstjOQKcwwExYwneOd/view?usp=drive_link" class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
+            <a href="https://www.mediafire.com/file/3oulz8llhw5hd9p/¡Cleip_Escapa!_v0.9.5.8_by_fabialancho.zip/file" target="_blank" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
+            <a href="https:key: 'https://drive.google.com/file/d/17vXTU6AE8E2SFwAstjOQKcwwExYwneOd/view?usp=drive_link" target="_blank" class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
           </div>
           
            <div id="links-v0_9_5_7" class="version-links hidden grid gap-2">
             <p class="text-gray-300 mb-4">Una versión de las primeras que publicaste, guardada como recuerdo. ¡Para ver la evolución del juego! 😏</p>
-            <a href="https://www.mediafire.com/file/y137dt3j2zi0u84/¡Cleip_Escapa!_v0.9.5.7_by_fabialancho.zip/file" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
-            <a href="https://drive.google.com/file/d/1_UZniGGfZeJrHLQUqATMPYTOG_H0W7Or/view?usp=drive_link" class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
+            <a href="https://www.mediafire.com/file/y137dt3j2zi0u84/¡Cleip_Escapa!_v0.9.5.7_by_fabialancho.zip/file" target="_blank" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
+            <a href="https://drive.google.com/file/d/1_UZniGGfZeJrHLQUqATMPYTOG_H0W7Or/view?usp=drive_link" target="_blank" class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
           </div>
 
           <div id="links-pocket" class="version-links hidden grid gap-2">
@@ -170,198 +260,201 @@
         </div>
         <hr class="border-gray-600 my-10">
 
-        <h2 class="text-4xl font-bold mb-8 text-center">APPS CREADAS POR MÍ</h2>
+        <!-- TÍTULO CAMBIADO -->
+        <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">APPS</h2>
         <div class="grid gap-8 md:grid-cols-1">
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🌀 Clipisito tu amiguito v0.10</h3>
-            <p class="text-gray-300 mb-4">
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🌀 Clipisito tu amiguito v0.10</h3>
+            <!-- Subtítulo "Creado por" -->
+            <p class="text-sm text-cyan-400">Creado por @fabialancho</p>
+            <p class="text-gray-300 my-4">
               Fanmade para revivir al Clipi del Office 😱💻. Te motiva 💪, cuenta chistes 😂, y hace preguntas de informática 💻.
             </p>
             <div class="grid gap-2">
               <a href="https://www.mediafire.com/file/lsknbybi8nfdth1/Clipisito_tu_amiguito_v0.10_by_fabialancho.zip/file" 
-                 class="bg-indigo-500 hover:bg-indigo-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
+                 target="_blank" class="bg-indigo-500 hover:bg-indigo-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
               <a href="https://drive.google.com/file/d/1AHgKZidtMcSRTpp0JsOh8xuKG1DHUBHY/view?usp=drive_link" 
-                 class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
+                 target="_blank" class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Google Drive</a>
             </div>
           </div>
         </div>
         
-        </section>
+      </section>
 
       <section id="webs-random" class="category hidden">
-        <h2 class="text-4xl font-bold mb-8 text-center">🌐 Webs Random</h2>
+        <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">🌐 Webs Random</h2>
         <div class="grid gap-8 md:grid-cols-3">
-
+          <!-- Tarjetas de Webs Random (texto más pequeño implícito por el body) -->
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">📊 Progresos random</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">📊 Progresos random</h3>
             <p class="text-gray-300 mb-4">Progresos de casi todo tipo de cosas, puro random 😎</p>
             <a href="https://neal.fun/progress/" target="_blank" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
-
+          <!-- ... otras tarjetas ... -->
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🤖 Emulador Android</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🤖 Emulador Android</h3>
             <p class="text-gray-300 mb-4">Corre Android en tu navegador, prueba apps y juegos 📱</p>
             <a href="https://www.myandroid.org/run/start.php" target="_blank" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🎨 Zodogo / Guimp</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🎨 Zodogo / Guimp</h3>
             <p class="text-gray-300 mb-4">La página más chic del mundo 😎✨</p>
             <a href="https://zodogo.com/guimp.com/" target="_blank" class="bg-pink-500 hover:bg-pink-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">✏️ Textify</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">✏️ Textify</h3>
             <p class="text-gray-300 mb-4">Convierte imágenes a texto 😎</p>
             <a href="https://lab.hakim.se/textify/" target="_blank" class="bg-yellow-500 hover:bg-yellow-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🖌 Sketch Toy</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🖌 Sketch Toy</h3>
             <p class="text-gray-300 mb-4">Dibuja algo y te lo recrea instantáneamente 🎨</p>
             <a href="https://sketchtoy.com/" target="_blank" class="bg-purple-500 hover:bg-purple-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🎡 Spinner Online</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🎡 Spinner Online</h3>
             <p class="text-gray-300 mb-4">Gira el spinner online, diversión asegurada 🌀</p>
             <a href="https://spinnergame.xyz/es/home/" target="_blank" class="bg-orange-500 hover:bg-orange-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">⛏ Crafting MC</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">⛏ Crafting MC</h3>
             <p class="text-gray-300 mb-4">Consulta recetas y craftings de Minecraft 🏗</p>
             <a href="https://www.minecraft-crafting.net/" target="_blank" class="bg-green-600 hover:bg-green-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">📱 Diseña tu celular</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">📱 Diseña tu celular</h3>
             <p class="text-gray-300 mb-4">Crea tu propio celular ficticio con esta web 😎</p>
             <a href="https://neal.fun/design-the-next-iphone/" target="_blank" class="bg-blue-600 hover:bg-blue-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">📚 Bookshelf MC</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">📚 Bookshelf MC</h3>
             <p class="text-gray-300 mb-4">Crea fotos con el estanterío de libros de Minecraft 📖</p>
-            <a href="httpsas://bookshelfs.art/" target="_blank" class="bg-red-600 hover:bg-red-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <a href="https://bookshelfs.art/" target="_blank" class="bg-red-600 hover:bg-red-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🕹 Minecraft Classic</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🕹 Minecraft Classic</h3>
             <p class="text-gray-300 mb-4">Minecraft en Java, versión clásica antigüísima 🕹</p>
             <a href="https://classic.minecraft.net/" target="_blank" class="bg-gray-500 hover:bg-gray-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">⚡ Eaglercraft</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">⚡ Eaglercraft</h3>
             <p class="text-gray-300 mb-4">Minecraft Java online, directo desde tu navegador 😎</p>
             <a href="https://eaglercraft.com/" target="_blank" class="bg-yellow-600 hover:bg-yellow-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🤖 Androidify</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🤖 Androidify</h3>
             <p class="text-gray-300 mb-4">Crea tu avatar animado estilo mascota de Android 🤖</p>
             <a href="https://androidify-io-2016.appspot.com/en/#/" target="_blank" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🪆 Crea tu tótem de MC</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🪆 Crea tu tótem de MC</h3>
             <p class="text-gray-300 mb-4">Crea tu propio tótem de MC con cualquier skin 🎮</p>
             <a href="https://spea.cc/totem/" target="_blank" class="bg-indigo-500 hover:bg-indigo-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🦥 Where is the sloth?</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🦥 Where is the sloth?</h3>
             <p class="text-gray-300 mb-4">Busca al perezoso y encuentra una sorpresa 😏</p>
             <a href="https://whereisthesloth.com/" target="_blank" class="bg-pink-500 hover:bg-pink-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🐄 Encuentra la vaca invisible</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🐄 Encuentra la vaca invisible</h3>
             <p class="text-gray-300 mb-4">Escucha el grito y encuentra la vaca perdida 🐄</p>
             <a href="https://findtheinvisiblecow.com/" target="_blank" class="bg-orange-500 hover:bg-orange-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🎵 Music Lab</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🎵 Music Lab</h3>
             <p class="text-gray-300 mb-4">Laboratorio secreto de música de Google 🎶</p>
             <a href="https://musiclab.chromeexperiments.com/" target="_blank" class="bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
           
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🎹 Bongo.cat</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🎹 Bongo.cat</h3>
             <p class="text-gray-300 mb-4">Toca un instrumento con un gato con tu teclado 😺🎹</p>
-            <a href="https://bongo.cat/" target="_blank" class="bg-gray-400 hover:bg-gray-600 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <a href="httpsas://bongo.cat/" target="_blank" class="bg-gray-400 hover:bg-gray-600 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🤖 Crea tu bot de Android</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🤖 Crea tu bot de Android</h3>
             <p class="text-gray-300 mb-4">Diseña tu propio bot de Android a tu gusto 🤖👕</p>
-            <a href="https://www.android.com/intl/es-419_mx/build-android-bot/" target="_blank" class="bg-green-600 hover:bg-green-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <a href="httpsas://www.android.com/intl/es-419_mx/build-android-bot/" target="_blank" class="bg-green-600 hover:bg-green-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🐶 Long Doge Challenge</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🐶 Long Doge Challenge</h3>
             <p class="text-gray-300 mb-4">Baja y baja sin parar para encontrar el cuerpo del perro Doge 🐶</p>
-            <a href="https://longdogechallenge.com/" target="_blank" class="bg-yellow-600 hover:bg-yellow-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <a href="httpsas://longdogechallenge.com/" target="_blank" class="bg-yellow-600 hover:bg-yellow-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
           
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🧩 Mini Mazes</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🧩 Mini Mazes</h3>
             <p class="text-gray-300 mb-4">Laberintos en línea que puedes controlar con las flechas del teclado 🕹️</p>
-            <a href="https://maze.toys/mazes/mini/daily/" target="_blank" class="bg-purple-600 hover:bg-purple-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <a href="httpsas://maze.toys/mazes/mini/daily/" target="_blank" class="bg-purple-600 hover:bg-purple-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
           
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🖱️ Cursor Effects</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🖱️ Cursor Effects</h3>
             <p class="text-gray-300 mb-4">Efectos que siguen a la flecha del mouse, solo en PC ✨</p>
-            <a href="https://cursoreffects.com/" target="_blank" class="bg-pink-600 hover:bg-pink-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <a href="httpsas://cursoreffects.com/" target="_blank" class="bg-pink-600 hover:bg-pink-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
           
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🔄 HEEEEEEY.com</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🔄 HEEEEEEY.com</h3>
             <p class="text-gray-300 mb-4">Una página que cambia de dirección en cada visita 🤪</p>
-            <a href="https://heeeeeeeey.com/" target="_blank" class="bg-indigo-600 hover:bg-indigo-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <a href="httpsas://heeeeeeeey.com/" target="_blank" class="bg-indigo-600 hover:bg-indigo-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
           
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🎨 Random Colour</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🎨 Random Colour</h3>
             <p class="text-gray-300 mb-4">Te muestra un color aleatorio cada vez que recargas la página 🌈</p>
-            <a href="httpsar://randomcolour.com/" target="_blank" class="bg-orange-600 hover:bg-orange-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <a href="httpsas://randomcolour.com/" target="_blank" class="bg-orange-600 hover:bg-orange-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
           
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🐨 Koalas to the Max</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🐨 Koalas to the Max</h3>
             <p class="text-gray-300 mb-4">Toca todos los círculos para revelar una imagen secreta 🐨🤫</p>
             <a href="httpsas://www.koalastothemax.com/" target="_blank" class="bg-red-600 hover:bg-red-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
           
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🥔 Potato or Tomato?</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🥔 Potato or Tomato?</h3>
             <p class="text-gray-300 mb-4">Te pregunta si el dibujo es papa o tomate, es pan comido y muy tonto jaja 🍅</p>
-            <a href="https://potatoortomato.com/" target="_blank" class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <a href="httpsas://potatoortomato.com/" target="_blank" class="bg-red-500 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
           
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🌌 Nulling the Void</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🌌 Nulling the Void</h3>
             <p class="text-gray-300 mb-4">Solo ves cubitos cayendo infinitamente 🔲</p>
-            <a href="https://nullingthevoid.com/" target="_blank" class="bg-gray-600 hover:bg-gray-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <a href="httpsas://nullingthevoid.com/" target="_blank" class="bg-gray-600 hover:bg-gray-800 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🧱 Smash The Walls</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🧱 Smash The Walls</h3>
             <p class="text-gray-300 mb-4">Si das clic, la pantalla rompe una pared de color y así sucesivamente 💥</p>
-            <a href="https://smashthewalls.com/" target="_blank" class="bg-teal-500 hover:bg-teal-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <a href="httpsas://smashthewalls.com/" target="_blank" class="bg-teal-500 hover:bg-teal-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
           
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🥪 Rotating Sandwiches</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🥪 Rotating Sandwiches</h3>
             <p class="text-gray-300 mb-4">Te dará hambre porque verás figuras de comida girando, ¡diferentes cada vez! 🍔</p>
-            <a href="https://rotatingsandwiches.com/" target="_blank" class="bg-amber-500 hover:bg-amber-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
+            <a href="httpsas://rotatingsandwiches.com/" target="_blank" class="bg-amber-500 hover:bg-amber-700 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
           
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">🤫 I'm a Ninja</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🤫 I'm a Ninja</h3>
             <p class="text-gray-300 mb-4">Es una página en negro con una palabra secreta que al seleccionar se ve lo que dice 🕵️</p>
             <a href="http://www.imaninja.com/" target="_blank" class="bg-black hover:bg-gray-900 px-4 py-2 rounded-lg font-bold block text-center">➡ Visitar</a>
           </div>
@@ -370,41 +463,63 @@
       </section>
       
       <section id="fbquiz-app" class="category hidden">
-        <h2 class="text-4xl font-bold mb-8 text-center">📓 FBQuiz</h2>
+        <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">📓 FBQuiz</h2>
         <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 flex flex-col items-center">
-            <h3 class="text-2xl font-bold mb-2">¡Cuestionarios modo Gamer!</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">¡Cuestionarios modo Gamer!</h3>
             <p class="text-gray-300 mb-4 text-center">
               ¡Transforma tu manera de estudiar! FBQuiz es una herramienta innovadora que convierte tus cuestionarios tradicionales en desafíos interactivos, inspirados en la gamificación de plataformas como Duolingo. Carga tus preguntas, juega y refuerza tu conocimiento de una forma divertida y efectiva. ¡Prepárate para subir de nivel en tus estudios!
               <br>Creado con ❤️ por fabialancho.
             </p>
             
-            <a href="fabilingo.html" class="w-full max-w-sm bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-bold block text-center text-white text-xl shadow-lg transition-all transform hover:scale-[1.02]">
+            <a href="fabilingo.html" class="w-full max-w-sm bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-bold block text-center text-white text-lg md:text-xl shadow-lg transition-all transform hover:scale-[1.02]">
                 🎮 ¡Empezar a jugar!
             </a>
         </div>
       </section>
 
+      <!-- SECCIÓN OTROS (ACTUALIZADA) -->
       <section id="otros" class="category hidden">
-        <h2 class="text-4xl font-bold mb-8 text-center">✨ Otros</h2>
+        <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">✨ Otros</h2>
         <div class="grid gap-8 md:grid-cols-2">
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-2xl font-bold mb-2">Mi Canal de YouTube</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">Mi Canal de YouTube</h3>
             <p class="text-gray-300 mb-4">¡Suscríbete para ver gameplays, tutoriales de desarrollo y más!</p>
             <a href="https://www.youtube.com/@fabialancho_oficial" target="_blank" class="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-bold block text-center">
               ➡ Ir a YouTube
             </a>
           </div>
 
+          <!-- NUEVO: Descarga MC -->
+          <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+            <h3 class="text-xl md:text-2xl font-bold mb-2">MC 1.21.114 (Método Recuperado)</h3>
+            <p class="text-gray-300 mb-4">Herramienta para desbloquear MC en Windows 10/11. Lee las instrucciones.</p>
+            <button data-modal="modal-mc" class="modal-open-btn w-full bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">
+              ⬇ Descargar
+            </button>
+          </div>
+          
+          <!-- NUEVO: Descarga Office -->
+          <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+            <h3 class="text-xl md:text-2xl font-bold mb-2">Office LTSC 2021 (Archivos)</h3>
+            <p class="text-gray-300 mb-4">Archivos de configuración extra para ahorrar tiempo en la instalación de Office LTSC.</p>
+            <button data-modal="modal-office" class="modal-open-btn w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">
+              ⬇ Descargar
+            </button>
+          </div>
+
+          <!-- Códigos Promo (Actualizado) -->
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6">
-            <h3 class="text-2xl font-bold mb-2">Códigos Promo</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">Códigos Promo</h3>
             <p class="text-gray-300 mb-4">¿Tienes un código secreto? ¡Ingrésalo aquí!</p>
-            <div class="flex gap-2">
+            <div class="flex flex-col sm:flex-row gap-2">
               <input type="text" id="promo-code-input" placeholder="Escribe tu código..." class="flex-1 p-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
               <button id="promo-btn" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold">
                 Canjear
               </button>
             </div>
+            <!-- Mensaje de estado del código promo -->
+            <p id="promo-status" class="text-sm mt-2 h-4"></p>
           </div>
 
         </div>
@@ -412,9 +527,87 @@
 
       </main>
   </div>
+  
+  <!-- ====== MODALS ====== -->
+  
+  <!-- Fondo del Modal -->
+  <div id="modal-backdrop" class="modal-backdrop"></div>
+  
+  <!-- Modal para MC -->
+  <div id="modal-mc" class="modal-content">
+    <h2 class="text-2xl font-bold mb-4">Instrucciones MC 1.21.114</h2>
+    
+    <a href="https://www.mediafire.com/file/e4gowwd7g8autt2/MC+1.21.114+para+Windows+(Metodo+Recuperado)+by+fabialancho.zip/file" target="_blank" class="w-full bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center mb-4">
+      ⬇ Descargar de Mediafire
+    </a>
+    
+    <div class="modal-info">
+✨ Como desbloquear el maicra gratis
+Escrito por: @fabialancho 💻
+Creador de la herramienta M Center: @tinedpakgamer 💻
+
+━━━━━━━━━━━━━━━━━━━━━━
+⚠️ ATENCIÓN!! 
+━━━━━━━━━━━━━━━━━━━━━━
+
+Antes de usar la herramienta, por favor lee esto.
+El método de Minecraft solo funciona en PC con Win 10/11 por la compatibilidad y es 100% confiable, libre de virus, tranqui yo mismo lo comprobé :).
+Los demás archivos que no son el .exe y .appx son los archivos que necesita la herramienta que usaremos para desbloquear el MC mejor no los toques para que no se rompa nada ;)
+La razón por la que des e instalar si o si esta versión antigua de Bedrock (1.21.114) es porque en la ultima actualización subida en la Microsoft store, ah daba unos grandes problemas, que nos impide desbloquear el juego con este truco, y lo peor la interfaz de entrada no solo se ve horrible sino también te exige tener cuenta de Microsoft vinculada con minecraft. 
+Así que gracias a que recupere el .appx de la versión antigua podrás seguir disfrutando de MC gratis bien funcional.
+Debes de tener en cuenta todos los pasos a continuación si es que no sabes como usar este truco y si ya sabes como es el truco simplemente instala el .appx y realiza el truco correspondiente.
+Teniendo en cuenta esto ya pude instalar el MC en tu PC sin problemas ^^
+
+━━━━━━━━━━━━━━━━━━━━━━
+🏆 Como Instalar el MC
+━━━━━━━━━━━━━━━━━━━━━━
+
+Si quieres comenzar a tener el minecraft bedrock completamente gratis, debes instalar, ejecutando el archivo .appx que se encuentra en esta carpeta
+(Minecraft for Windows - by fabialancho - 1.21.114.Appx) 
+Solo dale doble clic, y al abrir la app de instalador de paquetes simplemente le das en instalar, solo espera a que instale todo y listo, ya tenes la versión de prueba lista, ahora para desbloquearlo sigue los siguientes pasos.
+
+Para desbloquearlo dale doble clic a el archivo (M Center.exe) para ejecutarlo, se te abrirá un cuadro que te preguntara si quieres que la app haga cambios en el equipo, tranquilo esta apps solo toca dependencia el juego, cuando le pides, para así desbloquearlo.
+Luego de esto, dentro de la app, le das clic a la tercer opción que tiene el logo de cuadros naranjas 🟧 y dentro de ahí seleccionas la opción que tiene un engranaje en el logo ⚙️, y le das clic en desactivar.
+
+Ahora le das en back (salir), y dentro del menú principal, dale clic a la primera opción (Install Cracked DLL), y le das en (Star), ahora solo espera a que la herramienta haga su trabajo, una vez que la herramienta haya terminado simplemente sales de esa app y busca minecraft para jugarlo completamente desbloqueado :D. 
+
+━━━━━━━━━━━━━━━━━━━━━━
+😅 Eso es todo
+━━━━━━━━━━━━━━━━━━━━━━
+
+Facilísimo Verdad!!, así de simple volvemos a tener el maicra completamente desbloqueado en nuestra PC.
+Espero les haya sirva.
+
+Y que tengas un lindo día ;)
+
+Atte
+👾 fabialancho
+    </div>
+    
+    <button class="modal-close-btn w-full bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-lg font-bold block text-center mt-4">
+      Cerrar
+    </button>
+  </div>
+  
+  <!-- Modal para Office -->
+  <div id="modal-office" class="modal-content">
+    <h2 class="text-2xl font-bold mb-4">Archivos Office LTSC 2021</h2>
+    
+    <a href="https://www.mediafire.com/file/p2yqj61tmomglms/Office_LTSC_2021_-_Archivos_para_ahorrar_tiempo_-_by_fabialancho%25282%2529.zip/file" target="_blank" class="w-full bg-blue-500 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center mb-4">
+      ⬇ Descargar de Mediafire
+    </a>
+    
+    <div class="modal-info">
+      Son archivos de configuración extra para ahorrarse tiempo, contiene el archivo de config. para office ltsc necesarios para ejecutarlo.
+    </div>
+    
+    <button class="modal-close-btn w-full bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-lg font-bold block text-center mt-4">
+      Cerrar
+    </button>
+  </div>
 
   <script>
-    // Script original para cambiar categorías
+    // --- Script para cambiar categorías ---
     const buttons = document.querySelectorAll('.category-btn');
     const categories = document.querySelectorAll('.category');
 
@@ -428,6 +621,9 @@
             cat.classList.remove('show');
           }
         });
+        
+        // Opcional: Quitar foco del botón en móvil tras clic
+        btn.blur();
       });
     });
 
@@ -450,45 +646,120 @@
       });
     }
 
-    // --- Nuevo script para Códigos Promo (Confeti) ---
+    // --- Script para Códigos Promo (Actualizado) ---
     const promoBtn = document.getElementById('promo-btn');
     const promoCodeInput = document.getElementById('promo-code-input');
+    const promoStatus = document.getElementById('promo-status');
 
-    if (promoBtn && promoCodeInput) {
+    if (promoBtn && promoCodeInput && promoStatus) {
       promoBtn.addEventListener('click', () => {
         const code = promoCodeInput.value.trim().toLowerCase();
+        
+        promoStatus.textContent = ''; // Limpiar estado anterior
 
         if (code === 'confeti') {
-          // ¡Lanzar confeti!
-          const duration = 5 * 1000; // 5 segundos
+          promoStatus.textContent = '¡Código canjeado! 🎉';
+          promoStatus.className = 'text-sm mt-2 h-4 text-green-400';
+          
+          const duration = 5 * 1000;
           const end = Date.now() + duration;
 
           (function frame() {
-            // Lanza confeti desde los lados
+            confetti({ particleCount: 2, angle: 60, spread: 55, origin: { x: 0 } });
+            confetti({ particleCount: 2, angle: 120, spread: 55, origin: { x: 1 } });
+            if (Date.now() < end) { requestAnimationFrame(frame); }
+          }());
+          
+        } else if (code === 'boom') {
+          promoStatus.textContent = '¡BOOM! 💥';
+          promoStatus.className = 'text-sm mt-2 h-4 text-orange-400';
+          
+          // 1. Temblor
+          document.body.classList.add('shake-page');
+          setTimeout(() => {
+            document.body.classList.remove('shake-page');
+          }, 500);
+          
+          // 2. Explosión
+          const end = Date.now() + (1 * 1000); // 1 segundo de explosión
+          const colors = ['#ff0000', '#ffa500', '#ffff00', '#808080', '#333333'];
+
+          (function frame() {
             confetti({
-              particleCount: 2,
-              angle: 60,
-              spread: 55,
-              origin: { x: 0 }
-            });
-            confetti({
-              particleCount: 2,
-              angle: 120,
-              spread: 55,
-              origin: { x: 1 }
+              particleCount: 50,
+              startVelocity: 35,
+              spread: 360,
+              origin: { x: Math.random(), y: Math.random() - 0.2 },
+              colors: colors,
+              decay: 0.92, // Desvanecimiento (humo)
+              gravity: 0.6
             });
 
-            // Sigue lanzando hasta que se acabe el tiempo
             if (Date.now() < end) {
               requestAnimationFrame(frame);
             }
           }());
+
+
+        } else {
+          // Código no válido
+          promoStatus.textContent = 'Cod no válido :(';
+          promoStatus.className = 'text-sm mt-2 h-4 text-red-500';
         }
         
-        // Limpia el input
         promoCodeInput.value = '';
       });
     }
+    
+    // --- Script para desvanecer nav móvil en scroll ---
+    const mobileNav = document.querySelector('.mobile-nav');
+    if (mobileNav) {
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 20) {
+          mobileNav.style.opacity = '0.75'; // Se desvanece un poco
+        } else {
+          mobileNav.style.opacity = '1'; // Opacidad completa arriba
+        }
+      });
+    }
+    
+    // --- Script para Modals ---
+    const openButtons = document.querySelectorAll('.modal-open-btn');
+    const closeButtons = document.querySelectorAll('.modal-close-btn');
+    const backdrop = document.getElementById('modal-backdrop');
+
+    const openModal = (modalId) => {
+      const modal = document.getElementById(modalId);
+      if (modal && backdrop) {
+        backdrop.classList.add('show');
+        modal.classList.add('show');
+      }
+    };
+
+    const closeModal = () => {
+      document.querySelectorAll('.modal-content.show').forEach(modal => {
+        modal.classList.remove('show');
+      });
+      if (backdrop) {
+        backdrop.classList.remove('show');
+      }
+    };
+
+    openButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const modalId = btn.getAttribute('data-modal');
+        openModal(modalId);
+      });
+    });
+
+    closeButtons.forEach(btn => {
+      btn.addEventListener('click', closeModal);
+    });
+
+    if (backdrop) {
+      backdrop.addEventListener('click', closeModal);
+    }
+
   </script>
 
 </body>
