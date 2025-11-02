@@ -153,6 +153,16 @@
       animation: spin-full 1s ease-in-out;
     }
 
+    /* NUEVA: Animación Askew */
+    @keyframes skew-it {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(4deg); } /* Inclinado a la derecha */
+    }
+    .askew-page {
+      animation: skew-it 2s ease-in-out forwards; /* 'forwards' mantiene el estado final */
+      transform-origin: center center; /* Asegura que gire desde el centro */
+    }
+
   </style>
 </head>
 <body class="text-white font-sans">
@@ -160,7 +170,6 @@
   <header class="flex flex-col md:flex-row items-center justify-center gap-6 py-10 bg-black/50">
     <img src="fabi_alancho_games.png" alt="Fabialancho Games Logo" class="w-48 md:w-64 rounded-full opacity-92">
     <div class="text-center md:text-left px-4">
-      <!-- Texto más pequeño en móvil -->
       <h1 class="text-4xl md:text-6xl font-extrabold tracking-wider">
         🔥 Fabialancho Games 🔥
       </h1>
@@ -170,14 +179,11 @@
 
   <div class="flex flex-col md:flex-row max-w-7xl mx-auto mt-10 px-6 gap-8">
     
-    <!-- Contenedor del Nav para sticky en móvil -->
     <div class="w-full md:w-60 md:sticky md:top-6">
       <aside class="w-full flex flex-col md:flex-col gap-4 mobile-nav">
-        <!-- Botones de categoría -->
         <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="apps">🤖 Apps</button>
         <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="juegos-web">🕹️ Juegos Web</button>
         <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="webs-random">🌐 Webs Random</button>
-        <!-- BOTÓN FBQUIZ NORMALIZADO -->
         <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="fbquiz-app">📓 FBQuiz</button>
         <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="otros">✨ Otros</button>
       </aside>
@@ -189,7 +195,6 @@
         <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">🕹️ JUEGOS ONLINE</h2>
         <p class="text-lg md:text-xl text-gray-300 mb-6 text-center">Aquí encontrarás algunos demos de mis juegos y otros juegos online que yo mismo creé, además de algunos geniales de otras páginas web.</p>
         
-        <!-- Demo Cleip Escapa -->
         <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 flex flex-col items-center mb-8">
             <h3 class="text-xl md:text-2xl font-bold mb-2">¿Te gustaría probar mi juego en tu navegador?</h3>
             <p class="text-gray-300 mb-4">¡Sobrevive a los 60 segundos del enemigo!</p>
@@ -207,10 +212,8 @@
         
         <h3 class="text-2xl md:text-3xl font-bold mt-12 mb-8 text-center">Más Juegos Web</h3>
         
-        <!-- Grid de Juegos Web (NUEVOS Y MOVIDOS) -->
         <div class="grid gap-8 md:grid-cols-3">
 
-          <!-- NUEVO: Stumble Guys -->
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-xl md:text-2xl font-bold mb-2">Stumble Guys</h3>
             <p class="text-sm text-cyan-400 mb-2">de @scopely</p>
@@ -220,7 +223,6 @@
             </a>
           </div>
 
-          <!-- NUEVO: Bloxd.io -->
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-xl md:text-2xl font-bold mb-2">Bloxd.io</h3>
             <p class="text-sm text-gray-400 mb-2">Juego web</p>
@@ -230,7 +232,6 @@
             </a>
           </div>
 
-          <!-- MOVIDO: Minecraft Classic -->
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-xl md:text-2xl font-bold mb-2">🕹 Minecraft Classic</h3>
             <p class="text-sm text-cyan-400 mb-2">de @mojang studios</p>
@@ -242,7 +243,6 @@
           
         </div>
 
-        <!-- Muy Pronto -->
         <div class="bg-gray-700/70 rounded-2xl shadow-lg p-6 flex flex-col items-center border-2 border-dashed border-gray-500 opacity-80 mt-12">
             <h3 class="text-xl md:text-2xl font-bold mb-2 text-gray-400">¡Muy Pronto!</h3>
             <p class="text-gray-300 text-center">Estamos cocinando nuevos minijuegos web para que los disfrutes directamente aquí. 🧑‍🍳</p>
@@ -250,7 +250,6 @@
         </div>
       </section>
 
-      <!-- SECCIÓN APPS (TÍTULO CAMBIADO) -->
       <section id="apps" class="category show">
         <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">JUEGOS</h2>
         
@@ -266,7 +265,6 @@
             <option value="pocket">Pocket Edition (¡Muy pronto!)</option>
           </select>
 
-          <!-- Links de versiones -->
           <div id="links-v0_9_6_0" class="version-links grid gap-2">
             <p class="text-gray-300 mb-4">¡Es la versión más reciente! Incluye nuevas correcciones de bugs, mejoras de rendimiento y contenido fresco. ¡A escapar! 💥</p>
             <a href="https://www.mediafire.com/file/y4qai4cs2cwfwfx/%25C2%25A1Cleip_Escapa%2521_v0.9.6.0_by_fabialancho.zip/file" target="_blank" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">⬇ Mediafire</a>
@@ -298,7 +296,6 @@
         </div>
         <hr class="border-gray-600 my-10">
 
-        <!-- TÍTULO CAMBIADO -->
         <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">APPS</h2>
         <div class="grid gap-8 md:grid-cols-1">
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
@@ -322,7 +319,6 @@
         <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">🌐 Webs Random</h2>
         <div class="grid gap-8 md:grid-cols-3">
 
-          <!-- NUEVO: Win 7 Games -->
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-xl md:text-2xl font-bold mb-2">Win 7 Games</h3>
             <p class="text-gray-300 mb-4">Descarga los juegos clásicos de Windows 7 (Solitario, Buscaminas...) para Win 8, 10 y 11.</p>
@@ -509,13 +505,12 @@
               <br>Creado con ❤️ por fabialancho.
             </p>
             
-            <a href="fabilingo.html" class="w-full max-w-sm bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-bold block text-center text-white text-lg md:text-xl shadow-lg transition-all transform hover:scale-[1.02]">
+            <a href="fbquiz.html" class="w-full max-w-sm bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-bold block text-center text-white text-lg md:text-xl shadow-lg transition-all transform hover:scale-[1.02]">
                 🎮 ¡Empezar a jugar!
             </a>
         </div>
       </section>
 
-      <!-- SECCIÓN OTROS (ACTUALIZADA) -->
       <section id="otros" class="category hidden">
         <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">✨ Otros</h2>
         <div class="grid gap-8 md:grid-cols-2">
@@ -528,7 +523,6 @@
             </a>
           </div>
 
-          <!-- Descarga MC -->
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-xl md:text-2xl font-bold mb-2">MC 1.21.114 (Método Recuperado)</h3>
             <p class="text-gray-300 mb-4">Herramienta para desbloquear MC en Windows 10/11. Lee las instrucciones.</p>
@@ -537,7 +531,6 @@
             </button>
           </div>
           
-          <!-- Descarga Office -->
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
             <h3 class="text-xl md:text-2xl font-bold mb-2">Office LTSC 2021 (Archivos)</h3>
             <p class="text-gray-300 mb-4">Archivos de configuración extra para ahorrar tiempo en la instalación de Office LTSC.</p>
@@ -546,7 +539,6 @@
             </button>
           </div>
 
-          <!-- Códigos Promo (Actualizado) -->
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6">
             <h3 class="text-xl md:text-2xl font-bold mb-2">Códigos Promo</h3>
             <p class="text-gray-300 mb-4">¿Tienes un código secreto? ¡Ingrésalo aquí!</p>
@@ -556,7 +548,6 @@
                 Canjear
               </button>
             </div>
-            <!-- Mensaje de estado del código promo -->
             <p id="promo-status" class="text-sm mt-2 h-4"></p>
           </div>
 
@@ -566,12 +557,8 @@
       </main>
   </div>
   
-  <!-- ====== MODALS ====== -->
-  
-  <!-- Fondo del Modal -->
   <div id="modal-backdrop" class="modal-backdrop"></div>
   
-  <!-- Modal para MC (INFO CORREGIDA Y ORDENADA) -->
   <div id="modal-mc" class="modal-content">
     <h2 class="text-2xl font-bold mb-4">Instrucciones MC 1.21.114</h2>
     
@@ -645,7 +632,6 @@ Atte:
     </button>
   </div>
   
-  <!-- Modal para Office -->
   <div id="modal-office" class="modal-content">
     <h2 class="text-2xl font-bold mb-4">Archivos Office LTSC 2021</h2>
     
@@ -660,6 +646,11 @@ Son archivos de configuración extra para ahorrarse tiempo. Contiene las configu
     <button class="modal-close-btn w-full bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-lg font-bold block text-center mt-4">
       Cerrar
     </button>
+  </div>
+  
+  <div id="fb-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0); z-index: 9998; display: none; opacity: 1; transition: background 2s ease; justify-content: center; align-items: center; flex-direction: column;">
+    <img id="fb-overlay-img" src="fabi_alancho_games.png" alt="Logo" style="width: 200px; border-radius: 50%; opacity: 0; transition: opacity 1.5s ease;">
+    <p id="fb-overlay-text" style="font-family: 'Orbitron', sans-serif; font-size: 2rem; color: white; opacity: 0; transition: opacity 1.5s ease; margin-top: 1rem;">FB GAMES</p>
   </div>
 
   <script>
@@ -736,6 +727,61 @@ Son archivos de configuración extra para ahorrarse tiempo. Contiene las configu
             document.body.classList.remove('spin-page');
           }, 1000);
 
+        // NUEVO CÓDIGO ASKEW
+        } else if (code === 'askew') {
+          promoStatus.textContent = '¡Inclinando! 😵';
+          promoStatus.className = 'text-sm mt-2 h-4 text-yellow-400';
+          document.body.classList.add('askew-page');
+        
+        // NUEVO CÓDIGO FB
+        } else if (code === 'fb') {
+          promoStatus.textContent = 'Iniciando secuencia... 🌌';
+          promoStatus.className = 'text-sm mt-2 h-4 text-purple-400';
+          
+          const overlay = document.getElementById('fb-overlay');
+          const overlayImg = document.getElementById('fb-overlay-img');
+          const overlayText = document.getElementById('fb-overlay-text');
+
+          if (overlay && overlayImg && overlayText) {
+            // 0. Reset styles and show
+            overlay.style.display = 'flex';
+            overlay.style.background = 'rgba(0,0,0,0)';
+            overlayImg.style.opacity = '0';
+            overlayText.style.opacity = '0';
+
+            // 1. Fade to black (starts at 100ms, ends at 2.1s)
+            setTimeout(() => {
+              overlay.style.background = 'rgba(0,0,0,1)';
+            }, 100); 
+
+            // 2. Fade in Image (starts at 2.1s, ends at 3.6s)
+            setTimeout(() => {
+              overlayImg.style.opacity = '1';
+            }, 2100); // After black fade-in
+
+            // 3. Fade in Text (starts at 3.1s, ends at 4.6s)
+            setTimeout(() => {
+              overlayText.style.opacity = '1';
+            }, 3100); // 1s after image starts
+            
+            // 5. Fade out image and text (starts at 7s, ends at 8.5s)
+            setTimeout(() => {
+              overlayImg.style.opacity = '0';
+              overlayText.style.opacity = '0';
+            }, 7000);
+
+            // 6. Fade out black (starts at 8.5s, ends at 10.5s)
+            setTimeout(() => {
+              overlay.style.background = 'rgba(0,0,0,0)';
+            }, 8500);
+            
+            // Hide overlay completely after all animations
+            setTimeout(() => {
+              overlay.style.display = 'none';
+              promoStatus.textContent = ''; // Clear status
+            }, 10500); // 8.5s + 2s transition
+          }
+        
         } else {
           // Código no válido
           promoStatus.textContent = 'Cod no válido :(';
@@ -789,4 +835,3 @@ Son archivos de configuración extra para ahorrarse tiempo. Contiene las configu
 
 </body>
 </html>
-
