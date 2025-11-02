@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>💙 FABIQUIZ</title>
+  <link rel="icon" href="cleip_milo.png" type="image/png">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    /* Estilo de fondo coherente con index.html */
+    body {
+      background: url("fondodeaurasalanochecer.jpeg") no-repeat center center fixed;
+      background-size: cover;
+    }
+
+    /* Clases de animación personalizadas */
+    @keyframes bounce-blue {
+      0%, 100% {
+        transform: translateY(0);
+        text-shadow: 0 0 5px rgba(59, 130, 246, 0.5);
+      }
+      50% {
+        transform: translateY(-10px);
+        text-shadow: 0 0 20px #3B82F6;
+      }
+    }
+
+    .animate-bounce-blue {
+      animation: bounce-blue 0.5s ease-in-out;
+    }
+    
+    /* VIBRACIÓN PARA RESPUESTA INCORRECTA */
+    @keyframes incorrect-vibrate {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+    }
+    .animate-incorrect-vibrate {
+      animation: incorrect-vibrate 0.3s ease-in-out 3;
+    }
+    
+    /* RETUMBO PARA RESPUESTA CORRECTA Y RACHAS */
+    @keyframes correct-vibrate {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
+      25% { transform: scale(1.01); box-shadow: 0 0 20px #3B82F6; }
+      50% { transform: scale(1); }
+      75% { transform: scale(1.01); box-shadow: 0 0 20px #3B82F6; }
+    }
+    .animate-correct-vibrate {
+      animation: correct-vibrate 0.2s ease-in-out;
+    }
+
+
+    @keyframes glow-expand {
+      0% { box-shadow: 0 0 0 rgba(59, 130, 246, 0.4); transform: scale(1); }
+      50% { box-shadow: 0 0 25px #3B82F6; transform: scale(1.05); }
+      100% { box-shadow: 0 0 0 rgba(59, 130, 246, 0); transform: scale(1); }
+    }
+
+    .animate-glow-expand {
+      animation: glow-expand 0.8s ease-out;
+    }
+    
+    @keyframes streak-glow {
+        0%, 100% { text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
+        50% { text-shadow: 0 0 30px #FBBF24; }
+    }
+    
+    .animate-streak-glow {
+        animation: streak-glow 0.5s infinite alternate;
+    }
+    
+    /* Efecto confeti (solo visual, sin JS) */
+    .confetti {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: 10;
+    }
+    
+    .confetti-piece {
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        opacity: 0;
+        transform-origin: 50% 50%;
+        animation: fall 3s infinite;
+    }
+    
+    @keyframes fall {
+        0% { opacity: 0; transform: translate(0, -100px) rotate(0deg); }
+        10% { opacity: 1; }
+        100% { opacity: 0; transform: translate(var(--x), 100vh) rotate(var(--r)); }
+    }
+
+    /* Colores del confeti */
+    .confetti-blue { background-color: #3B82F6; }
+    .confetti-white { background-color: #E5E7EB; }
+    .confetti-yellow { background-color: #FBBF24; }
+
+  </style>
+</head>
+<body class="text-white font-sans flex flex-col min-h-screen">
+
+  <header class="py-6 bg-black/50 text-center relative">
+    <h1 class="text-3xl font-extrabold flex items-center justify-center">
+      <span class="text-blue-500 text-5xl mr-2">💙</span> FABIQUIZ
+    </h1>
+    <span class="absolute top-2 right-4 text-sm text-gray-400 font-semibold">v0.7</span>
+  </header>
+
+  <div class="flex-grow flex items-center justify-center p-4">
+    <main id="game-container" class="w-full max-w-xl bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-10 transition-all duration-500">
+      
+      <div id="input-screen">
+          <h2 class="text-4xl font-extrabold text-center text-blue-400 mb-6">📝 Generador de Cuestionarios</h2>
+          
+          <div class="mb-4">
+            <label for="separator-select" class="block text-sm font-medium text-gray-300 mb-2">
+                Elige el caracter separador (pregunta [SEP] respuesta):
+            </label>
+            <select id="separator-select" class="w-full p-3 text-gray-900 bg-white rounded-xl shadow-md focus:ring-4 focus:ring-blue-500 focus:outline-none text-xl">
+                <option value="|">| (Barra Vertical) - Recomendado</option>
+                <option value="-">- (Guión)</option>
+                <option value=",">, (Coma)</option>
+                <option value=".">. (Punto)</option>
+                <option value=">">> (Mayor que)</option>
+                <option value="<">< (Menor que)</option>
+                <option value="=">= (Igual)</option>
+            </select>
+          </div>
+
+          <p class="text-lg text-gray-300 mb-4 text-center">Pega tu texto de estudio (en formato <code class="bg-gray-700 px-1 rounded">pregunta [SEP] respuesta</code>) para crear el quiz.</p>
+          
+          <textarea id="user-text" 
+                    placeholder="Pega aquí tu texto. Cada línea debe ser:
+¿Pregunta 1? | Respuesta 1
+¿Pregunta 2? | Respuesta 2
+(Si pones más separadores, se usarán como opciones para la Opción Múltiple)" 
+                    maxlength="10000"
+                    class="w-full h-48 p-4 text-gray-900 bg-white rounded-xl shadow-md focus:ring-4 focus:ring-blue-500 focus:outline-none text-xl mb-6 resize-none"></textarea>
+          
+          <p id="char-count" class="text-right text-sm text-gray-400 mb-6">0 / 10000 caracteres</p>
+
+          <button id="generate-button" 
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-2xl shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed">
+            Generar Cuestionario
+          </button>
+
+          <div id="loading-feedback" class="mt-4 text-center text-yellow-400 font-semibold hidden">
+              Cargando...
+          </div>
+      </div>
+      
+      <div id="quiz-screen" class="hidden">
+          <div class="flex justify-between items-center mb-6">
+            <div class="text-2xl font-bold">
+              Puntos: <span id="score" class="text-blue-400">0</span>
+            </div>
+            <div class="text-lg font-semibold">
+              Nivel: <span id="level" class="text-yellow-400">1</span>
+            </div>
+          </div>
+          
+          <div class="w-full bg-gray-700 rounded-full h-3 mb-8 shadow-inner">
+            <div id="progress-bar" class="bg-blue-500 h-3 rounded-full transition-all duration-500" style="width: 0%; box-shadow: 0 0 5px #3B82F6;"></div>
+          </div>
+    
+          <div id="question-area" class="text-center">
+            <p class="text-lg text-gray-300 mb-2" id="question-prompt">Responde la pregunta:</p>
+            <h2 id="question-word" class="text-4xl md:text-5xl font-extrabold text-white mb-6"></h2>
+            
+            <div id="streak-alert" class="text-3xl font-bold text-yellow-400 my-4 h-8 transition-all duration-300"></div>
+    
+            <input type="text" id="answer-input" placeholder="Escribe tu respuesta aquí..." 
+                   class="w-full p-4 text-gray-900 bg-white rounded-xl shadow-md focus:ring-4 focus:ring-blue-500 focus:outline-none text-center text-xl mb-6 transition-colors duration-300"
+                   autocapitalize="off" autocomplete="off" autocorrect="off">
+            
+            <button id="check-button" 
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-2xl shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-blue-500/50">
+              Comprobar
+            </button>
+
+            <div id="answer-options" class="grid grid-cols-1 gap-3 hidden">
+                </div>
+            
+            <div id="feedback" class="mt-6 text-2xl font-bold min-h-[3rem]"></div>
+          </div>
+      </div>
+      
+      <div id="finish-screen" class="hidden text-center">
+        <h2 class="text-5xl font-extrabold text-blue-400 mb-8 animate-bounce-blue">🎉 ¡Terminaste el cuestionario!</h2>
+        <div class="space-y-4 text-xl">
+          <p>Puntaje Total: <span id="final-score" class="text-blue-400 font-bold"></span></p>
+          <p>Nivel Alcanzado: <span id="final-level" class="text-yellow-400 font-bold"></span></p>
+          <p>Mejor Racha: <span id="final-streak" class="text-red-400 font-bold"></span></p>
+          <p id="total-errors" class="text-red-300"></p>
+        </div>
+        <div class="mt-8 space-y-4 md:space-y-0 md:space-x-4 flex flex-col md:flex-row justify-center">
+          <button id="retry-button" 
+                  class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl text-xl shadow-lg transition-all duration-200 transform hover:scale-105">
+            🔁 Volver a intentar
+          </button>
+          <button id="new-quiz-button"
+                  class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-xl text-xl shadow-lg transition-all duration-200 transform hover:scale-105 mt-4 md:mt-0">
+            ➕ Crear Nuevo Quiz
+          </button>
+          <a href="index.html" 
+             class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl text-xl shadow-lg transition-all duration-200 transform hover:scale-105 block text-center mt-4 md:mt-0">
+            ⬅ Volver al inicio
+          </a>
+        </div>
+      </div>
+
+    </main>
+  </div>
+  
+  <footer class="py-3 bg-black/50 text-center text-gray-500 text-sm">
+      ©2025 created by fabialancho
+  </footer>
+
+  <div id="confetti-container" class="confetti"></div>
+
+  <script>
+    // 1. Datos y Variables de Estado del Juego
+    let QUESTIONS = [];
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let level = 1;
+    let currentStreak = 0;
+    let bestStreak = 0;
+    let totalQuestions = 0;
+    let errorsInQuiz = 0;
+    let questionsLeft = [];
+    let currentQuestion;
+    let currentQuizType = 'input'; // 'input', 'tf', 'mc'
+
+    // Constantes de clases de animación
+    const INCORRECT_VIBRATE_CLASS = 'animate-incorrect-vibrate';
+    const CORRECT_VIBRATE_CLASS = 'animate-correct-vibrate';
+    const MC_ENABLED_AFTER = 3; // Habilitar Opción Múltiple después de la pregunta 4 (índice 3)
+
+    // 2. Referencias del DOM
+    const inputScreen = document.getElementById('input-screen');
+    const quizScreen = document.getElementById('quiz-screen');
+    const userTextarea = document.getElementById('user-text');
+    const generateButton = document.getElementById('generate-button');
+    const loadingFeedback = document.getElementById('loading-feedback');
+    const charCount = document.getElementById('char-count');
+    const separatorSelect = document.getElementById('separator-select');
+    
+    // Elementos del quiz
+    const questionWord = document.getElementById('question-word');
+    const answerInput = document.getElementById('answer-input');
+    const checkButton = document.getElementById('check-button');
+    const feedback = document.getElementById('feedback');
+    const scoreDisplay = document.getElementById('score');
+    const levelDisplay = document.getElementById('level');
+    const progressBar = document.getElementById('progress-bar');
+    const streakAlert = document.getElementById('streak-alert');
+    const gameContainer = document.getElementById('game-container');
+    const finishScreen = document.getElementById('finish-screen');
+    const retryButton = document.getElementById('retry-button');
+    const newQuizButton = document.getElementById('new-quiz-button');
+    const confettiContainer = document.getElementById('confetti-container');
+    const questionPrompt = document.getElementById('question-prompt');
+    const answerOptionsArea = document.getElementById('answer-options');
+
+    // Función de normalización para respuestas tolerantes
+    const normalize = (text) => text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").trim();
+
+    // 3. Funciones de Navegación
+    function showInputScreen() {
+        inputScreen.classList.remove('hidden');
+        quizScreen.classList.add('hidden');
+        finishScreen.classList.add('hidden');
+        userTextarea.value = '';
+        updateCharCount();
+        generateButton.disabled = true;
+        userTextarea.focus();
+    }
+    
+    function showQuizScreen() {
+        inputScreen.classList.add('hidden');
+        quizScreen.classList.remove('hidden');
+        finishScreen.classList.add('hidden');
+    }
+
+    // 4. Lógica de Generación y Parseo
+    async function handleGenerateQuiz() {
+        const text = userTextarea.value.trim();
+        if (text.length === 0) return;
+        
+        generateButton.disabled = true;
+        loadingFeedback.textContent = 'Generando...';
+        loadingFeedback.classList.remove('hidden');
+        
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        QUESTIONS = parseQuizText(text);
+        totalQuestions = QUESTIONS.length;
+        
+        if (totalQuestions > 0) {
+            startGame();
+            showQuizScreen();
+        } else {
+            loadingFeedback.textContent = `❌ Error. Asegúrate de que el texto siga el formato: pregunta [${separatorSelect.value}] respuesta`;
+            loadingFeedback.classList.remove('hidden');
+            generateButton.disabled = false;
+            
+            setTimeout(() => {
+                loadingFeedback.classList.add('hidden');
+                loadingFeedback.textContent = 'Cargando...';
+            }, 3000);
+            return;
+        }
+        
+        loadingFeedback.classList.add('hidden');
+    }
+
+
+    /**
+     * Parsea el texto usando el separador seleccionado.
+     */
+    function parseQuizText(text) {
+        // Escapar caracteres especiales para usar en RegExp si el separador no es un carácter simple.
+        const separator = separatorSelect.value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'); 
+        const lines = text.split('\n').filter(line => line.trim() !== '');
+        
+        // El separador debe ser una expresión regular para manejar espacios opcionales alrededor.
+        const separatorRegex = new RegExp(`\\s*${separator}\\s*`);
+        
+        return lines.map(line => {
+            // Dividir la línea por el separador
+            const parts = line.split(separatorRegex).map(p => p.trim()).filter(p => p.length > 0);
+            
+            if (parts.length >= 2) {
+                const question = parts[0];
+                const answer = parts[1];
+                
+                // Las opciones son la respuesta correcta más el resto de las partes
+                const options = parts.slice(1);
+                
+                return { 
+                    question: question, 
+                    answer: answer, 
+                    options: options,
+                    type: 'mixed'
+                };
+            }
+            return null;
+        }).filter(q => q !== null);
+    }
+    
+    // 5. Lógica del Juego (Adaptada)
+
+    function startGame() {
+        if (QUESTIONS.length === 0) return;
+
+        currentQuestionIndex = 0;
+        score = 0;
+        level = 1;
+        currentStreak = 0;
+        bestStreak = 0;
+        errorsInQuiz = 0;
+        questionsLeft = [...QUESTIONS];
+        
+        questionsLeft.sort(() => Math.random() - 0.5);
+
+        scoreDisplay.textContent = score;
+        levelDisplay.textContent = level;
+        progressBar.style.width = '0%';
+        feedback.innerHTML = '';
+        streakAlert.innerHTML = '';
+        
+        quizScreen.classList.remove('hidden');
+        finishScreen.classList.add('hidden');
+
+        loadQuestion();
+    }
+
+    function loadQuestion() {
+        if (currentQuestionIndex >= totalQuestions) {
+            finishGame();
+            return;
+        }
+        
+        currentQuestion = questionsLeft[currentQuestionIndex];
+        
+        const canDoMC = currentQuestionIndex >= MC_ENABLED_AFTER; 
+
+        // Ponderación de tipos de pregunta: Input (40%), MC (30%), T/F (30%) si disponibles.
+        const rand = Math.random();
+        currentQuizType = 'input'; // Default
+        
+        if (rand < 0.3 && canDoMC && currentQuestion.options.length > 1) {
+            currentQuizType = 'mc';
+        } else if (rand < 0.6) { // 30% a 60% -> T/F (siempre disponible)
+            currentQuizType = 'tf';
+        } 
+        
+        renderQuestionUI(currentQuestion);
+        
+        questionWord.classList.remove('animate-bounce-blue');
+        void questionWord.offsetWidth;
+        questionWord.classList.add('animate-bounce-blue');
+        
+        if (currentQuizType === 'input') {
+             answerInput.focus();
+        }
+    }
+
+    /**
+     * Renderiza los elementos de la UI según el tipo de quiz actual.
+     */
+    function renderQuestionUI(q) {
+        questionWord.textContent = q.question;
+        answerInput.value = '';
+        answerOptionsArea.innerHTML = '';
+        
+        // Ocultar elementos por defecto
+        answerInput.classList.add('hidden');
+        checkButton.classList.add('hidden');
+        answerOptionsArea.classList.add('hidden');
+        answerInput.disabled = false;
+        checkButton.disabled = false;
+        answerOptionsArea.classList.remove('grid-cols-2');
+
+        if (currentQuizType === 'input') {
+            questionPrompt.textContent = 'Escribe la respuesta:';
+            answerInput.classList.remove('hidden');
+            checkButton.classList.remove('hidden');
+        } else {
+            answerOptionsArea.classList.remove('hidden');
+            let optionsToRender = [];
+
+            if (currentQuizType === 'tf') {
+                questionPrompt.textContent = 'Verdadero o Falso:';
+                
+                // Lógica de V/F: 50% de las veces la declaración es Verdadera, 50% es Falsa.
+                const isStatementTrue = Math.random() < 0.5;
+                let displayedAnswer;
+                
+                // Obtener todas las respuestas, excluyendo la actual (para usar como distractor).
+                const correctNormalized = normalize(currentQuestion.answer);
+                const otherAnswers = QUESTIONS
+                    .map(q => q.answer)
+                    .filter(a => normalize(a) !== correctNormalized);
+                
+                // Determinar el enunciado
+                if (isStatementTrue || otherAnswers.length === 0) {
+                    // Opción: La declaración es verdadera (o no hay distractores disponibles).
+                    displayedAnswer = currentQuestion.answer;
+                    currentQuestion.tfCorrectAnswer = 'Verdadero';
+                } else {
+                    // Opción: La declaración es falsa (usando un distractor).
+                    // Seleccionar un distractor aleatorio de las otras respuestas.
+                    displayedAnswer = otherAnswers[Math.floor(Math.random() * otherAnswers.length)];
+                    currentQuestion.tfCorrectAnswer = 'Falso';
+                }
+                
+                questionWord.textContent = `¿Es correcto que la respuesta a "${currentQuestion.question}" es: ${displayedAnswer}?`;
+
+                optionsToRender = [
+                    { text: 'Verdadero', value: 'Verdadero' },
+                    { text: 'Falso', value: 'Falso' }
+                ];
+                answerOptionsArea.classList.add('grid-cols-2'); 
+
+            } else if (currentQuizType === 'mc') {
+                questionPrompt.textContent = 'Selecciona la opción correcta:';
+                
+                // Lógica de Opción Múltiple (igual que antes)
+                const correctNormalized = normalize(currentQuestion.answer);
+                
+                const distractorPool = QUESTIONS
+                    .map(q => q.answer)
+                    .filter(a => normalize(a) !== correctNormalized)
+                    .sort(() => 0.5 - Math.random());
+                
+                let finalOptions = [currentQuestion.answer];
+                
+                let distractorCount = 0;
+                while (finalOptions.length < 4 && distractorCount < distractorPool.length) {
+                    const distractor = distractorPool[distractorCount];
+                    if (!finalOptions.map(normalize).includes(normalize(distractor))) {
+                        finalOptions.push(distractor);
+                    }
+                    distractorCount++;
+                }
+                
+                finalOptions.sort(() => Math.random() - 0.5);
+                
+                optionsToRender = finalOptions.map(text => ({ text: text, value: text }));
+                answerOptionsArea.classList.add('grid-cols-2'); 
+            }
+
+            // Renderizar botones
+            optionsToRender.forEach((opt, index) => {
+                const button = document.createElement('button');
+                const label = ['A', 'B', 'C', 'D'][index] || '';
+                button.textContent = `${label}. ${opt.text}`;
+                button.dataset.value = opt.value;
+                button.className = 'answer-option-button w-full bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-xl text-lg shadow-md transition-all duration-150 mb-3 text-left';
+                button.addEventListener('click', () => checkButtonAnswer(opt.value));
+                answerOptionsArea.appendChild(button);
+            });
+        }
+    }
+
+
+    /**
+     * Maneja la comprobación de la respuesta del usuario (Modo Escribir) con Lógica Fuzzy.
+     */
+    function checkAnswer() {
+        if (answerInput.disabled) return;
+
+        const userAnswer = normalize(answerInput.value);
+        const correctAnswer = normalize(currentQuestion.answer);
+        
+        answerInput.disabled = true;
+        checkButton.disabled = true;
+
+        // --- NUEVA LÓGICA DE FUZZY MATCHING (TOLERANCIA) ---
+        let isCorrect = (userAnswer === correctAnswer); // 1. Coincidencia exacta
+
+        if (!isCorrect && userAnswer.length > 0 && correctAnswer.length > 0) {
+            // 2. Fuzzy Match (Inclusión): Si la respuesta del usuario está contenida en la correcta.
+            if (correctAnswer.includes(userAnswer)) {
+                // Acepta si la respuesta del usuario es al menos el 50% de la longitud de la correcta.
+                if (userAnswer.length >= correctAnswer.length * 0.5) {
+                    isCorrect = true;
+                }
+            }
+            
+            // 3. Fuzzy Match (Inclusión Inversa): Si la respuesta correcta está contenida en la del usuario.
+            if (!isCorrect && userAnswer.includes(correctAnswer)) {
+                // Acepta si la respuesta correcta es al menos el 50% de la longitud de la del usuario.
+                if (correctAnswer.length >= userAnswer.length * 0.5) {
+                    isCorrect = true;
+                }
+            }
+        }
+        // --- FIN LÓGICA DE FUZZY MATCHING ---
+
+
+        if (isCorrect) {
+            handleCorrectAnswer();
+        } else {
+            handleIncorrectAnswer(currentQuestion.answer);
+        }
+        
+        setTimeout(() => {
+            currentQuestionIndex++;
+            updateProgress();
+            feedback.innerHTML = '';
+            loadQuestion();
+        }, 1500);
+    }
+    
+    /**
+     * Maneja la comprobación de la respuesta del usuario (Modo Botones).
+     */
+    function checkButtonAnswer(userSelection) {
+        document.querySelectorAll('.answer-option-button').forEach(btn => btn.disabled = true);
+        
+        let isCorrect = false;
+        let correctAnswerText = '';
+
+        if (currentQuizType === 'tf') {
+            isCorrect = userSelection === currentQuestion.tfCorrectAnswer;
+            correctAnswerText = currentQuestion.tfCorrectAnswer;
+        } else if (currentQuizType === 'mc') {
+            isCorrect = normalize(userSelection) === normalize(currentQuestion.answer);
+            correctAnswerText = currentQuestion.answer;
+        }
+
+        // Resaltar el botón correcto e incorrecto
+        document.querySelectorAll('.answer-option-button').forEach(btn => {
+            const btnValue = btn.dataset.value;
+            
+            let isCorrectOption = false;
+            if (currentQuizType === 'tf') {
+                 isCorrectOption = btnValue === currentQuestion.tfCorrectAnswer;
+            } else if (currentQuizType === 'mc') {
+                 isCorrectOption = normalize(btnValue) === normalize(currentQuestion.answer);
+            }
+
+            if (isCorrectOption) {
+                 btn.classList.add('bg-green-600', 'ring-4', 'ring-green-400', 'animate-pulse');
+            } else if (btnValue === userSelection && !isCorrect) {
+                 btn.classList.add('bg-red-600', 'ring-4', 'ring-red-400');
+            }
+        });
+
+        if (isCorrect) {
+            handleCorrectAnswer();
+        } else {
+            handleIncorrectAnswer(correctAnswerText);
+        }
+        
+        setTimeout(() => {
+            currentQuestionIndex++;
+            updateProgress();
+            feedback.innerHTML = '';
+            loadQuestion();
+        }, 2500);
+    }
+
+    /**
+     * Lógica para una respuesta correcta (incluye Retumbo y Rachas).
+     */
+    function handleCorrectAnswer() {
+        feedback.innerHTML = '✅ <span class="text-green-400">¡Correcto!</span>';
+        feedback.classList.add('animate-bounce-blue');
+        setTimeout(() => feedback.classList.remove('animate-bounce-blue'), 500);
+        
+        // RETUMBO BÁSICO
+        gameContainer.classList.add(CORRECT_VIBRATE_CLASS);
+        setTimeout(() => gameContainer.classList.remove(CORRECT_VIBRATE_CLASS), 200);
+
+
+        const previousLevel = level;
+        score += 10;
+        scoreDisplay.textContent = score;
+        level = Math.floor(score / 50) + 1;
+        
+        if (level > previousLevel) {
+            levelUp();
+        }
+        levelDisplay.textContent = level;
+
+        currentStreak++;
+        bestStreak = Math.max(bestStreak, currentStreak);
+        
+        let retumboDuration = 0;
+
+        if (currentStreak === 5) {
+            showStreakAlert("🔥 ¡5 seguidas! (Retumbo)", true);
+            retumboDuration = 500;
+        } else if (currentStreak === 10) {
+            showStreakAlert("💥 ¡10 seguidas! (Retumbo Fuerte)", true);
+            retumboDuration = 800;
+        } else if (currentStreak > 10 && currentStreak % 5 === 0) {
+            showStreakAlert(`✨ ¡${currentStreak} seguidas!`);
+        }
+        
+        if (retumboDuration > 0) {
+             gameContainer.classList.add(CORRECT_VIBRATE_CLASS);
+             // Quitar la clase de retumbo después de la duración extra.
+             setTimeout(() => gameContainer.classList.remove(CORRECT_VIBRATE_CLASS), retumboDuration);
+        }
+    }
+
+    /**
+     * Lógica para una respuesta incorrecta (incluye Vibración).
+     */
+    function handleIncorrectAnswer(correctAnswer) {
+        errorsInQuiz++;
+        feedback.innerHTML = `❌ <span class="text-red-400">Incorrecto. Era: ${correctAnswer}</span>`;
+        
+        // VIBRACIÓN INCORRECTA
+        gameContainer.classList.add(INCORRECT_VIBRATE_CLASS);
+        setTimeout(() => gameContainer.classList.remove(INCORRECT_VIBRATE_CLASS), 900);
+
+        currentStreak = 0;
+        streakAlert.innerHTML = '';
+    }
+
+    function showStreakAlert(text, intense = false) {
+        streakAlert.textContent = text;
+        streakAlert.classList.remove('animate-streak-glow');
+        void streakAlert.offsetWidth;
+        if (intense) {
+            streakAlert.classList.add('animate-streak-glow');
+            spawnConfetti(50, ['confetti-yellow', 'confetti-white']);
+        }
+    }
+
+    function updateProgress() {
+        const progress = (currentQuestionIndex / totalQuestions) * 100;
+        progressBar.style.width = `${progress}%`;
+        
+        if (progress >= 100) {
+            progressBar.style.boxShadow = '0 0 10px #3B82F6, 0 0 20px rgba(59, 130, 246, 0.8)';
+        } else {
+            progressBar.style.boxShadow = '0 0 5px #3B82F6';
+        }
+    }
+
+    function levelUp() {
+        levelDisplay.classList.add('animate-glow-expand');
+        spawnConfetti(30, ['confetti-blue', 'confetti-white']);
+        setTimeout(() => levelDisplay.classList.remove('animate-glow-expand'), 800);
+    }
+
+    function finishGame() {
+        quizScreen.classList.add('hidden');
+        finishScreen.classList.remove('hidden');
+        
+        document.getElementById('final-score').textContent = score;
+        document.getElementById('final-level').textContent = level;
+        document.getElementById('final-streak').textContent = bestStreak;
+        document.getElementById('total-errors').textContent = `Errores cometidos: ${errorsInQuiz}`;
+        
+        if (errorsInQuiz === 0) {
+            const perfectText = document.querySelector('#finish-screen h2');
+            perfectText.textContent = "🌟 ¡PERFECTO!";
+            perfectText.classList.remove('text-blue-400');
+            perfectText.classList.add('text-yellow-400', 'animate-streak-glow');
+            
+            spawnConfetti(100, ['confetti-blue', 'confetti-yellow', 'confetti-white']);
+        } else {
+            const perfectText = document.querySelector('#finish-screen h2');
+            perfectText.textContent = "🎉 ¡Terminaste el cuestionario!";
+            perfectText.classList.add('text-blue-400');
+            perfectText.classList.remove('text-yellow-400', 'animate-streak-glow');
+            spawnConfetti(50, ['confetti-blue']);
+        }
+    }
+    
+    function spawnConfetti(count, colors) {
+        confettiContainer.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+            const piece = document.createElement('div');
+            piece.className = 'confetti-piece ' + colors[Math.floor(Math.random() * colors.length)];
+            
+            piece.style.left = Math.random() * 100 + 'vw';
+            piece.style.animationDelay = - (Math.random() * 2) + 's';
+            piece.style.setProperty('--x', (Math.random() * 200 - 100) + 'px');
+            piece.style.setProperty('--r', (Math.random() * 360) + 'deg');
+            
+            confettiContainer.appendChild(piece);
+        }
+        setTimeout(() => confettiContainer.innerHTML = '', 3000);
+    }
+    
+    function updateCharCount() {
+        const currentLength = userTextarea.value.length;
+        const maxLength = userTextarea.maxLength;
+        charCount.textContent = `${currentLength} / ${maxLength} caracteres`;
+        
+        generateButton.disabled = currentLength === 0;
+    }
+
+
+    // 6. Manejadores de Eventos
+    checkButton.addEventListener('click', checkAnswer);
+    answerInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !answerInput.disabled && !quizScreen.classList.contains('hidden')) {
+            checkAnswer();
+        }
+    });
+    retryButton.addEventListener('click', startGame);
+    newQuizButton.addEventListener('click', showInputScreen);
+    generateButton.addEventListener('click', handleGenerateQuiz);
+    userTextarea.addEventListener('input', updateCharCount);
+
+
+    // 7. Inicio del Flujo
+    showInputScreen();
+  </script>
+
+</body>
+</html>
