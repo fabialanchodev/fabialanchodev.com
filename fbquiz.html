@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>💙 FABIQUIZ</title>
+  <title>🏆 FBQUIZ</title>
   <link rel="icon" href="cleip_milo.png" type="image/png">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -11,7 +11,51 @@
     body {
       background: url("fondodeaurasalanochecer.jpeg") no-repeat center center fixed;
       background-size: cover;
+      /* Ocultar contenido principal al inicio para el splash */
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
     }
+    
+    body.loaded {
+        opacity: 1;
+    }
+    
+    /* --- NUEVO: Splash Screen --- */
+    #splash-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #000;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 100;
+        opacity: 1;
+        transition: opacity 1.5s ease;
+    }
+    #splash-screen img {
+        width: 150px;
+        border-radius: 50%;
+        opacity: 1;
+        transition: opacity 1s ease;
+    }
+    #splash-screen h1 {
+        font-family: 'Orbitron', sans-serif; /* Usando la fuente del index */
+        font-size: 3rem;
+        color: white;
+        opacity: 1;
+        transition: opacity 1s ease;
+        animation: blink 1s steps(1, end) 3; /* Parpadea 3 veces */
+    }
+    
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+    /* ------------------------------ */
 
     /* Clases de animación personalizadas */
     @keyframes bounce-blue {
@@ -105,11 +149,16 @@
 </head>
 <body class="text-white font-sans flex flex-col min-h-screen">
 
+  <div id="splash-screen">
+    <img src="fabi_alancho_games.png" alt="Logo">
+    <h1 id="splash-text">FBQUIZ</h1>
+  </div>
+
   <header class="py-6 bg-black/50 text-center relative">
     <h1 class="text-3xl font-extrabold flex items-center justify-center">
-      <span class="text-blue-500 text-5xl mr-2">💙</span> FABIQUIZ
+      <span class="text-blue-500 text-5xl mr-2">🏆</span> FBQUIZ
     </h1>
-    <span class="absolute top-2 right-4 text-sm text-gray-400 font-semibold">v0.7</span>
+    <span class="absolute top-2 right-4 text-sm text-gray-400 font-semibold">v0.8</span>
   </header>
 
   <div class="flex-grow flex items-center justify-center p-4">
@@ -241,7 +290,8 @@
     // Constantes de clases de animación
     const INCORRECT_VIBRATE_CLASS = 'animate-incorrect-vibrate';
     const CORRECT_VIBRATE_CLASS = 'animate-correct-vibrate';
-    const MC_ENABLED_AFTER = 3; // Habilitar Opción Múltiple después de la pregunta 4 (índice 3)
+    // CAMBIO: Habilitar Opción Múltiple desde el inicio
+    const MC_ENABLED_AFTER = 0; 
 
     // 2. Referencias del DOM
     const inputScreen = document.getElementById('input-screen');
@@ -268,6 +318,11 @@
     const confettiContainer = document.getElementById('confetti-container');
     const questionPrompt = document.getElementById('question-prompt');
     const answerOptionsArea = document.getElementById('answer-options');
+    
+    // NUEVO: Referencias del Splash Screen
+    const splashScreen = document.getElementById('splash-screen');
+    const splashImg = splashScreen.querySelector('img');
+    const splashText = splashScreen.querySelector('h1');
 
     // Función de normalización para respuestas tolerantes
     const normalize = (text) => text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").trim();
@@ -390,6 +445,7 @@
         
         currentQuestion = questionsLeft[currentQuestionIndex];
         
+        // CAMBIO: MC_ENABLED_AFTER es 0, así que 'canDoMC' siempre es true
         const canDoMC = currentQuestionIndex >= MC_ENABLED_AFTER; 
 
         // Ponderación de tipos de pregunta: Input (40%), MC (30%), T/F (30%) si disponibles.
@@ -476,12 +532,14 @@
                 // Lógica de Opción Múltiple (igual que antes)
                 const correctNormalized = normalize(currentQuestion.answer);
                 
+                // Usa las opciones extra del usuario si las proveyó
+                let finalOptions = [...currentQuestion.options];
+
+                // Si no hay suficientes opciones, rellena con distractores de otras preguntas
                 const distractorPool = QUESTIONS
                     .map(q => q.answer)
                     .filter(a => normalize(a) !== correctNormalized)
                     .sort(() => 0.5 - Math.random());
-                
-                let finalOptions = [currentQuestion.answer];
                 
                 let distractorCount = 0;
                 while (finalOptions.length < 4 && distractorCount < distractorPool.length) {
@@ -761,7 +819,31 @@
 
 
     // 7. Inicio del Flujo
-    showInputScreen();
+    // showInputScreen(); // Se llama después del splash
+
+    // --- NUEVO: Lógica del Splash Screen ---
+    window.onload = () => {
+        // 1. Espera 3 segundos (para la animación de parpadeo)
+        setTimeout(() => {
+            // 2. Desvanece el logo y el texto
+            splashImg.style.opacity = '0';
+            splashText.style.opacity = '0';
+            
+            // 3. Espera 1s (transición de logo/texto) y desvanece el fondo negro
+            setTimeout(() => {
+                splashScreen.style.opacity = '0';
+                // 4. Muestra el contenido principal de la página
+                document.body.classList.add('loaded');
+                
+                // 5. Espera 1.5s (transición del fondo) y elimina el splash
+                setTimeout(() => {
+                    splashScreen.style.display = 'none';
+                    // 6. Inicia el flujo normal de la app
+                    showInputScreen();
+                }, 1500);
+            }, 1000);
+        }, 3000); // 3 segundos de parpadeo
+    };
   </script>
 
 </body>
