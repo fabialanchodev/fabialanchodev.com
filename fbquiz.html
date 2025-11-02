@@ -11,12 +11,18 @@
     body {
       background: url("fondodeaurasalanochecer.jpeg") no-repeat center center fixed;
       background-size: cover;
-      /* Ocultar contenido principal al inicio para el splash */
-      opacity: 0;
-      transition: opacity 1s ease-in-out;
+      /* FIX CRÍTICO: Eliminar opacity: 0 del body */
+      opacity: 1; 
+      transition: none; /* No queremos que el body haga la transición */
     }
     
-    body.loaded {
+    /* Nueva clase para controlar el contenido principal */
+    .main-content-wrapper {
+        opacity: 0; /* Contenido principal oculto al inicio */
+        transition: opacity 1s ease-in-out;
+    }
+    
+    .main-content-wrapper.show {
         opacity: 1;
     }
     
@@ -27,7 +33,7 @@
         left: 0;
         width: 100vw;
         height: 100vh;
-        background-color: #000;
+        background-color: #000; /* Fondo negro */
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -43,7 +49,7 @@
         transition: opacity 1s ease;
     }
     #splash-screen h1 {
-        font-family: 'Orbitron', sans-serif; /* Usando la fuente del index */
+        font-family: 'Orbitron', sans-serif;
         font-size: 3rem;
         color: white;
         opacity: 1;
@@ -55,9 +61,8 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
     }
-    /* ------------------------------ */
+    /* ... (resto de estilos omitidos por brevedad) ... */
 
-    /* Clases de animación personalizadas */
     @keyframes bounce-blue {
       0%, 100% {
         transform: translateY(0);
@@ -73,7 +78,6 @@
       animation: bounce-blue 0.5s ease-in-out;
     }
     
-    /* VIBRACIÓN PARA RESPUESTA INCORRECTA */
     @keyframes incorrect-vibrate {
       0%, 100% { transform: translateX(0); }
       25% { transform: translateX(-5px); }
@@ -84,7 +88,6 @@
       animation: incorrect-vibrate 0.3s ease-in-out 3;
     }
     
-    /* RETUMBO PARA RESPUESTA CORRECTA Y RACHAS */
     @keyframes correct-vibrate {
       0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
       25% { transform: scale(1.01); box-shadow: 0 0 20px #3B82F6; }
@@ -115,7 +118,6 @@
         animation: streak-glow 0.5s infinite alternate;
     }
     
-    /* Efecto confeti (solo visual, sin JS) */
     .confetti {
         position: absolute;
         width: 100%;
@@ -140,138 +142,150 @@
         100% { opacity: 0; transform: translate(var(--x), 100vh) rotate(var(--r)); }
     }
 
-    /* Colores del confeti */
     .confetti-blue { background-color: #3B82F6; }
     .confetti-white { background-color: #E5E7EB; }
     .confetti-yellow { background-color: #FBBF24; }
-
+    
   </style>
 </head>
 <body class="text-white font-sans flex flex-col min-h-screen">
 
   <div id="splash-screen">
-    <img src="fabi_alancho_games.png" alt="Logo">
+    <img src="fabi_alancho_games.png" alt="Logo"> 
     <h1 id="splash-text">FBQUIZ</h1>
   </div>
 
-  <header class="py-6 bg-black/50 text-center relative">
-    <h1 class="text-3xl font-extrabold flex items-center justify-center">
-      <span class="text-blue-500 text-5xl mr-2">🏆</span> FBQUIZ
-    </h1>
-    <span class="absolute top-2 right-4 text-sm text-gray-400 font-semibold">v0.8</span>
-  </header>
-
-  <div class="flex-grow flex items-center justify-center p-4">
-    <main id="game-container" class="w-full max-w-xl bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-10 transition-all duration-500">
+  <div id="app-content-wrapper" class="main-content-wrapper flex flex-col min-h-screen">
       
-      <div id="input-screen">
-          <h2 class="text-4xl font-extrabold text-center text-blue-400 mb-6">📝 Generador de Cuestionarios</h2>
-          
-          <div class="mb-4">
-            <label for="separator-select" class="block text-sm font-medium text-gray-300 mb-2">
-                Elige el caracter separador (pregunta [SEP] respuesta):
-            </label>
-            <select id="separator-select" class="w-full p-3 text-gray-900 bg-white rounded-xl shadow-md focus:ring-4 focus:ring-blue-500 focus:outline-none text-xl">
-                <option value="|">| (Barra Vertical) - Recomendado</option>
-                <option value="-">- (Guión)</option>
-                <option value=",">, (Coma)</option>
-                <option value=".">. (Punto)</option>
-                <option value=">">> (Mayor que)</option>
-                <option value="<">< (Menor que)</option>
-                <option value="=">= (Igual)</option>
-            </select>
-          </div>
-
-          <p class="text-lg text-gray-300 mb-4 text-center">Pega tu texto de estudio (en formato <code class="bg-gray-700 px-1 rounded">pregunta [SEP] respuesta</code>) para crear el quiz.</p>
-          
-          <textarea id="user-text" 
-                    placeholder="Pega aquí tu texto. Cada línea debe ser:
-¿Pregunta 1? | Respuesta 1
-¿Pregunta 2? | Respuesta 2
-(Si pones más separadores, se usarán como opciones para la Opción Múltiple)" 
-                    maxlength="10000"
-                    class="w-full h-48 p-4 text-gray-900 bg-white rounded-xl shadow-md focus:ring-4 focus:ring-blue-500 focus:outline-none text-xl mb-6 resize-none"></textarea>
-          
-          <p id="char-count" class="text-right text-sm text-gray-400 mb-6">0 / 10000 caracteres</p>
-
-          <button id="generate-button" 
-                  class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-2xl shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed">
-            Generar Cuestionario
-          </button>
-
-          <div id="loading-feedback" class="mt-4 text-center text-yellow-400 font-semibold hidden">
-              Cargando...
-          </div>
-      </div>
-      
-      <div id="quiz-screen" class="hidden">
-          <div class="flex justify-between items-center mb-6">
-            <div class="text-2xl font-bold">
-              Puntos: <span id="score" class="text-blue-400">0</span>
-            </div>
-            <div class="text-lg font-semibold">
-              Nivel: <span id="level" class="text-yellow-400">1</span>
-            </div>
-          </div>
-          
-          <div class="w-full bg-gray-700 rounded-full h-3 mb-8 shadow-inner">
-            <div id="progress-bar" class="bg-blue-500 h-3 rounded-full transition-all duration-500" style="width: 0%; box-shadow: 0 0 5px #3B82F6;"></div>
-          </div>
+      <header class="py-6 bg-black/50 text-center relative">
+        <h1 class="text-3xl font-extrabold flex items-center justify-center">
+          <span class="text-blue-500 text-5xl mr-2">🏆</span> FBQUIZ
+        </h1>
+        <span class="absolute top-2 right-4 text-sm text-gray-400 font-semibold">v0.8</span>
+      </header>
     
-          <div id="question-area" class="text-center">
-            <p class="text-lg text-gray-300 mb-2" id="question-prompt">Responde la pregunta:</p>
-            <h2 id="question-word" class="text-4xl md:text-5xl font-extrabold text-white mb-6"></h2>
-            
-            <div id="streak-alert" class="text-3xl font-bold text-yellow-400 my-4 h-8 transition-all duration-300"></div>
+      <div class="flex-grow flex items-center justify-center p-4">
+        <main id="game-container" class="w-full max-w-xl bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-10 transition-all duration-500">
+          
+          <div id="input-screen">
+              <h2 class="text-4xl font-extrabold text-center text-blue-400 mb-6">📝 Generador de Cuestionarios</h2>
+              
+              <div class="mb-4">
+                <label for="separator-select" class="block text-sm font-medium text-gray-300 mb-2">
+                    Elige el caracter separador (pregunta [SEP] respuesta):
+                </label>
+                <select id="separator-select" class="w-full p-3 text-gray-900 bg-white rounded-xl shadow-md focus:ring-4 focus:ring-blue-500 focus:outline-none text-xl">
+                    <option value="|">| (Barra Vertical) - Recomendado</option>
+                    <option value="-">- (Guión)</option>
+                    <option value=",">, (Coma)</option>
+                    <option value=".">. (Punto)</option>
+                    <option value=">">> (Mayor que)</option>
+                    <option value="<">< (Menor que)</option>
+                    <option value="=">= (Igual)</option>
+                </select>
+              </div>
     
-            <input type="text" id="answer-input" placeholder="Escribe tu respuesta aquí..." 
-                   class="w-full p-4 text-gray-900 bg-white rounded-xl shadow-md focus:ring-4 focus:ring-blue-500 focus:outline-none text-center text-xl mb-6 transition-colors duration-300"
-                   autocapitalize="off" autocomplete="off" autocorrect="off">
-            
-            <button id="check-button" 
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-2xl shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-blue-500/50">
-              Comprobar
-            </button>
-
-            <div id="answer-options" class="grid grid-cols-1 gap-3 hidden">
+              <p class="text-lg text-gray-300 mb-4 text-center">Pega tu texto de estudio (en formato <code class="bg-gray-700 px-1 rounded">pregunta [SEP] respuesta</code>) para crear el quiz.</p>
+              
+              <textarea id="user-text" 
+                        placeholder="Pega aquí tu texto. Cada línea debe ser:
+    ¿Pregunta 1? | Respuesta 1
+    ¿Pregunta 2? | Respuesta 2
+    (Si pones más separadores, se usarán como opciones para la Opción Múltiple)" 
+                        maxlength="10000"
+                        class="w-full h-48 p-4 text-gray-900 bg-white rounded-xl shadow-md focus:ring-4 focus:ring-blue-500 focus:outline-none text-xl mb-6 resize-none"></textarea>
+              
+              <p id="char-count" class="text-right text-sm text-gray-400 mb-6">0 / 10000 caracteres</p>
+    
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <button id="generate-button" 
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-2xl shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed">
+                  Estudiar Ahora
+                </button>
+                <button id="save-button" 
+                        class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl text-2xl shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-amber-500/50 disabled:opacity-50 disabled:cursor-not-allowed">
+                  💾 Guardar
+                </button>
+              </div>
+    
+              <div id="loading-feedback" class="mt-4 text-center text-yellow-400 font-semibold hidden">
+                  Cargando...
+              </div>
+              
+              <hr class="border-gray-600 my-6">
+              <h3 class="text-3xl font-extrabold text-center text-blue-400 mb-6">Mis Cuestionarios</h3>
+              <div id="saved-quizzes-list" class="max-h-60 overflow-y-auto pr-2 space-y-3">
+                  <p class="text-gray-400 text-center">No hay cuestionarios guardados.</p>
+              </div>
+          </div>
+          
+          <div id="quiz-screen" class="hidden">
+              <div class="flex justify-between items-center mb-6">
+                <div class="text-2xl font-bold">
+                  Puntos: <span id="score" class="text-blue-400">0</span>
                 </div>
-            
-            <div id="feedback" class="mt-6 text-2xl font-bold min-h-[3rem]"></div>
+                <div class="text-lg font-semibold">
+                  Nivel: <span id="level" class="text-yellow-400">1</span>
+                </div>
+              </div>
+              
+              <div class="w-full bg-gray-700 rounded-full h-3 mb-8 shadow-inner">
+                <div id="progress-bar" class="bg-blue-500 h-3 rounded-full transition-all duration-500" style="width: 0%; box-shadow: 0 0 5px #3B82F6;"></div>
+              </div>
+        
+              <div id="question-area" class="text-center">
+                <p class="text-lg text-gray-300 mb-2" id="question-prompt">Responde la pregunta:</p>
+                <h2 id="question-word" class="text-4xl md:text-5xl font-extrabold text-white mb-6"></h2>
+                
+                <div id="streak-alert" class="text-3xl font-bold text-yellow-400 my-4 h-8 transition-all duration-300"></div>
+        
+                <input type="text" id="answer-input" placeholder="Escribe tu respuesta aquí..." 
+                       class="w-full p-4 text-gray-900 bg-white rounded-xl shadow-md focus:ring-4 focus:ring-blue-500 focus:outline-none text-center text-xl mb-6 transition-colors duration-300"
+                       autocapitalize="off" autocomplete="off" autocorrect="off">
+                
+                <button id="check-button" 
+                        class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-2xl shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-blue-500/50">
+                  Comprobar
+                </button>
+    
+                <div id="answer-options" class="grid grid-cols-1 gap-3 hidden">
+                    </div>
+                
+                <div id="feedback" class="mt-6 text-2xl font-bold min-h-[3rem]"></div>
+              </div>
           </div>
+          
+          <div id="finish-screen" class="hidden text-center">
+            <h2 class="text-5xl font-extrabold text-blue-400 mb-8 animate-bounce-blue">🎉 ¡Terminaste el cuestionario!</h2>
+            <div class="space-y-4 text-xl">
+              <p>Puntaje Total: <span id="final-score" class="text-blue-400 font-bold"></span></p>
+              <p>Nivel Alcanzado: <span id="final-level" class="text-yellow-400 font-bold"></span></p>
+              <p>Mejor Racha: <span id="final-streak" class="text-red-400 font-bold"></span></p>
+              <p id="total-errors" class="text-red-300"></p>
+            </div>
+            <div class="mt-8 space-y-4 md:space-y-0 md:space-x-4 flex flex-col md:flex-row justify-center">
+              <button id="retry-button" 
+                      class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl text-xl shadow-lg transition-all duration-200 transform hover:scale-105">
+                🔁 Volver a intentar
+              </button>
+              <button id="new-quiz-button"
+                      class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-xl text-xl shadow-lg transition-all duration-200 transform hover:scale-105 mt-4 md:mt-0">
+                ➕ Crear Nuevo Quiz
+              </button>
+              <a href="index.html" 
+                 class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl text-xl shadow-lg transition-all duration-200 transform hover:scale-105 block text-center mt-4 md:mt-0">
+                ⬅ Volver al inicio
+              </a>
+            </div>
+          </div>
+    
+        </main>
       </div>
       
-      <div id="finish-screen" class="hidden text-center">
-        <h2 class="text-5xl font-extrabold text-blue-400 mb-8 animate-bounce-blue">🎉 ¡Terminaste el cuestionario!</h2>
-        <div class="space-y-4 text-xl">
-          <p>Puntaje Total: <span id="final-score" class="text-blue-400 font-bold"></span></p>
-          <p>Nivel Alcanzado: <span id="final-level" class="text-yellow-400 font-bold"></span></p>
-          <p>Mejor Racha: <span id="final-streak" class="text-red-400 font-bold"></span></p>
-          <p id="total-errors" class="text-red-300"></p>
-        </div>
-        <div class="mt-8 space-y-4 md:space-y-0 md:space-x-4 flex flex-col md:flex-row justify-center">
-          <button id="retry-button" 
-                  class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl text-xl shadow-lg transition-all duration-200 transform hover:scale-105">
-            🔁 Volver a intentar
-          </button>
-          <button id="new-quiz-button"
-                  class="bg-yellow-600 hover:bg-yellow-700 text-white font-bold py-3 px-6 rounded-xl text-xl shadow-lg transition-all duration-200 transform hover:scale-105 mt-4 md:mt-0">
-            ➕ Crear Nuevo Quiz
-          </button>
-          <a href="index.html" 
-             class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl text-xl shadow-lg transition-all duration-200 transform hover:scale-105 block text-center mt-4 md:mt-0">
-            ⬅ Volver al inicio
-          </a>
-        </div>
-      </div>
-
-    </main>
-  </div>
-  
-  <footer class="py-3 bg-black/50 text-center text-gray-500 text-sm">
-      ©2025 created by fabialancho
-  </footer>
-
-  <div id="confetti-container" class="confetti"></div>
+      <footer class="py-3 bg-black/50 text-center text-gray-500 text-sm">
+          ©2025 created by fabialancho
+      </footer>
+  </div> <div id="confetti-container" class="confetti"></div>
 
   <script>
     // 1. Datos y Variables de Estado del Juego
@@ -287,22 +301,22 @@
     let currentQuestion;
     let currentQuizType = 'input'; // 'input', 'tf', 'mc'
 
-    // Constantes de clases de animación
     const INCORRECT_VIBRATE_CLASS = 'animate-incorrect-vibrate';
     const CORRECT_VIBRATE_CLASS = 'animate-correct-vibrate';
-    // CAMBIO: Habilitar Opción Múltiple desde el inicio
-    const MC_ENABLED_AFTER = 0; 
+    const MC_ENABLED_AFTER = 0;
+    const QUIZ_STORAGE_KEY = 'fbquiz-savedQuizzes';
 
     // 2. Referencias del DOM
     const inputScreen = document.getElementById('input-screen');
     const quizScreen = document.getElementById('quiz-screen');
     const userTextarea = document.getElementById('user-text');
     const generateButton = document.getElementById('generate-button');
+    const saveButton = document.getElementById('save-button');
     const loadingFeedback = document.getElementById('loading-feedback');
     const charCount = document.getElementById('char-count');
     const separatorSelect = document.getElementById('separator-select');
+    const savedQuizzesList = document.getElementById('saved-quizzes-list');
     
-    // Elementos del quiz
     const questionWord = document.getElementById('question-word');
     const answerInput = document.getElementById('answer-input');
     const checkButton = document.getElementById('check-button');
@@ -319,10 +333,11 @@
     const questionPrompt = document.getElementById('question-prompt');
     const answerOptionsArea = document.getElementById('answer-options');
     
-    // NUEVO: Referencias del Splash Screen
     const splashScreen = document.getElementById('splash-screen');
     const splashImg = splashScreen.querySelector('img');
     const splashText = splashScreen.querySelector('h1');
+    // FIX: NUEVA REFERENCIA al contenedor del contenido
+    const appContentWrapper = document.getElementById('app-content-wrapper');
 
     // Función de normalización para respuestas tolerantes
     const normalize = (text) => text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").trim();
@@ -334,7 +349,7 @@
         finishScreen.classList.add('hidden');
         userTextarea.value = '';
         updateCharCount();
-        generateButton.disabled = true;
+        renderSavedQuizzes();
         userTextarea.focus();
     }
     
@@ -344,12 +359,13 @@
         finishScreen.classList.add('hidden');
     }
 
-    // 4. Lógica de Generación y Parseo
+    // 4. Lógica de Generación y Parseo (Omitida por ser idéntica al código anterior)
     async function handleGenerateQuiz() {
         const text = userTextarea.value.trim();
         if (text.length === 0) return;
         
         generateButton.disabled = true;
+        saveButton.disabled = true;
         loadingFeedback.textContent = 'Generando...';
         loadingFeedback.classList.remove('hidden');
         
@@ -365,6 +381,7 @@
             loadingFeedback.textContent = `❌ Error. Asegúrate de que el texto siga el formato: pregunta [${separatorSelect.value}] respuesta`;
             loadingFeedback.classList.remove('hidden');
             generateButton.disabled = false;
+            saveButton.disabled = false;
             
             setTimeout(() => {
                 loadingFeedback.classList.add('hidden');
@@ -376,27 +393,18 @@
         loadingFeedback.classList.add('hidden');
     }
 
-
-    /**
-     * Parsea el texto usando el separador seleccionado.
-     */
     function parseQuizText(text) {
-        // Escapar caracteres especiales para usar en RegExp si el separador no es un carácter simple.
         const separator = separatorSelect.value.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&'); 
         const lines = text.split('\n').filter(line => line.trim() !== '');
         
-        // El separador debe ser una expresión regular para manejar espacios opcionales alrededor.
         const separatorRegex = new RegExp(`\\s*${separator}\\s*`);
         
         return lines.map(line => {
-            // Dividir la línea por el separador
             const parts = line.split(separatorRegex).map(p => p.trim()).filter(p => p.length > 0);
             
             if (parts.length >= 2) {
                 const question = parts[0];
                 const answer = parts[1];
-                
-                // Las opciones son la respuesta correcta más el resto de las partes
                 const options = parts.slice(1);
                 
                 return { 
@@ -410,8 +418,7 @@
         }).filter(q => q !== null);
     }
     
-    // 5. Lógica del Juego (Adaptada)
-
+    // 5. Lógica del Juego (Omitida por ser idéntica al código anterior)
     function startGame() {
         if (QUESTIONS.length === 0) return;
 
@@ -422,7 +429,6 @@
         bestStreak = 0;
         errorsInQuiz = 0;
         questionsLeft = [...QUESTIONS];
-        
         questionsLeft.sort(() => Math.random() - 0.5);
 
         scoreDisplay.textContent = score;
@@ -433,28 +439,22 @@
         
         quizScreen.classList.remove('hidden');
         finishScreen.classList.add('hidden');
-
         loadQuestion();
     }
-
+    
     function loadQuestion() {
         if (currentQuestionIndex >= totalQuestions) {
             finishGame();
             return;
         }
-        
         currentQuestion = questionsLeft[currentQuestionIndex];
-        
-        // CAMBIO: MC_ENABLED_AFTER es 0, así que 'canDoMC' siempre es true
         const canDoMC = currentQuestionIndex >= MC_ENABLED_AFTER; 
-
-        // Ponderación de tipos de pregunta: Input (40%), MC (30%), T/F (30%) si disponibles.
         const rand = Math.random();
-        currentQuizType = 'input'; // Default
+        currentQuizType = 'input';
         
         if (rand < 0.3 && canDoMC && currentQuestion.options.length > 1) {
             currentQuizType = 'mc';
-        } else if (rand < 0.6) { // 30% a 60% -> T/F (siempre disponible)
+        } else if (rand < 0.6) {
             currentQuizType = 'tf';
         } 
         
@@ -468,16 +468,12 @@
              answerInput.focus();
         }
     }
-
-    /**
-     * Renderiza los elementos de la UI según el tipo de quiz actual.
-     */
+    
     function renderQuestionUI(q) {
         questionWord.textContent = q.question;
         answerInput.value = '';
         answerOptionsArea.innerHTML = '';
         
-        // Ocultar elementos por defecto
         answerInput.classList.add('hidden');
         checkButton.classList.add('hidden');
         answerOptionsArea.classList.add('hidden');
@@ -495,51 +491,29 @@
 
             if (currentQuizType === 'tf') {
                 questionPrompt.textContent = 'Verdadero o Falso:';
-                
-                // Lógica de V/F: 50% de las veces la declaración es Verdadera, 50% es Falsa.
                 const isStatementTrue = Math.random() < 0.5;
                 let displayedAnswer;
-                
-                // Obtener todas las respuestas, excluyendo la actual (para usar como distractor).
                 const correctNormalized = normalize(currentQuestion.answer);
-                const otherAnswers = QUESTIONS
-                    .map(q => q.answer)
-                    .filter(a => normalize(a) !== correctNormalized);
+                const otherAnswers = QUESTIONS.map(q => q.answer).filter(a => normalize(a) !== correctNormalized);
                 
-                // Determinar el enunciado
                 if (isStatementTrue || otherAnswers.length === 0) {
-                    // Opción: La declaración es verdadera (o no hay distractores disponibles).
                     displayedAnswer = currentQuestion.answer;
                     currentQuestion.tfCorrectAnswer = 'Verdadero';
                 } else {
-                    // Opción: La declaración es falsa (usando un distractor).
-                    // Seleccionar un distractor aleatorio de las otras respuestas.
                     displayedAnswer = otherAnswers[Math.floor(Math.random() * otherAnswers.length)];
                     currentQuestion.tfCorrectAnswer = 'Falso';
                 }
                 
                 questionWord.textContent = `¿Es correcto que la respuesta a "${currentQuestion.question}" es: ${displayedAnswer}?`;
 
-                optionsToRender = [
-                    { text: 'Verdadero', value: 'Verdadero' },
-                    { text: 'Falso', value: 'Falso' }
-                ];
+                optionsToRender = [{ text: 'Verdadero', value: 'Verdadero' }, { text: 'Falso', value: 'Falso' }];
                 answerOptionsArea.classList.add('grid-cols-2'); 
 
             } else if (currentQuizType === 'mc') {
                 questionPrompt.textContent = 'Selecciona la opción correcta:';
-                
-                // Lógica de Opción Múltiple (igual que antes)
                 const correctNormalized = normalize(currentQuestion.answer);
-                
-                // Usa las opciones extra del usuario si las proveyó
                 let finalOptions = [...currentQuestion.options];
-
-                // Si no hay suficientes opciones, rellena con distractores de otras preguntas
-                const distractorPool = QUESTIONS
-                    .map(q => q.answer)
-                    .filter(a => normalize(a) !== correctNormalized)
-                    .sort(() => 0.5 - Math.random());
+                const distractorPool = QUESTIONS.map(q => q.answer).filter(a => normalize(a) !== correctNormalized).sort(() => 0.5 - Math.random());
                 
                 let distractorCount = 0;
                 while (finalOptions.length < 4 && distractorCount < distractorPool.length) {
@@ -549,14 +523,11 @@
                     }
                     distractorCount++;
                 }
-                
                 finalOptions.sort(() => Math.random() - 0.5);
-                
                 optionsToRender = finalOptions.map(text => ({ text: text, value: text }));
                 answerOptionsArea.classList.add('grid-cols-2'); 
             }
 
-            // Renderizar botones
             optionsToRender.forEach((opt, index) => {
                 const button = document.createElement('button');
                 const label = ['A', 'B', 'C', 'D'][index] || '';
@@ -568,43 +539,24 @@
             });
         }
     }
-
-
-    /**
-     * Maneja la comprobación de la respuesta del usuario (Modo Escribir) con Lógica Fuzzy.
-     */
+    
     function checkAnswer() {
         if (answerInput.disabled) return;
-
         const userAnswer = normalize(answerInput.value);
         const correctAnswer = normalize(currentQuestion.answer);
-        
         answerInput.disabled = true;
         checkButton.disabled = true;
 
-        // --- NUEVA LÓGICA DE FUZZY MATCHING (TOLERANCIA) ---
-        let isCorrect = (userAnswer === correctAnswer); // 1. Coincidencia exacta
+        let isCorrect = (userAnswer === correctAnswer);
 
         if (!isCorrect && userAnswer.length > 0 && correctAnswer.length > 0) {
-            // 2. Fuzzy Match (Inclusión): Si la respuesta del usuario está contenida en la correcta.
-            if (correctAnswer.includes(userAnswer)) {
-                // Acepta si la respuesta del usuario es al menos el 50% de la longitud de la correcta.
-                if (userAnswer.length >= correctAnswer.length * 0.5) {
-                    isCorrect = true;
-                }
+            if (correctAnswer.includes(userAnswer) && userAnswer.length >= correctAnswer.length * 0.5) {
+                isCorrect = true;
             }
-            
-            // 3. Fuzzy Match (Inclusión Inversa): Si la respuesta correcta está contenida en la del usuario.
-            if (!isCorrect && userAnswer.includes(correctAnswer)) {
-                // Acepta si la respuesta correcta es al menos el 50% de la longitud de la del usuario.
-                if (correctAnswer.length >= userAnswer.length * 0.5) {
-                    isCorrect = true;
-                }
+            if (!isCorrect && userAnswer.includes(correctAnswer) && correctAnswer.length >= userAnswer.length * 0.5) {
+                isCorrect = true;
             }
         }
-        // --- FIN LÓGICA DE FUZZY MATCHING ---
-
-
         if (isCorrect) {
             handleCorrectAnswer();
         } else {
@@ -619,12 +571,8 @@
         }, 1500);
     }
     
-    /**
-     * Maneja la comprobación de la respuesta del usuario (Modo Botones).
-     */
     function checkButtonAnswer(userSelection) {
         document.querySelectorAll('.answer-option-button').forEach(btn => btn.disabled = true);
-        
         let isCorrect = false;
         let correctAnswerText = '';
 
@@ -636,17 +584,10 @@
             correctAnswerText = currentQuestion.answer;
         }
 
-        // Resaltar el botón correcto e incorrecto
         document.querySelectorAll('.answer-option-button').forEach(btn => {
             const btnValue = btn.dataset.value;
+            let isCorrectOption = (currentQuizType === 'tf') ? (btnValue === currentQuestion.tfCorrectAnswer) : (normalize(btnValue) === normalize(currentQuestion.answer));
             
-            let isCorrectOption = false;
-            if (currentQuizType === 'tf') {
-                 isCorrectOption = btnValue === currentQuestion.tfCorrectAnswer;
-            } else if (currentQuizType === 'mc') {
-                 isCorrectOption = normalize(btnValue) === normalize(currentQuestion.answer);
-            }
-
             if (isCorrectOption) {
                  btn.classList.add('bg-green-600', 'ring-4', 'ring-green-400', 'animate-pulse');
             } else if (btnValue === userSelection && !isCorrect) {
@@ -668,62 +609,40 @@
         }, 2500);
     }
 
-    /**
-     * Lógica para una respuesta correcta (incluye Retumbo y Rachas).
-     */
     function handleCorrectAnswer() {
         feedback.innerHTML = '✅ <span class="text-green-400">¡Correcto!</span>';
         feedback.classList.add('animate-bounce-blue');
         setTimeout(() => feedback.classList.remove('animate-bounce-blue'), 500);
-        
-        // RETUMBO BÁSICO
         gameContainer.classList.add(CORRECT_VIBRATE_CLASS);
         setTimeout(() => gameContainer.classList.remove(CORRECT_VIBRATE_CLASS), 200);
-
 
         const previousLevel = level;
         score += 10;
         scoreDisplay.textContent = score;
         level = Math.floor(score / 50) + 1;
         
-        if (level > previousLevel) {
-            levelUp();
-        }
+        if (level > previousLevel) { levelUp(); }
         levelDisplay.textContent = level;
 
         currentStreak++;
         bestStreak = Math.max(bestStreak, currentStreak);
         
         let retumboDuration = 0;
-
-        if (currentStreak === 5) {
-            showStreakAlert("🔥 ¡5 seguidas! (Retumbo)", true);
-            retumboDuration = 500;
-        } else if (currentStreak === 10) {
-            showStreakAlert("💥 ¡10 seguidas! (Retumbo Fuerte)", true);
-            retumboDuration = 800;
-        } else if (currentStreak > 10 && currentStreak % 5 === 0) {
-            showStreakAlert(`✨ ¡${currentStreak} seguidas!`);
-        }
+        if (currentStreak === 5) { showStreakAlert("🔥 ¡5 seguidas! (Retumbo)", true); retumboDuration = 500; } 
+        else if (currentStreak === 10) { showStreakAlert("💥 ¡10 seguidas! (Retumbo Fuerte)", true); retumboDuration = 800; } 
+        else if (currentStreak > 10 && currentStreak % 5 === 0) { showStreakAlert(`✨ ¡${currentStreak} seguidas!`); }
         
         if (retumboDuration > 0) {
              gameContainer.classList.add(CORRECT_VIBRATE_CLASS);
-             // Quitar la clase de retumbo después de la duración extra.
              setTimeout(() => gameContainer.classList.remove(CORRECT_VIBRATE_CLASS), retumboDuration);
         }
     }
 
-    /**
-     * Lógica para una respuesta incorrecta (incluye Vibración).
-     */
     function handleIncorrectAnswer(correctAnswer) {
         errorsInQuiz++;
         feedback.innerHTML = `❌ <span class="text-red-400">Incorrecto. Era: ${correctAnswer}</span>`;
-        
-        // VIBRACIÓN INCORRECTA
         gameContainer.classList.add(INCORRECT_VIBRATE_CLASS);
         setTimeout(() => gameContainer.classList.remove(INCORRECT_VIBRATE_CLASS), 900);
-
         currentStreak = 0;
         streakAlert.innerHTML = '';
     }
@@ -741,7 +660,6 @@
     function updateProgress() {
         const progress = (currentQuestionIndex / totalQuestions) * 100;
         progressBar.style.width = `${progress}%`;
-        
         if (progress >= 100) {
             progressBar.style.boxShadow = '0 0 10px #3B82F6, 0 0 20px rgba(59, 130, 246, 0.8)';
         } else {
@@ -764,15 +682,13 @@
         document.getElementById('final-streak').textContent = bestStreak;
         document.getElementById('total-errors').textContent = `Errores cometidos: ${errorsInQuiz}`;
         
+        const perfectText = document.querySelector('#finish-screen h2');
         if (errorsInQuiz === 0) {
-            const perfectText = document.querySelector('#finish-screen h2');
             perfectText.textContent = "🌟 ¡PERFECTO!";
             perfectText.classList.remove('text-blue-400');
             perfectText.classList.add('text-yellow-400', 'animate-streak-glow');
-            
             spawnConfetti(100, ['confetti-blue', 'confetti-yellow', 'confetti-white']);
         } else {
-            const perfectText = document.querySelector('#finish-screen h2');
             perfectText.textContent = "🎉 ¡Terminaste el cuestionario!";
             perfectText.classList.add('text-blue-400');
             perfectText.classList.remove('text-yellow-400', 'animate-streak-glow');
@@ -785,12 +701,10 @@
         for (let i = 0; i < count; i++) {
             const piece = document.createElement('div');
             piece.className = 'confetti-piece ' + colors[Math.floor(Math.random() * colors.length)];
-            
             piece.style.left = Math.random() * 100 + 'vw';
             piece.style.animationDelay = - (Math.random() * 2) + 's';
             piece.style.setProperty('--x', (Math.random() * 200 - 100) + 'px');
             piece.style.setProperty('--r', (Math.random() * 360) + 'deg');
-            
             confettiContainer.appendChild(piece);
         }
         setTimeout(() => confettiContainer.innerHTML = '', 3000);
@@ -801,7 +715,102 @@
         const maxLength = userTextarea.maxLength;
         charCount.textContent = `${currentLength} / ${maxLength} caracteres`;
         
-        generateButton.disabled = currentLength === 0;
+        const isEmpty = currentLength === 0;
+        generateButton.disabled = isEmpty;
+        saveButton.disabled = isEmpty;
+    }
+
+    // --- FUNCIONES DE LOCALSTORAGE (Omitidas por ser idénticas al código anterior)
+    function getQuizzes() {
+        const quizzes = localStorage.getItem(QUIZ_STORAGE_KEY);
+        return quizzes ? JSON.parse(quizzes) : {};
+    }
+
+    function saveQuizzes(quizzes) {
+        localStorage.setItem(QUIZ_STORAGE_KEY, JSON.stringify(quizzes));
+    }
+
+    function renderSavedQuizzes() {
+        savedQuizzesList.innerHTML = '';
+        const quizzes = getQuizzes();
+        const quizNames = Object.keys(quizzes);
+
+        if (quizNames.length === 0) {
+            savedQuizzesList.innerHTML = '<p class="text-gray-400 text-center">No hay cuestionarios guardados.</p>';
+            return;
+        }
+
+        quizNames.forEach(name => {
+            const item = document.createElement('div');
+            item.className = 'flex justify-between items-center bg-gray-700 p-3 rounded-xl shadow-md';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = name;
+            nameSpan.className = 'font-semibold text-lg cursor-pointer hover:text-blue-300 transition-colors flex-1 truncate pr-4';
+            nameSpan.title = `Cargar "${name}"`;
+            nameSpan.onclick = () => loadQuizText(name);
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Borrar';
+            deleteBtn.className = 'bg-red-600 hover:bg-red-700 text-white font-bold py-1 px-3 rounded-lg text-sm transition-transform transform active:scale-95';
+            deleteBtn.title = `Borrar "${name}"`;
+            deleteBtn.onclick = () => deleteQuiz(name);
+
+            item.appendChild(nameSpan);
+            item.appendChild(deleteBtn);
+            savedQuizzesList.appendChild(item);
+        });
+    }
+
+    function handleSaveQuiz() {
+        const text = userTextarea.value.trim();
+        if (text.length === 0) {
+            alert('No puedes guardar un cuestionario vacío.');
+            return;
+        }
+
+        let name = prompt('Dale un nombre a tu cuestionario (max 20 caracteres):');
+        
+        if (!name) return;
+        
+        name = name.trim().slice(0, 20);
+        
+        if (name.length === 0) {
+             alert('El nombre no puede estar vacío.');
+             return;
+        }
+
+        const quizzes = getQuizzes();
+        
+        if (quizzes[name] && !confirm(`Ya existe un quiz con el nombre "${name}". ¿Quieres sobrescribirlo?`)) {
+            return;
+        }
+
+        quizzes[name] = text;
+        saveQuizzes(quizzes);
+        renderSavedQuizzes();
+        
+        alert(`¡Cuestionario "${name}" guardado!`);
+    }
+
+    function loadQuizText(name) {
+        const quizzes = getQuizzes();
+        if (quizzes[name]) {
+            userTextarea.value = quizzes[name];
+            updateCharCount();
+            window.scrollTo(0, 0);
+        }
+    }
+
+    function deleteQuiz(name) {
+        if (!confirm(`¿Estás seguro de que quieres borrar el cuestionario "${name}"? Esta acción no se puede deshacer.`)) {
+            return;
+        }
+
+        const quizzes = getQuizzes();
+        delete quizzes[name];
+        saveQuizzes(quizzes);
+        renderSavedQuizzes();
     }
 
 
@@ -815,15 +824,13 @@
     retryButton.addEventListener('click', startGame);
     newQuizButton.addEventListener('click', showInputScreen);
     generateButton.addEventListener('click', handleGenerateQuiz);
+    saveButton.addEventListener('click', handleSaveQuiz);
     userTextarea.addEventListener('input', updateCharCount);
 
 
-    // 7. Inicio del Flujo
-    // showInputScreen(); // Se llama después del splash
-
-    // --- NUEVO: Lógica del Splash Screen ---
+    // 7. Inicio del Flujo (Lógica de Splash Screen Ajustada)
     window.onload = () => {
-        // 1. Espera 3 segundos (para la animación de parpadeo)
+        // 1. Espera 3 segundos para el parpadeo
         setTimeout(() => {
             // 2. Desvanece el logo y el texto
             splashImg.style.opacity = '0';
@@ -832,17 +839,17 @@
             // 3. Espera 1s (transición de logo/texto) y desvanece el fondo negro
             setTimeout(() => {
                 splashScreen.style.opacity = '0';
-                // 4. Muestra el contenido principal de la página
-                document.body.classList.add('loaded');
                 
-                // 5. Espera 1.5s (transición del fondo) y elimina el splash
+                // FIX: Muestra el contenido principal de la página (el wrapper)
+                appContentWrapper.classList.add('show');
+                
+                // 4. Espera 1.5s (transición del fondo) y elimina el splash
                 setTimeout(() => {
                     splashScreen.style.display = 'none';
-                    // 6. Inicia el flujo normal de la app
                     showInputScreen();
                 }, 1500);
             }, 1000);
-        }, 3000); // 3 segundos de parpadeo
+        }, 3000);
     };
   </script>
 
