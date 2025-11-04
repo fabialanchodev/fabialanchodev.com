@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🏆 FBQUIZ</title>
+  <title>🏆 FBQUIZ v0.9</title>
   <link rel="icon" href="cleip_milo.png" type="image/png">
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
@@ -11,14 +11,12 @@
     body {
       background: url("fondodeaurasalanochecer.jpeg") no-repeat center center fixed;
       background-size: cover;
-      /* FIX CRÍTICO: Eliminar opacity: 0 del body */
       opacity: 1; 
-      transition: none; /* No queremos que el body haga la transición */
+      transition: none;
     }
     
-    /* Nueva clase para controlar el contenido principal */
     .main-content-wrapper {
-        opacity: 0; /* Contenido principal oculto al inicio */
+        opacity: 0;
         transition: opacity 1s ease-in-out;
     }
     
@@ -26,14 +24,14 @@
         opacity: 1;
     }
     
-    /* --- NUEVO: Splash Screen --- */
+    /* --- Splash Screen --- */
     #splash-screen {
         position: fixed;
         top: 0;
         left: 0;
         width: 100vw;
         height: 100vh;
-        background-color: #000; /* Fondo negro */
+        background-color: #000;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -54,14 +52,14 @@
         color: white;
         opacity: 1;
         transition: opacity 1s ease;
-        animation: blink 1s steps(1, end) 3; /* Parpadea 3 veces */
+        animation: blink 1s steps(1, end) 3;
     }
     
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0; }
     }
-    /* ... (resto de estilos omitidos por brevedad) ... */
+    /* ... (resto de estilos) ... */
 
     @keyframes bounce-blue {
       0%, 100% {
@@ -73,10 +71,7 @@
         text-shadow: 0 0 20px #3B82F6;
       }
     }
-
-    .animate-bounce-blue {
-      animation: bounce-blue 0.5s ease-in-out;
-    }
+    .animate-bounce-blue { animation: bounce-blue 0.5s ease-in-out; }
     
     @keyframes incorrect-vibrate {
       0%, 100% { transform: translateX(0); }
@@ -84,9 +79,7 @@
       50% { transform: translateX(5px); }
       75% { transform: translateX(-5px); }
     }
-    .animate-incorrect-vibrate {
-      animation: incorrect-vibrate 0.3s ease-in-out 3;
-    }
+    .animate-incorrect-vibrate { animation: incorrect-vibrate 0.3s ease-in-out 3; }
     
     @keyframes correct-vibrate {
       0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); }
@@ -94,30 +87,22 @@
       50% { transform: scale(1); }
       75% { transform: scale(1.01); box-shadow: 0 0 20px #3B82F6; }
     }
-    .animate-correct-vibrate {
-      animation: correct-vibrate 0.2s ease-in-out;
-    }
-
+    .animate-correct-vibrate { animation: correct-vibrate 0.2s ease-in-out; }
 
     @keyframes glow-expand {
       0% { box-shadow: 0 0 0 rgba(59, 130, 246, 0.4); transform: scale(1); }
       50% { box-shadow: 0 0 25px #3B82F6; transform: scale(1.05); }
       100% { box-shadow: 0 0 0 rgba(59, 130, 246, 0); transform: scale(1); }
     }
-
-    .animate-glow-expand {
-      animation: glow-expand 0.8s ease-out;
-    }
+    .animate-glow-expand { animation: glow-expand 0.8s ease-out; }
     
     @keyframes streak-glow {
         0%, 100% { text-shadow: 0 0 10px rgba(251, 191, 36, 0.5); }
         50% { text-shadow: 0 0 30px #FBBF24; }
     }
+    .animate-streak-glow { animation: streak-glow 0.5s infinite alternate; }
     
-    .animate-streak-glow {
-        animation: streak-glow 0.5s infinite alternate;
-    }
-    
+    /* --- Confetti --- */
     .confetti {
         position: absolute;
         width: 100%;
@@ -126,7 +111,6 @@
         pointer-events: none;
         z-index: 10;
     }
-    
     .confetti-piece {
         position: absolute;
         width: 10px;
@@ -135,16 +119,19 @@
         transform-origin: 50% 50%;
         animation: fall 3s infinite;
     }
-    
     @keyframes fall {
         0% { opacity: 0; transform: translate(0, -100px) rotate(0deg); }
         10% { opacity: 1; }
         100% { opacity: 0; transform: translate(var(--x), 100vh) rotate(var(--r)); }
     }
-
     .confetti-blue { background-color: #3B82F6; }
     .confetti-white { background-color: #E5E7EB; }
     .confetti-yellow { background-color: #FBBF24; }
+    
+    /* --- CAMBIO v0.9: Estilos para Modo Fichas --- */
+    #flashcard.is-flipped {
+      transform: rotateY(180deg);
+    }
     
   </style>
 </head>
@@ -158,14 +145,14 @@
   <div id="app-content-wrapper" class="main-content-wrapper flex flex-col min-h-screen">
       
       <header class="py-6 bg-black/50 text-center relative">
-        <h1 class="text-3xl font-extrabold flex items-center justify-center">
+        <h1 id="header-title" class="text-3xl font-extrabold flex items-center justify-center cursor-pointer hover:opacity-80 transition-opacity">
           <span class="text-blue-500 text-5xl mr-2">🏆</span> FBQUIZ
         </h1>
-        <span class="absolute top-2 right-4 text-sm text-gray-400 font-semibold">v0.8</span>
+        <span class="absolute top-2 right-4 text-sm text-gray-400 font-semibold">v0.9</span>
       </header>
     
       <div class="flex-grow flex items-center justify-center p-4">
-        <main id="game-container" class="w-full max-w-xl bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-10 transition-all duration-500">
+        <main id="game-container" class="w-full max-w-3xl bg-gray-800/80 backdrop-blur-sm rounded-3xl shadow-2xl p-6 md:p-10 transition-all duration-500">
           
           <div id="input-screen">
               <h2 class="text-4xl font-extrabold text-center text-blue-400 mb-6">📝 Generador de Cuestionarios</h2>
@@ -197,10 +184,14 @@
               
               <p id="char-count" class="text-right text-sm text-gray-400 mb-6">0 / 10000 caracteres</p>
     
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
                 <button id="generate-button" 
                         class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl text-2xl shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-blue-500/50 disabled:opacity-50 disabled:cursor-not-allowed">
                   Estudiar Ahora
+                </button>
+                <button id="flashcard-button" 
+                        class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl text-2xl shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-green-500/50 disabled:opacity-50 disabled:cursor-not-allowed">
+                  📚 Modo Fichas
                 </button>
                 <button id="save-button" 
                         class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-xl text-2xl shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-amber-500/50 disabled:opacity-50 disabled:cursor-not-allowed">
@@ -252,7 +243,16 @@
                     </div>
                 
                 <div id="feedback" class="mt-6 text-2xl font-bold min-h-[3rem]"></div>
-              </div>
+
+                <div id="override-container" class="mt-6 space-y-3 md:space-y-0 md:space-x-4 flex flex-col md:flex-row justify-center hidden">
+                  <button id="override-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-xl text-lg transition-transform transform active:scale-95">
+                    Mi respuesta estaba bien
+                  </button>
+                  <button id="continue-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-xl text-lg transition-transform transform active:scale-95">
+                    Ok, siguiente
+                  </button>
+                </div>
+                </div>
           </div>
           
           <div id="finish-screen" class="hidden text-center">
@@ -278,8 +278,35 @@
               </a>
             </div>
           </div>
-    
-        </main>
+          
+          <div id="flashcard-screen" class="hidden text-center">
+            <h2 class="text-4xl font-extrabold text-center text-green-400 mb-6">📚 Modo Fichas</h2>
+            
+            <div id="flashcard-container" class="relative w-full h-80 [perspective:1000px] mb-6">
+              <div id="flashcard" class="relative w-full h-full cursor-pointer [transform-style:preserve-3d] transition-transform duration-700 ease-in-out">
+                <div id="flashcard-front" class="absolute w-full h-full p-6 flex items-center justify-center bg-gray-700 rounded-2xl shadow-lg [backface-visibility:hidden]">
+                  <p class="text-2xl md:text-3xl font-bold"></p>
+                </div>
+                <div id="flashcard-back" class="absolute w-full h-full p-6 flex items-center justify-center bg-blue-600 rounded-2xl shadow-lg [backface-visibility:hidden] [transform:rotateY(180deg)]">
+                  <p class="text-2xl md:text-3xl"></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="mt-8 flex justify-between items-center">
+              <button id="fc-prev-button" class="bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-6 rounded-xl text-xl shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+                ⬅ Anterior
+              </button>
+              <span id="fc-counter" class="text-2xl font-bold text-gray-300">1 / 10</span>
+              <button id="fc-next-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl text-xl shadow-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">
+                Siguiente ➡
+              </button>
+            </div>
+            <button id="fc-exit-button" class="w-full md:w-auto bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-xl text-xl shadow-lg transition-all duration-200 transform hover:scale-105 mt-8">
+              Salir del Modo Fichas
+            </button>
+          </div>
+          </main>
       </div>
       
       <footer class="py-3 bg-black/50 text-center text-gray-500 text-sm">
@@ -300,6 +327,7 @@
     let questionsLeft = [];
     let currentQuestion;
     let currentQuizType = 'input'; // 'input', 'tf', 'mc'
+    let currentFlashcardIndex = 0; // v0.9
 
     const INCORRECT_VIBRATE_CLASS = 'animate-incorrect-vibrate';
     const CORRECT_VIBRATE_CLASS = 'animate-correct-vibrate';
@@ -309,6 +337,7 @@
     // 2. Referencias del DOM
     const inputScreen = document.getElementById('input-screen');
     const quizScreen = document.getElementById('quiz-screen');
+    const finishScreen = document.getElementById('finish-screen');
     const userTextarea = document.getElementById('user-text');
     const generateButton = document.getElementById('generate-button');
     const saveButton = document.getElementById('save-button');
@@ -326,7 +355,6 @@
     const progressBar = document.getElementById('progress-bar');
     const streakAlert = document.getElementById('streak-alert');
     const gameContainer = document.getElementById('game-container');
-    const finishScreen = document.getElementById('finish-screen');
     const retryButton = document.getElementById('retry-button');
     const newQuizButton = document.getElementById('new-quiz-button');
     const confettiContainer = document.getElementById('confetti-container');
@@ -336,10 +364,27 @@
     const splashScreen = document.getElementById('splash-screen');
     const splashImg = splashScreen.querySelector('img');
     const splashText = splashScreen.querySelector('h1');
-    // FIX: NUEVA REFERENCIA al contenedor del contenido
     const appContentWrapper = document.getElementById('app-content-wrapper');
 
-    // Función de normalización para respuestas tolerantes
+    // CAMBIO v0.9: Nuevas referencias del DOM
+    const headerTitle = document.getElementById('header-title');
+    const overrideContainer = document.getElementById('override-container');
+    const overrideButton = document.getElementById('override-button');
+    const continueButton = document.getElementById('continue-button');
+    
+    const flashcardButton = document.getElementById('flashcard-button');
+    const flashcardScreen = document.getElementById('flashcard-screen');
+    const flashcardContainer = document.getElementById('flashcard-container');
+    const flashcard = document.getElementById('flashcard');
+    const flashcardFront = document.getElementById('flashcard-front').querySelector('p');
+    const flashcardBack = document.getElementById('flashcard-back').querySelector('p');
+    const fcPrevButton = document.getElementById('fc-prev-button');
+    const fcNextButton = document.getElementById('fc-next-button');
+    const fcCounter = document.getElementById('fc-counter');
+    const fcExitButton = document.getElementById('fc-exit-button');
+    
+
+    // Función de normalización
     const normalize = (text) => text.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, "").trim();
 
     // 3. Funciones de Navegación
@@ -347,6 +392,7 @@
         inputScreen.classList.remove('hidden');
         quizScreen.classList.add('hidden');
         finishScreen.classList.add('hidden');
+        flashcardScreen.classList.add('hidden'); // v0.9
         userTextarea.value = '';
         updateCharCount();
         renderSavedQuizzes();
@@ -357,15 +403,17 @@
         inputScreen.classList.add('hidden');
         quizScreen.classList.remove('hidden');
         finishScreen.classList.add('hidden');
+        flashcardScreen.classList.add('hidden'); // v0.9
     }
 
-    // 4. Lógica de Generación y Parseo (Omitida por ser idéntica al código anterior)
-    async function handleGenerateQuiz() {
+    // 4. Lógica de Generación y Parseo
+    async function handleGenerateQuiz(mode = 'quiz') {
         const text = userTextarea.value.trim();
         if (text.length === 0) return;
         
         generateButton.disabled = true;
         saveButton.disabled = true;
+        flashcardButton.disabled = true; // v0.9
         loadingFeedback.textContent = 'Generando...';
         loadingFeedback.classList.remove('hidden');
         
@@ -375,13 +423,18 @@
         totalQuestions = QUESTIONS.length;
         
         if (totalQuestions > 0) {
-            startGame();
-            showQuizScreen();
+            if (mode === 'quiz') {
+                startGame();
+                showQuizScreen();
+            } else if (mode === 'flashcards') {
+                startFlashcards(); // v0.9
+            }
         } else {
             loadingFeedback.textContent = `❌ Error. Asegúrate de que el texto siga el formato: pregunta [${separatorSelect.value}] respuesta`;
             loadingFeedback.classList.remove('hidden');
             generateButton.disabled = false;
             saveButton.disabled = false;
+            flashcardButton.disabled = false; // v0.9
             
             setTimeout(() => {
                 loadingFeedback.classList.add('hidden');
@@ -418,7 +471,7 @@
         }).filter(q => q !== null);
     }
     
-    // 5. Lógica del Juego (Omitida por ser idéntica al código anterior)
+    // 5. Lógica del Juego
     function startGame() {
         if (QUESTIONS.length === 0) return;
 
@@ -439,6 +492,16 @@
         
         quizScreen.classList.remove('hidden');
         finishScreen.classList.add('hidden');
+        flashcardScreen.classList.add('hidden');
+        loadQuestion();
+    }
+    
+    // CAMBIO v0.9: Nueva función para avanzar de pregunta
+    function proceedToNextQuestion() {
+        currentQuestionIndex++;
+        updateProgress();
+        feedback.innerHTML = '';
+        overrideContainer.classList.add('hidden'); // Ocultar botones
         loadQuestion();
     }
     
@@ -557,18 +620,16 @@
                 isCorrect = true;
             }
         }
+        
         if (isCorrect) {
             handleCorrectAnswer();
+            // CAMBIO v0.9: Mover el avance a una función separada
+            setTimeout(proceedToNextQuestion, 1500);
         } else {
             handleIncorrectAnswer(currentQuestion.answer);
+            // CAMBIO v0.9: Mostrar botones de anulación y no avanzar automáticamente
+            overrideContainer.classList.remove('hidden');
         }
-        
-        setTimeout(() => {
-            currentQuestionIndex++;
-            updateProgress();
-            feedback.innerHTML = '';
-            loadQuestion();
-        }, 1500);
     }
     
     function checkButtonAnswer(userSelection) {
@@ -597,16 +658,13 @@
 
         if (isCorrect) {
             handleCorrectAnswer();
+            // CAMBIO v0.9: Mover el avance a una función separada
+            setTimeout(proceedToNextQuestion, 2500);
         } else {
             handleIncorrectAnswer(correctAnswerText);
+            // CAMBIO v0.9: Mostrar botones de anulación y no avanzar automáticamente
+            overrideContainer.classList.remove('hidden');
         }
-        
-        setTimeout(() => {
-            currentQuestionIndex++;
-            updateProgress();
-            feedback.innerHTML = '';
-            loadQuestion();
-        }, 2500);
     }
 
     function handleCorrectAnswer() {
@@ -647,6 +705,23 @@
         streakAlert.innerHTML = '';
     }
 
+    // CAMBIO v0.9: Nueva función para anular una respuesta incorrecta
+    function handleOverrideAnswer() {
+        // 1. Revertir estadísticas incorrectas
+        if (errorsInQuiz > 0) {
+            errorsInQuiz--;
+        }
+        
+        // 2. Aplicar estadísticas correctas
+        handleCorrectAnswer(); 
+        
+        // 3. Ocultar los botones de anulación
+        overrideContainer.classList.add('hidden');
+        
+        // 4. Establecer temporizador para avanzar
+        setTimeout(proceedToNextQuestion, 1500);
+    }
+
     function showStreakAlert(text, intense = false) {
         streakAlert.textContent = text;
         streakAlert.classList.remove('animate-streak-glow');
@@ -676,6 +751,7 @@
     function finishGame() {
         quizScreen.classList.add('hidden');
         finishScreen.classList.remove('hidden');
+        flashcardScreen.classList.add('hidden'); // v0.9
         
         document.getElementById('final-score').textContent = score;
         document.getElementById('final-level').textContent = level;
@@ -718,9 +794,10 @@
         const isEmpty = currentLength === 0;
         generateButton.disabled = isEmpty;
         saveButton.disabled = isEmpty;
+        flashcardButton.disabled = isEmpty; // v0.9
     }
 
-    // --- FUNCIONES DE LOCALSTORAGE (Omitidas por ser idénticas al código anterior)
+    // --- FUNCIONES DE LOCALSTORAGE
     function getQuizzes() {
         const quizzes = localStorage.getItem(QUIZ_STORAGE_KEY);
         return quizzes ? JSON.parse(quizzes) : {};
@@ -813,6 +890,40 @@
         renderSavedQuizzes();
     }
 
+    // --- CAMBIO v0.9: Lógica del Modo Fichas ---
+    function handleFlashcardMode() {
+        handleGenerateQuiz('flashcards');
+    }
+    
+    function startFlashcards() {
+        currentFlashcardIndex = 0;
+        totalQuestions = QUESTIONS.length;
+        
+        inputScreen.classList.add('hidden');
+        quizScreen.classList.add('hidden');
+        finishScreen.classList.add('hidden');
+        flashcardScreen.classList.remove('hidden');
+        
+        loadFlashcard(currentFlashcardIndex);
+    }
+    
+    function loadFlashcard(index) {
+        if (index < 0 || index >= totalQuestions) return;
+        
+        const q = QUESTIONS[index];
+        flashcardFront.textContent = q.question;
+        flashcardBack.textContent = q.answer;
+        fcCounter.textContent = `${index + 1} / ${totalQuestions}`;
+        
+        // Resetear la rotación de la ficha
+        flashcard.classList.remove('is-flipped');
+        
+        // Habilitar/deshabilitar botones de navegación
+        fcPrevButton.disabled = (index === 0);
+        fcNextButton.disabled = (index === totalQuestions - 1);
+    }
+    // --- FIN CAMBIO v0.9 ---
+
 
     // 6. Manejadores de Eventos
     checkButton.addEventListener('click', checkAnswer);
@@ -823,12 +934,44 @@
     });
     retryButton.addEventListener('click', startGame);
     newQuizButton.addEventListener('click', showInputScreen);
-    generateButton.addEventListener('click', handleGenerateQuiz);
+    generateButton.addEventListener('click', () => handleGenerateQuiz('quiz'));
     saveButton.addEventListener('click', handleSaveQuiz);
     userTextarea.addEventListener('input', updateCharCount);
 
+    // --- CAMBIO v0.9: Nuevos Manejadores de Eventos ---
+    headerTitle.addEventListener('click', () => {
+        if (confirm('¿Quieres recargar la página y volver al inicio? ¿Estás seguro?')) {
+            location.reload();
+        }
+    });
+    
+    continueButton.addEventListener('click', proceedToNextQuestion);
+    overrideButton.addEventListener('click', handleOverrideAnswer);
+    
+    flashcardButton.addEventListener('click', handleFlashcardMode);
+    flashcard.addEventListener('click', () => {
+        flashcard.classList.toggle('is-flipped');
+    });
+    
+    fcPrevButton.addEventListener('click', () => {
+        if (currentFlashcardIndex > 0) {
+            currentFlashcardIndex--;
+            loadFlashcard(currentFlashcardIndex);
+        }
+    });
+    
+    fcNextButton.addEventListener('click', () => {
+        if (currentFlashcardIndex < totalQuestions - 1) {
+            currentFlashcardIndex++;
+            loadFlashcard(currentFlashcardIndex);
+        }
+    });
+    
+    fcExitButton.addEventListener('click', showInputScreen);
+    // --- FIN CAMBIO v0.9 ---
 
-    // 7. Inicio del Flujo (Lógica de Splash Screen Ajustada)
+
+    // 7. Inicio del Flujo
     window.onload = () => {
         // 1. Espera 3 segundos para el parpadeo
         setTimeout(() => {
@@ -836,14 +979,14 @@
             splashImg.style.opacity = '0';
             splashText.style.opacity = '0';
             
-            // 3. Espera 1s (transición de logo/texto) y desvanece el fondo negro
+            // 3. Espera 1s y desvanece el fondo negro
             setTimeout(() => {
                 splashScreen.style.opacity = '0';
                 
-                // FIX: Muestra el contenido principal de la página (el wrapper)
+                // Muestra el contenido principal
                 appContentWrapper.classList.add('show');
                 
-                // 4. Espera 1.5s (transición del fondo) y elimina el splash
+                // 4. Espera 1.5s y elimina el splash
                 setTimeout(() => {
                     splashScreen.style.display = 'none';
                     showInputScreen();
