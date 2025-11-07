@@ -166,7 +166,6 @@
             border-radius: 50%;
             top: 20px; /* Centrado */
             left: 20px; /* Centrado */
-            /* transition: transform 0.05s linear; No se usa para el joystick táctil */
         }
 
         #fire-button {
@@ -262,6 +261,7 @@
             imagesLoadedCount++;
             if (imagesLoadedCount === totalImages) {
                 // Inicia el bucle de juego una vez que todas las imágenes estén listas.
+                // Esta función se llama solo si las 4 imágenes se encuentran en la carpeta.
                 gameLoop(); 
             }
         }
@@ -270,6 +270,7 @@
         function loadGameImage(src) {
             let img = new Image();
             img.onload = checkAllImagesLoaded; 
+            img.onerror = () => console.error(`Error cargando imagen: ${src}. Asegúrate de que el nombre y la ruta son correctos.`); // Mensaje de ayuda si no carga
             img.src = src;
             return img;
         }
@@ -351,8 +352,6 @@
         // --- Funciones Principales del Juego ---
 
         function gameLoop() {
-            // El gameLoop se llama 60 veces por segundo, independientemente del estado.
-
             if (gameState === 'PLAYING') {
                 ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
 
@@ -382,9 +381,6 @@
                 enemies.forEach(e => e.draw());
                 explosions.forEach(ex => ex.draw());
             }
-
-            // La pantalla 'INTRO' se encarga de sí misma con el timeout/CSS
-            // La pantalla 'MENU' y 'GAMEOVER' no necesitan dibujar nada en el canvas.
             
             requestAnimationFrame(gameLoop);
         }
@@ -468,6 +464,14 @@
             pauseScreen.style.display = 'none';
             menuScreen.style.display = 'flex';
             gameState = 'MENU';
+            // Asegurarse de limpiar los controles al volver al menú
+            if (gameMode === 'pc') {
+                window.removeEventListener('keydown', handlePCKeyDown);
+                window.removeEventListener('keyup', handlePCKeyUp);
+            } else {
+                joystickArea.removeEventListener('touchstart', handleJoystickStart);
+                fireButton.removeEventListener('touchstart', handleFireTouch);
+            }
         }
 
 
@@ -475,7 +479,6 @@
 
         // 1. Intro de fabialancho games
         window.addEventListener('load', () => {
-            // El `setTimeout` espera el tiempo de la animación CSS de la intro.
             setTimeout(() => {
                 introScreen.style.opacity = '0';
                 setTimeout(() => {
@@ -512,12 +515,18 @@
         menuFromPauseButton.addEventListener('click', goToMenu);
         restartButton.addEventListener('click', goToMenu);
 
+
         // 4. Controles de PC (Teclado)
         function setupPCControls() {
-            // Se limpian los listeners de movimiento
-            window.removeEventListener('keydown', handleJoystickKeyboard);
-            window.removeEventListener('keyup', handleJoystickKeyboard);
+            // --- LIMPIEZA MÓVIL AL CAMBIAR A PC ---
+            joystickArea.removeEventListener('touchstart', handleJoystickStart);
+            fireButton.removeEventListener('touchstart', handleFireTouch);
 
+            // Limpiar los listeners de PC (por si se vuelve a llamar)
+            window.removeEventListener('keydown', handlePCKeyDown);
+            window.removeEventListener('keyup', handlePCKeyUp);
+
+            // --- AÑADIR CONTROLES DE PC ---
             window.addEventListener('keydown', handlePCKeyDown);
             window.addEventListener('keyup', handlePCKeyUp);
         }
@@ -537,18 +546,20 @@
         }
 
         // 5. Controles Móviles (Joystick y Botón)
+
+        // Función con nombre para poder eliminarla más tarde
+        function handleFireTouch(e) {
+            e.preventDefault();
+            tryShoot();
+        }
+        
         function setupMobileControls() {
-            // Limpiar los listeners de PC
+            // --- LIMPIEZA PC AL CAMBIAR A MÓVIL ---
             window.removeEventListener('keydown', handlePCKeyDown);
             window.removeEventListener('keyup', handlePCKeyUp);
 
-            // Botón de Disparo (usa preventDefault para evitar el scroll)
-            fireButton.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                tryShoot();
-            }, { passive: false });
-
-            // Joystick
+            // --- AÑADIR CONTROLES MÓVILES ---
+            fireButton.addEventListener('touchstart', handleFireTouch, { passive: false });
             joystickArea.addEventListener('touchstart', handleJoystickStart, { passive: false });
         }
         
@@ -594,9 +605,6 @@
             joystickArea.removeEventListener('touchend', handleJoystickEnd);
             joystickArea.removeEventListener('touchcancel', handleJoystickEnd);
         }
-        
-        // El bucle de juego comienza después de que todas las imágenes han cargado.
-        // Ver la función checkAllImagesLoaded.
 
     </script>
 </body>
