@@ -349,7 +349,7 @@
     <div id="intro-screen" class="screen active">
         <img id="intro-logo" src="fabi_alancho_games.png" alt="Fabialancho Games Logo" style="display: none;">
         <div id="intro-fbgames" class="subtitle" style="display: none;">FBGAMES</div>
-        <div id="intro-version">v0.1.1</div>
+        <div id="intro-version">v0.1.3</div>
         <div id="intro-title" class="title" style="display: none;">MILO SHOOTER</div>
         <div id="intro-loading" style="display: none;">
             <div id="loading-bar">
@@ -453,6 +453,8 @@
             spawnInterval: 2, 
         };
 
+        const ENEMY_CAP = 15; // OPTIMIZACIÓN: Límite de enemigos en pantalla
+        
         let player;
         let missiles = [];
         let enemies = [];
@@ -480,7 +482,6 @@
             logo: 'fabi_alancho_games.png',
             player: 'miloenunanave.png',
             enemy: 'enemigo.png',
-            // RUTA ACTUALIZADA: misil.png -> proyectil.png
             missile: 'proyectil.png', 
             life: 'corazon.png',
             explosion: 'explo_sion.png'
@@ -529,9 +530,9 @@
                     // Placeholders con los tamaños ajustados
                     let placeholder;
                     switch(key) {
-                        case 'player': placeholder = createPlaceholder(80, 80, 'MILO', '#00f'); break; // 80x80
+                        case 'player': placeholder = createPlaceholder(80, 80, 'MILO', '#00f'); break; 
                         case 'enemy': placeholder = createPlaceholder(50, 50, 'ENMY', '#f00'); break;
-                        case 'missile': placeholder = createPlaceholder(40, 20, 'PROY', '#ff0'); break; // 40x20
+                        case 'missile': placeholder = createPlaceholder(40, 20, 'PROY', '#ff0'); break; 
                         case 'life': placeholder = createPlaceholder(30, 30, '<3', '#f0f'); break;
                         case 'explosion': placeholder = createPlaceholder(64, 64, 'BOOM', '#f80'); break;
                         default: placeholder = createPlaceholder(100, 50, 'IMG', '#888');
@@ -578,7 +579,6 @@
         class Player extends Entity {
             constructor(x, y) {
                 const img = assets.player;
-                // TAMAÑO AUMENTADO: 80x80
                 const width = 80; 
                 const height = 80;
                 super(x, y, width, height, img);
@@ -586,7 +586,7 @@
                 this.shootCooldown = 0;
                 this.shootInterval = 0.3;
                 this.isHit = false;
-                this.hitTimer = 0;
+                this.hitTimer = 1.5; // Duración de la invencibilidad
             }
             
             update(dt) {
@@ -633,11 +633,13 @@
                     this.hitTimer -= dt;
                     if (this.hitTimer <= 0) {
                         this.isHit = false;
+                        this.hitTimer = 1.5;
                     }
                 }
             }
             
             draw(ctx) {
+                // Parpadeo de invencibilidad
                 if (this.isHit && Math.floor(this.hitTimer * 10) % 2 === 0) {
                     return; 
                 }
@@ -645,7 +647,6 @@
             }
 
             shoot() {
-                // TAMAÑO ACTUALIZADO: 40x20
                 const missileWidth = 40;
                 const missileHeight = 20;
                 const x = this.x + this.width; 
@@ -666,7 +667,6 @@
                     this.hitTimer = 1.5; 
                 }
                 
-                // Crea una explosión más grande cuando es golpeado
                 createExplosion(this.x + this.width / 2, this.y + this.height / 2, true);
             }
         }
@@ -729,9 +729,8 @@
             draw(ctx) {
                 ctx.fillStyle = this.color;
                 ctx.globalAlpha = this.life * 2; 
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
+                // OPTIMIZACIÓN: Usar fillRect (rectángulo) es más rápido que arc (círculo)
+                ctx.fillRect(this.x, this.y, this.size, this.size);
             }
         }
 
@@ -755,6 +754,7 @@
         function update(dt) {
             player.update(dt);
             
+            // Filtrar entidades inactivas. Usar `filter` es más limpio que `splice`.
             missiles = missiles.filter(m => m.active);
             missiles.forEach(m => m.update(dt));
             
@@ -767,7 +767,8 @@
             gameState.spawnTimer -= dt;
             if (gameState.spawnTimer <= 0) {
                 spawnEnemy();
-                gameState.spawnInterval = Math.max(0.5, gameState.spawnInterval * 0.99);
+                // Aumentar la dificultad, pero más lentamente para no sobrecargar
+                gameState.spawnInterval = Math.max(0.7, gameState.spawnInterval * 0.99); 
                 gameState.spawnTimer = gameState.spawnInterval;
             }
             
@@ -818,7 +819,6 @@
             enemies = [];
             particles = [];
             
-            // Posición inicial ajustada al nuevo tamaño de 80x80
             player = new Player(50, canvas.height / 2 - 40); 
             
             updateHUDLives();
@@ -836,7 +836,7 @@
             mobilePauseButton.style.display = 'none'; 
             
             if (assets.explosion) {
-                // EXPLOSIÓN FINAL: 2x el tamaño del jugador
+                // Explosión final (más grande, centrada)
                 const w = player.width * 2;
                 const h = player.height * 2;
                 const x = player.x - (w - player.width) / 2;
@@ -871,6 +871,11 @@
         }
         
         function spawnEnemy() {
+            // OPTIMIZACIÓN: Limitar el número de enemigos activos
+            if (enemies.length >= ENEMY_CAP) {
+                return; 
+            }
+            
             const y = Math.random() * (canvas.height - 50); 
             const x = canvas.width;
             enemies.push(new Enemy(x, y));
@@ -879,7 +884,7 @@
         // Crear explosión
         function createExplosion(x, y, isPlayer = false) {
             if (isPlayer && assets.explosion) {
-                // EXPLOSIÓN DE HIT: 1.5x el tamaño normal de la imagen
+                // Explosión de 'hit' (1.5x más grande)
                 const w = assets.explosion.width * 1.5;
                 const h = assets.explosion.height * 1.5;
                 const posX = x - w / 2;
@@ -904,7 +909,8 @@
                 });
             } else {
                 // Explosión normal (partículas)
-                for (let i = 0; i < 15; i++) { 
+                // OPTIMIZACIÓN: Reducción a 10 partículas
+                for (let i = 0; i < 10; i++) { 
                     particles.push(new Particle(x, y, '#ff8800'));
                 }
             }
@@ -1168,4 +1174,3 @@
 
 </body>
 </html>
-```eof
