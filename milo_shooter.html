@@ -2,610 +2,1239 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>MILO SHOOTER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FBGames | MILO SHOUTER</title>
+    <link rel="icon" href="cleip_milo.png" type="image/png">
+    
+    <!-- Importar la fuente "gamer" de Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
     
     <style>
-        /* --- Configuración General --- */
-        body {
+        /* --- CONFIGURACIÓN GLOBAL --- */
+        * {
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            height: 100%;
+            width: 100%;
             margin: 0;
             padding: 0;
             background-color: #000;
-            color: #ffffff;
-            font-family: 'Arial', sans-serif;
-            display: flex;
+            color: #fff;
+            font-family: 'Press Start 2P', cursive;
+            overflow: hidden; /* Evita barras de scroll */
+        }
+
+        /* --- EFECTO DE FONDO (STARFIELD) --- */
+        /* Este es un fondo animado simple que estará detrás de todo */
+        @keyframes move-stars {
+            from { background-position: 0 0; }
+            to { background-position: -10000px 5000px; }
+        }
+
+        #starfield-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 200%;
+            z-index: 0;
+            background-image: radial-gradient(2px 2px at 20px 30px, #eee, rgba(0,0,0,0)),
+                            radial-gradient(2px 2px at 40px 70px, #fff, rgba(0,0,0,0)),
+                            radial-gradient(2px 2px at 50px 160px, #ddd, rgba(0,0,0,0)),
+                            radial-gradient(2px 2px at 90px 40px, #fff, rgba(0,0,0,0)),
+                            radial-gradient(2px 2px at 130px 80px, #fff, rgba(0,0,0,0)),
+            radial-gradient(2px 2px at 160px 120px, #ddd, rgba(0,0,0,0));
+            background-repeat: repeat;
+            background-size: 500px 500px;
+            animation: move-stars 200s linear infinite;
+        }
+
+        /* --- CONTENEDOR DE PANTALLAS --- */
+        .screen {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            touch-action: none; /* Evita el scroll y el zoom en móviles */
+            padding: 20px;
+            text-align: center;
         }
 
-        #game-container {
-            position: relative;
-            border: 2px solid #333;
-            overflow: hidden;
-            /* Fija el tamaño base del juego */
-            width: 800px; 
-            height: 600px;
-            /* Permite que el juego escale en móviles sin desbordarse */
-            max-width: 100vw;
-            max-height: 100vh;
+        .screen.active {
+            display: flex; /* Visible cuando está activo */
         }
 
-        canvas {
-            display: block;
-            background-color: #000;
+        /* --- PANTALLA DE INTRO --- */
+        #intro-screen img {
+            max-width: 80%;
+            width: 300px;
+            opacity: 0;
+            animation: fadeIn 2s forwards;
+        }
+        
+        #intro-screen .title {
+            font-size: 2.5rem;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+            text-shadow: 0 0 10px #fff;
+        }
+        
+        #intro-screen .subtitle {
+            font-size: 2rem;
+            margin-top: 20px;
+            opacity: 0;
+            animation: fadeIn 1s forwards, blink 1.5s linear infinite 1s;
         }
 
-        /* --- Pantallas (Intro, Menú, Pausa, Game Over) --- */
-        .screen {
+        #loading-bar {
+            width: 80%;
+            max-width: 300px;
+            height: 30px;
+            border: 2px solid #fff;
+            border-radius: 5px;
+            margin-top: 30px;
+            opacity: 0;
+            animation: fadeIn 1s forwards;
+        }
+
+        #loading-bar-fill {
+            width: 0%;
+            height: 100%;
+            background-color: #fff;
+            animation: load 3s linear forwards;
+        }
+
+        /* --- PANTALLA DE MENÚ Y GAME OVER --- */
+        #menu-screen h1, #game-over-screen h1 {
+            font-size: 1.5rem;
+            color: #fff;
+            text-shadow: 0 0 5px #fff;
+        }
+        
+        #game-over-screen h1 {
+            font-size: 2.5rem;
+            color: #ff0000;
+            text-shadow: 0 0 10px #ff0000;
+            animation: blink 1s linear infinite;
+        }
+
+        .record-text {
+            font-size: 1.2rem;
+            margin: 20px 0;
+            color: #ffdd00;
+        }
+        
+        #game-over-screen .stats {
+             font-size: 1.2rem;
+             line-height: 2;
+        }
+
+        .game-button {
+            font-family: 'Press Start 2P', cursive;
+            font-size: 1rem;
+            background-color: #333;
+            color: #fff;
+            border: 2px solid #fff;
+            border-radius: 8px;
+            padding: 20px 30px;
+            margin: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 5px 0 #111;
+            text-transform: uppercase;
+        }
+
+        .game-button:hover, .game-button:active {
+            background-color: #fff;
+            color: #000;
+            box-shadow: 0 2px 0 #111;
+            transform: translateY(3px);
+        }
+
+        /* --- PANTALLA DE JUEGO --- */
+        #game-canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            background-color: rgba(0, 0, 0, 0.9);
-            text-align: center;
-            z-index: 10;
+            z-index: 1; /* Detrás del HUD pero sobre el fondo */
+            background-color: #000; /* Fondo del juego */
         }
 
-        /* Intro de la Marca */
-        #intro-screen {
+        /* --- HUD (Heads-Up Display) --- */
+        #hud {
             position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 100%;
-            background-color: #000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            opacity: 1;
-            transition: opacity 1s ease-out;
-        }
-
-        #intro-screen h1 {
-            font-size: 3em;
-            color: #fff;
-            opacity: 0;
-            animation: fadeInOut 3s ease-in-out forwards;
-        }
-
-        @keyframes fadeInOut {
-            0% { opacity: 0; }
-            50% { opacity: 1; }
-            100% { opacity: 0; }
-        }
-
-        /* Menú Principal */
-        #menu-screen h1 {
-            font-size: 3.5em;
-            color: #00aaff;
-            text-shadow: 2px 2px 4px #000;
-        }
-
-        .menu-button {
-            margin: 15px;
-            padding: 15px 30px;
-            font-size: 1.5em;
-            cursor: pointer;
-            background-color: #0074d9;
-            color: white;
-            border: 2px solid #00aaff;
-            border-radius: 10px;
-            font-weight: bold;
-        }
-
-        .menu-button:hover {
-            background-color: #00aaff;
-        }
-
-        #game-over h2 { color: #ff4136; font-size: 48px; }
-        #pause-screen h2 { color: #ffdc00; font-size: 48px; }
-
-        /* --- Interfaz de Usuario (Juego) --- */
-        #ui-container {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            width: calc(100% - 20px);
+            padding: 10px 20px;
+            z-index: 20;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 5;
+            font-size: 1rem;
+            color: #fff;
+            background: rgba(0,0,0,0.3);
+            pointer-events: none; /* Permite clics a través del HUD */
         }
-
-        #score-container {
-            font-size: 24px;
-            font-weight: bold;
-            text-shadow: 2px 2px 4px #000;
+        
+        #hud-lives {
+            display: flex;
         }
-
-        #pause-button {
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
-            font-weight: bold;
-            background-color: rgba(255, 255, 0, 0.7);
-            border: 2px solid #fff;
-            border-radius: 50%;
-            cursor: pointer;
-            user-select: none; /* Evita que se seleccione el texto */
+        
+        #hud-lives img {
+            width: 30px;
+            height: 30px;
+            margin-right: 5px;
         }
-
-        /* --- Controles Móviles (para Mode Celular) --- */
+        
+        #hud-score, #hud-time {
+             min-width: 100px;
+             text-align: right;
+        }
+        
+        /* --- CONTROLES MÓVILES --- */
         #mobile-controls {
-            position: absolute;
+            position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            height: 150px; /* Área de los controles */
-            z-index: 5;
+            height: 100%;
+            z-index: 19;
+            display: none; /* Oculto por defecto */
+            pointer-events: none; /* No bloquea el canvas */
         }
-
-        #joystick-area {
+        
+        #mobile-controls.active {
+            display: block;
+        }
+        
+        #joystick-zone {
             position: absolute;
-            bottom: 25px;
-            left: 25px;
-            width: 100px;
-            height: 100px;
-            background-color: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.4);
+            bottom: 20px;
+            left: 20px;
+            width: 150px;
+            height: 150px;
+            pointer-events: auto; /* Sí recibe eventos */
         }
-
+        
+        #joystick-base {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            left: 15px;
+            top: 15px;
+        }
+        
         #joystick-knob {
             position: absolute;
-            width: 60px;
-            height: 60px;
-            background-color: rgba(255, 255, 255, 0.5);
+            width: 70px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.5);
             border-radius: 50%;
-            top: 20px; /* Centrado */
-            left: 20px; /* Centrado */
+            left: 40px;
+            top: 40px;
+            transition: transform 0.05s linear;
         }
-
-        #fire-button {
+        
+        #shoot-button {
             position: absolute;
-            bottom: 25px;
-            right: 25px;
-            width: 90px;
-            height: 90px;
-            background-color: rgba(255, 0, 0, 0.5);
-            border: 2px solid rgba(255, 0, 0, 0.8);
+            bottom: 30px;
+            right: 30px;
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.5);
             border-radius: 50%;
-            user-select: none;
+            pointer-events: auto; /* Sí recibe eventos */
+        }
+        
+        #shoot-button:active {
+            background: rgba(255, 0, 0, 0.7);
+        }
+        
+        /* --- PANTALLA DE PAUSA --- */
+        #pause-screen {
+            background: rgba(0, 0, 0, 0.7);
+            font-size: 2rem;
+            color: #ffdd00;
+            text-shadow: 0 0 10px #ffdd00;
         }
 
-        #fire-button:active {
-            background-color: rgba(255, 0, 0, 0.8);
+        /* --- ANIMACIONES CSS --- */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
+
+        @keyframes fadeOut {
+            from { opacity: 1; }
+            to { opacity: 0; }
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+        
+        @keyframes load {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
     </style>
 </head>
 <body>
 
-    <div id="intro-screen">
-        <h1>fabialancho games</h1>
+    <!-- Fondo de estrellas persistente -->
+    <div id="starfield-bg"></div>
+
+    <!-- PANTALLA 1: INTRO -->
+    <div id="intro-screen" class="screen active">
+        <!-- El logo y los textos se mostrarán/ocultarán con JS -->
+        <img id="intro-logo" src="fabi_alancho_games.png" alt="Fabialancho Games Logo" style="display: none;">
+        <div id="intro-fbgames" class_name="subtitle" style="display: none;">FBGAMES</div>
+        
+        <div id="intro-title" class_name="title" style="display: none;">MILO SHOUTER</div>
+        <div id="intro-loading" style="display: none;">
+            <div id="loading-bar">
+                <div id="loading-bar-fill"></div>
+            </div>
+        </div>
     </div>
 
-    <div id="menu-screen" class="screen" style="display: none;">
-        <h1>MILO SHOOTER</h1>
-        <button id="pc-button" class="menu-button">Modo PC (Teclado/Mouse)</button>
-        <button id="mobile-button" class="menu-button">Modo Celular (Joystick/Touch)</button>
+    <!-- PANTALLA 2: MENÚ PRINCIPAL -->
+    <div id="menu-screen" class="screen">
+        <h1>MILO SHOUTER</h1>
+        <div class="record-text">⏱️ Tiempo récord: <span id="menu-record">0</span> s</div>
+        <button id="btn-play-mobile" class="game-button">JUGAR EN CELULAR</button>
+        <button id="btn-play-pc" class="game-button">JUGAR EN PC</button>
     </div>
 
-    <div id="game-container" style="display: none;">
+    <!-- PANTALLA 3: JUEGO -->
+    <div id="game-screen" class="screen">
         <canvas id="game-canvas"></canvas>
         
-        <div id="ui-container">
-            <div id="score-container">
-                Puntuación: <span id="score">0</span>
+        <!-- HUD (Vidas, Puntuación, Tiempo) -->
+        <div id="hud">
+            <div id="hud-lives">
+                <!-- Los corazones se generan con JS -->
             </div>
-            <button id="pause-button">||</button>
+            <div id="hud-time">Tiempo: 0s</div>
+            <div id="hud-score">Puntos: 0</div>
         </div>
-
-        <div id="mobile-controls" style="display: none;">
-            <div id="joystick-area">
+        
+        <!-- Controles Móviles (Ocultos por defecto) -->
+        <div id="mobile-controls">
+            <div id="joystick-zone">
+                <div id="joystick-base"></div>
                 <div id="joystick-knob"></div>
             </div>
-            <button id="fire-button"></button>
+            <div id="shoot-button"></div>
         </div>
-
-        <div id="pause-screen" class="screen" style="display: none;">
-            <h2>PAUSA</h2>
-            <button id="resume-button" class="menu-button">Reanudar</button>
-            <button id="menu-from-pause-button" class="menu-button">Menú Principal</button>
-        </div>
-
-        <div id="game-over" class="screen" style="display: none;">
-            <h2>GAME OVER</h2>
-            <button id="restart-button" class="menu-button">Volver al Menú</button>
+        
+        <!-- Pantalla de Pausa (Overlay) -->
+        <div id="pause-screen" class="screen">
+            JUEGO PAUSADO
         </div>
     </div>
 
+    <!-- PANTALLA 4: GAME OVER -->
+    <div id="game-over-screen" class="screen">
+        <h1>HAS PERDIDO</h1>
+        <div class="stats">
+            <div>⏱️ Tiempo sobrevivido: <span id="stat-time">0</span> s</div>
+            <div class="record-text">🏆 Récord: <span id="stat-record">0</span> s</div>
+        </div>
+        <button id="btn-retry" class="game-button">🔁 Reintentar</button>
+        <button id="btn-menu" class="game-button">🏠 Salir al Menú</button>
+        <button id="btn-web" class="game-button">🌐 Ir a la Web Principal</button>
+    </div>
+
+
+    <!-- ======================================================= -->
+    <!-- SCRIPT PRINCIPAL DEL JUEGO -->
+    <!-- ======================================================= -->
     <script>
-        // --- Elementos del DOM ---
+    document.addEventListener('DOMContentLoaded', () => {
+
+        // --- 1. REFERENCIAS A ELEMENTOS DEL DOM ---
+        // Pantallas
+        const screens = {
+            intro: document.getElementById('intro-screen'),
+            menu: document.getElementById('menu-screen'),
+            game: document.getElementById('game-screen'),
+            gameOver: document.getElementById('game-over-screen'),
+            pause: document.getElementById('pause-screen')
+        };
+        // Intro
+        const introLogo = document.getElementById('intro-logo');
+        const introFbGames = document.getElementById('intro-fbgames');
+        const introTitle = document.getElementById('intro-title');
+        const introLoading = document.getElementById('intro-loading');
+        
+        // Menú
+        const btnPlayMobile = document.getElementById('btn-play-mobile');
+        const btnPlayPC = document.getElementById('btn-play-pc');
+        const menuRecord = document.getElementById('menu-record');
+        
+        // Juego
         const canvas = document.getElementById('game-canvas');
         const ctx = canvas.getContext('2d');
-
-        const introScreen = document.getElementById('intro-screen');
-        const menuScreen = document.getElementById('menu-screen');
-        const pcButton = document.getElementById('pc-button');
-        const mobileButton = document.getElementById('mobile-button');
-        const gameContainer = document.getElementById('game-container');
-
-        const scoreEl = document.getElementById('score');
-        const pauseButton = document.getElementById('pause-button');
-        const pauseScreen = document.getElementById('pause-screen');
-        const resumeButton = document.getElementById('resume-button');
-        const menuFromPauseButton = document.getElementById('menu-from-pause-button');
-        const gameOverScreen = document.getElementById('game-over');
-        const restartButton = document.getElementById('restart-button');
-
+        const hudLives = document.getElementById('hud-lives');
+        const hudTime = document.getElementById('hud-time');
+        const hudScore = document.getElementById('hud-score');
         const mobileControls = document.getElementById('mobile-controls');
-        const joystickArea = document.getElementById('joystick-area');
+        
+        // Game Over
+        const btnRetry = document.getElementById('btn-retry');
+        const btnMenu = document.getElementById('btn-menu');
+        const btnWeb = document.getElementById('btn-web');
+        const statTime = document.getElementById('stat-time');
+        const statRecord = document.getElementById('stat-record');
+
+        // Controles Móviles
+        const joystickZone = document.getElementById('joystick-zone');
         const joystickKnob = document.getElementById('joystick-knob');
-        const fireButton = document.getElementById('fire-button');
+        const shootButton = document.getElementById('shoot-button');
 
-        // --- Configuración del Canvas ---
-        canvas.width = 800;
-        canvas.height = 600;
+        // --- 2. CONFIGURACIÓN Y ESTADO DEL JUEGO ---
+        let controlMode = 'pc'; // 'pc' o 'mobile'
+        let gameState = {
+            running: false,
+            paused: false,
+            lives: 3,
+            score: 0,
+            startTime: 0,
+            elapsedTime: 0,
+            recordTime: 0,
+            spawnTimer: 0,
+            spawnInterval: 2, // Segundos para nuevo enemigo
+        };
 
-        // --- Carga de Imágenes (Aseguramos que carguen antes de empezar) ---
-        let imagesLoadedCount = 0;
-        const totalImages = 4;
-        function checkAllImagesLoaded() {
-            imagesLoadedCount++;
-            if (imagesLoadedCount === totalImages) {
-                // Inicia el bucle de juego una vez que todas las imágenes estén listas.
-                // Esta función se llama solo si las 4 imágenes se encuentran en la carpeta.
-                gameLoop(); 
-            }
-        }
+        let player;
+        let missiles = [];
+        let enemies = [];
+        let particles = [];
+        let stars = [];
+        
+        let keys = {}; // Estado de teclas presionadas
+        let joystick = {
+            active: false,
+            touchId: null,
+            startX: 0,
+            startY: 0,
+            currentX: 0,
+            currentY: 0,
+            deltaX: 0,
+            deltaY: 0,
+            maxDistance: 60,
+        };
+        let isShootingMobile = false;
 
-        // Función auxiliar para cargar imagen y verificar el estado
-        function loadGameImage(src) {
-            let img = new Image();
-            img.onload = checkAllImagesLoaded; 
-            img.onerror = () => console.error(`Error cargando imagen: ${src}. Asegúrate de que el nombre y la ruta son correctos.`); // Mensaje de ayuda si no carga
-            img.src = src;
+        let lastTime = 0;
+        const RECORD_KEY = 'milo_shouter_record';
+
+        // --- 3. ASSETS (IMÁGENES) ---
+        // Aquí es donde cambias las rutas de los sprites
+        const assetPaths = {
+            logo: 'fabi_alancho_games.png',
+            player: 'miloenunanave.png',
+            enemy: 'enemigo.png',
+            missile: 'misil.png',
+            life: 'corazon.png',
+            explosion: 'explo_sion.png'
+        };
+        
+        const assets = {};
+        let assetsLoaded = 0;
+        const totalAssets = Object.keys(assetPaths).length;
+
+        // Función para crear un placeholder si la imagen falla
+        function createPlaceholder(width, height, text, color) {
+            const buffer = document.createElement('canvas');
+            buffer.width = width;
+            buffer.height = height;
+            const bCtx = buffer.getContext('2d');
+            
+            bCtx.fillStyle = color;
+            bCtx.fillRect(0, 0, width, height);
+            bCtx.fillStyle = '#000';
+            bCtx.font = '10px "Press Start 2P"';
+            bCtx.textAlign = 'center';
+            bCtx.textBaseline = 'middle';
+            bCtx.fillText(text, width / 2, height / 2);
+            
+            // Convertir el canvas a una imagen
+            const img = new Image();
+            img.src = buffer.toDataURL();
             return img;
         }
 
-        const playerImg = loadGameImage('miloenunanave.png');
-        const projectileImg = loadGameImage('proyectil.png');
-        const enemyImg = loadGameImage('enemigo.png');
-        const explosionImg = loadGameImage('explo_sion.png');
-
-        // --- Variables del Juego ---
-        let player, projectileCooldown;
-        let projectiles = [];
-        let enemies = [];
-        let explosions = [];
-        let score = 0;
-        let enemySpawnTimer = 0;
-        const enemySpawnInterval = 100;
-
-        // --- Estados del Juego ---
-        let gameState = 'INTRO'; // 'INTRO', 'MENU', 'PLAYING', 'PAUSED', 'GAMEOVER'
-        let gameMode = 'pc'; // 'pc' o 'mobile'
-
-        // --- Variables del Joystick ---
-        let joystickActive = false;
-        let joystickStartY = 0;
-        const joystickMaxMove = 40; 
+        // Función para cargar todos los assets
+        function loadAssets(onComplete) {
+            Object.keys(assetPaths).forEach(key => {
+                const img = new Image();
+                img.src = assetPaths[key];
+                
+                img.onload = () => {
+                    assets[key] = img;
+                    assetsLoaded++;
+                    if (assetsLoaded === totalAssets) {
+                        onComplete();
+                    }
+                };
+                
+                img.onerror = () => {
+                    console.error(`Error al cargar asset: ${assetPaths[key]}`);
+                    // Si falla, crea un placeholder
+                    let placeholder;
+                    switch(key) {
+                        case 'player': placeholder = createPlaceholder(60, 60, 'MILO', '#00f'); break;
+                        case 'enemy': placeholder = createPlaceholder(50, 50, 'ENMY', '#f00'); break;
+                        case 'missile': placeholder = createPlaceholder(20, 10, 'MISIL', '#ff0'); break;
+                        case 'life': placeholder = createPlaceholder(30, 30, '<3', '#f0f'); break;
+                        case 'explosion': placeholder = createPlaceholder(64, 64, 'BOOM', '#f80'); break;
+                        default: placeholder = createPlaceholder(100, 50, 'IMG', '#888');
+                    }
+                    assets[key] = placeholder;
+                    
+                    assetsLoaded++;
+                    if (assetsLoaded === totalAssets) {
+                        onComplete();
+                    }
+                };
+            });
+        }
         
-        // Clases de Objetos (simplificadas para el código único)
-        class Player {
-            constructor() {
-                this.width = 100; this.height = 75;
-                this.x = 50; this.y = (canvas.height - this.height) / 2;
-                this.speed = 7;
-                this.keys = { up: false, down: false };
+
+        // --- 4. CLASES DEL JUEGO ---
+
+        // Clase base para entidades
+        class Entity {
+            constructor(x, y, width, height, img) {
+                this.x = x;
+                this.y = y;
+                this.width = width;
+                this.height = height;
+                this.img = img;
+                this.active = true; // Para marcar si debe ser eliminado
             }
-            draw() {
-                ctx.drawImage(playerImg, this.x, this.y, this.width, this.height);
+            
+            draw(ctx) {
+                if (this.img) {
+                    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+                }
             }
-            update() {
-                if (this.keys.up && this.y > 0) {
-                    this.y -= this.speed;
-                }
-                if (this.keys.down && this.y < canvas.height - this.height) {
-                    this.y += this.speed;
-                }
-                this.draw();
+            
+            // Detección de colisión (AABB)
+            collidesWith(other) {
+                return this.x < other.x + other.width &&
+                       this.x + this.width > other.x &&
+                       this.y < other.y + other.height &&
+                       this.y + this.height > other.y;
             }
         }
 
-        class Projectile {
+        // Clase del Jugador
+        class Player extends Entity {
             constructor(x, y) {
-                this.width = 30; this.height = 30; this.x = x; this.y = y; this.speed = 10;
+                const img = assets.player;
+                // AJUSTAR: Tamaño del jugador
+                const width = 60; 
+                const height = 60;
+                super(x, y, width, height, img);
+                // AJUSTAR: Velocidad del jugador
+                this.speed = 300; // píxeles por segundo
+                this.shootCooldown = 0;
+                // AJUSTAR: Tiempo entre disparos (segundos)
+                this.shootInterval = 0.3;
+                this.isHit = false;
+                this.hitTimer = 0;
             }
-            draw() { ctx.drawImage(projectileImg, this.x, this.y, this.width, this.height); }
-            update() { this.x += this.speed; this.draw(); }
-        }
+            
+            update(dt) {
+                // Movimiento
+                let moveX = 0;
+                let moveY = 0;
 
-        class Enemy {
-            constructor() {
-                this.width = 60; this.height = 60;
-                this.x = canvas.width;
-                this.y = Math.random() * (canvas.height - this.height);
-                this.speed = Math.random() * 3 + 2;
-            }
-            draw() { ctx.drawImage(enemyImg, this.x, this.y, this.width, this.height); }
-            update() { this.x -= this.speed; this.draw(); }
-        }
-
-        class Explosion {
-            constructor(x, y) {
-                this.width = 75; this.height = 75; this.x = x; this.y = y;
-                this.timer = 15;
-            }
-            draw() { ctx.drawImage(explosionImg, this.x, this.y, this.width, this.height); }
-            update() { this.timer--; this.draw(); }
-        }
-
-
-        // --- Funciones Principales del Juego ---
-
-        function gameLoop() {
-            if (gameState === 'PLAYING') {
-                ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
-
-                player.update();
-                if (projectileCooldown > 0) projectileCooldown--;
-
-                projectiles = projectiles.filter(p => p.x < canvas.width);
-                projectiles.forEach(p => p.update());
-
-                enemySpawnTimer++;
-                if (enemySpawnTimer > enemySpawnInterval) {
-                    enemies.push(new Enemy());
-                    enemySpawnTimer = 0;
+                if (controlMode === 'pc') {
+                    if (keys['w'] || keys['ArrowUp']) moveY -= 1;
+                    if (keys['s'] || keys['ArrowDown']) moveY += 1;
+                    if (keys['a'] || keys['ArrowLeft']) moveX -= 1;
+                    if (keys['d'] || keys['ArrowRight']) moveX += 1;
+                } else {
+                    moveX = joystick.deltaX;
+                    moveY = joystick.deltaY;
                 }
+                
+                // Normalizar vector diagonal (para que no sea más rápido)
+                const mag = Math.sqrt(moveX * moveX + moveY * moveY);
+                if (mag > 0) {
+                    moveX /= mag;
+                    moveY /= mag;
+                }
+                
+                this.x += moveX * this.speed * dt;
+                this.y += moveY * this.speed * dt;
 
-                enemies = enemies.filter(e => e.x > -e.width);
-                enemies.forEach(e => e.update());
+                // Límites de pantalla
+                if (this.x < 0) this.x = 0;
+                if (this.x + this.width > canvas.width) this.x = canvas.width - this.width;
+                if (this.y < 0) this.y = 0;
+                if (this.y + this.height > canvas.height) this.y = canvas.height - this.height;
 
-                explosions = explosions.filter(ex => ex.timer > 0);
-                explosions.forEach(ex => ex.update());
-
-                handleCollisions();
-            } else if (gameState === 'PAUSED') {
-                // Si está en pausa, solo redibujar lo último
-                player.draw();
-                projectiles.forEach(p => p.draw());
-                enemies.forEach(e => e.draw());
-                explosions.forEach(ex => ex.draw());
+                // Disparo
+                this.shootCooldown -= dt;
+                const canShoot = this.shootCooldown <= 0;
+                const isShooting = (controlMode === 'pc' && keys[' ']) || 
+                                   (controlMode === 'mobile' && isShootingMobile);
+                                   
+                if (isShooting && canShoot) {
+                    this.shoot();
+                    this.shootCooldown = this.shootInterval;
+                }
+                
+                // Manejo de ser golpeado (parpadeo)
+                if (this.isHit) {
+                    this.hitTimer -= dt;
+                    if (this.hitTimer <= 0) {
+                        this.isHit = false;
+                    }
+                }
             }
+            
+            draw(ctx) {
+                // Parpadea si está golpeado
+                if (this.isHit && Math.floor(this.hitTimer * 10) % 2 === 0) {
+                    return; 
+                }
+                super.draw(ctx);
+            }
+
+            shoot() {
+                // AJUSTAR: Tamaño del misil
+                const missileWidth = 30;
+                const missileHeight = 15;
+                const x = this.x + this.width; // Sale de la punta de la nave
+                const y = this.y + this.height / 2 - missileHeight / 2;
+                missiles.push(new Missile(x, y, missileWidth, missileHeight));
+            }
+            
+            hit() {
+                if (this.isHit) return; // Ya es invulnerable
+                
+                gameState.lives--;
+                updateHUDLives();
+                
+                if (gameState.lives <= 0) {
+                    gameOver();
+                } else {
+                    this.isHit = true;
+                    // AJUSTAR: Tiempo de invulnerabilidad (segundos)
+                    this.hitTimer = 1.5; 
+                }
+                
+                // Crear explosión visual
+                createExplosion(this.x + this.width / 2, this.y + this.height / 2, true);
+            }
+        }
+        
+        // Clase del Misil
+        class Missile extends Entity {
+            constructor(x, y, width, height) {
+                super(x, y, width, height, assets.missile);
+                // AJUSTAR: Velocidad del misil
+                this.speed = 500; // píxeles por segundo
+            }
+            
+            update(dt) {
+                this.x += this.speed * dt;
+                // Desactivar si sale de la pantalla
+                if (this.x > canvas.width) {
+                    this.active = false;
+                }
+            }
+        }
+        
+        // Clase del Enemigo
+        class Enemy extends Entity {
+            constructor(x, y) {
+                const img = assets.enemy;
+                // AJUSTAR: Tamaño del enemigo
+                const width = 50;
+                const height = 50;
+                super(x, y, width, height, img);
+                // AJUSTAR: Velocidad del enemigo
+                this.speed = Math.random() * 100 + 100; // Velocidad aleatoria
+            }
+            
+            update(dt) {
+                this.x -= this.speed * dt;
+                // Desactivar si sale de la pantalla
+                if (this.x + this.width < 0) {
+                    this.active = false;
+                }
+            }
+        }
+        
+        // Clase de Partícula (para explosiones)
+        class Particle {
+            constructor(x, y, color) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 5 + 2;
+                this.speedX = (Math.random() - 0.5) * 8;
+                this.speedY = (Math.random() - 0.5) * 8;
+                this.life = Math.random() * 0.5 + 0.5; // 0.5 a 1 segundo
+                this.color = color || `rgb(${Math.random()*255}, ${Math.random()*255}, 0)`;
+                this.active = true;
+            }
+            
+            update(dt) {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= dt;
+                if (this.life <= 0) {
+                    this.active = false;
+                }
+            }
+            
+            draw(ctx) {
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.life * 2; // Fade out
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+        
+        // Clase de Estrella (para fondo del canvas)
+        class Star {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speed = Math.random() * 20 + 10; // Más lento
+            }
+            
+            update(dt) {
+                this.x -= this.speed * dt;
+                if (this.x < 0) {
+                    this.x = canvas.width;
+                    this.y = Math.random() * canvas.height;
+                }
+            }
+            
+            draw(ctx) {
+                ctx.fillStyle = '#fff';
+                ctx.globalAlpha = this.size / 2.5;
+                ctx.fillRect(this.x, this.y, this.size, this.size);
+            }
+        }
+
+
+        // --- 5. LÓGICA DEL JUEGO (Game Loop) ---
+
+        // Bucle principal del juego
+        function gameLoop(timestamp) {
+            if (!gameState.running) return;
+            
+            const dt = (timestamp - lastTime) / 1000; // Delta time en segundos
+            lastTime = timestamp;
+
+            if (!gameState.paused) {
+                update(dt);
+            }
+            
+            draw();
             
             requestAnimationFrame(gameLoop);
         }
 
-        function initGame() {
-            player = new Player();
-            projectiles = [];
-            enemies = [];
-            explosions = [];
-            score = 0;
-            scoreEl.textContent = 0;
-            enemySpawnTimer = 0;
-            projectileCooldown = 0;
+        // Función de Actualización
+        function update(dt) {
+            // Actualizar estrellas de fondo
+            stars.forEach(star => star.update(dt));
+
+            // Actualizar jugador
+            player.update(dt);
             
-            gameOverScreen.style.display = 'none';
-            pauseScreen.style.display = 'none';
-            gameState = 'PLAYING';
-            // Asegurarse de que el joystick se resetea si se sale de gameover
-            handleJoystickEnd(); 
+            // Actualizar misiles
+            missiles = missiles.filter(m => m.active);
+            missiles.forEach(m => m.update(dt));
+            
+            // Actualizar enemigos
+            enemies = enemies.filter(e => e.active);
+            enemies.forEach(e => e.update(dt));
+            
+            // Actualizar partículas
+            particles = particles.filter(p => p.active);
+            particles.forEach(p => p.update(dt));
+
+            // Spawneo de enemigos
+            // AJUSTAR: Lógica de spawn
+            gameState.spawnTimer -= dt;
+            if (gameState.spawnTimer <= 0) {
+                spawnEnemy();
+                // Dificultad incremental: reducir tiempo de spawn
+                gameState.spawnInterval = Math.max(0.5, gameState.spawnInterval * 0.99);
+                gameState.spawnTimer = gameState.spawnInterval;
+            }
+            
+            // Detección de colisiones
+            checkCollisions();
+            
+            // Actualizar HUD
+            gameState.elapsedTime = (Date.now() - gameState.startTime) / 1000;
+            hudTime.textContent = `Tiempo: ${Math.floor(gameState.elapsedTime)}s`;
+            hudScore.textContent = `Puntos: ${gameState.score}`;
+        }
+        
+        // Función de Dibujado
+        function draw() {
+            // Limpiar canvas
+            ctx.globalAlpha = 1;
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Dibujar estrellas
+            ctx.globalAlpha = 1;
+            stars.forEach(star => star.draw(ctx));
+            
+            // Dibujar jugador
+            player.draw(ctx);
+            
+            // Dibujar misiles
+            missiles.forEach(m => m.draw(ctx));
+            
+            // Dibujar enemigos
+            enemies.forEach(e => e.draw(ctx));
+            
+            // Dibujar partículas (explosiones)
+            particles.forEach(p => p.draw(ctx));
+            
+            // Restaurar alpha global por si acaso
+            ctx.globalAlpha = 1;
+        }
+        
+        // --- 6. FUNCIONES AUXILIARES DEL JUEGO ---
+
+        // Iniciar una nueva partida
+        function startGame() {
+            // Ajustar tamaño del canvas
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            // Configurar modo de control
+            if (controlMode === 'mobile') {
+                mobileControls.classList.add('active');
+            } else {
+                mobileControls.classList.remove('active');
+            }
+            
+            // Reiniciar estado
+            gameState.running = true;
+            gameState.paused = false;
+            gameState.lives = 3;
+            gameState.score = 0;
+            gameState.startTime = Date.now();
+            gameState.elapsedTime = 0;
+            // AJUSTAR: Intervalo inicial de spawn
+            gameState.spawnInterval = 2.0; 
+            gameState.spawnTimer = gameState.spawnInterval;
+            
+            // Limpiar arrays
+            missiles = [];
+            enemies = [];
+            particles = [];
+            stars = [];
+            
+            // Crear jugador
+            player = new Player(50, canvas.height / 2 - 30);
+            
+            // Crear estrellas de fondo
+            for (let i = 0; i < 100; i++) {
+                stars.push(new Star());
+            }
+            
+            // Actualizar HUD
+            updateHUDLives();
+            hudScore.textContent = 'Puntos: 0';
+            hudTime.textContent = 'Tiempo: 0s';
+            
+            // Mostrar pantalla de juego
+            showScreen('game');
+            
+            // Iniciar bucle
+            lastTime = performance.now();
+            gameLoop(lastTime);
+        }
+        
+        // Terminar la partida
+        function gameOver() {
+            gameState.running = false;
+            
+            // Mostrar explosión final del jugador
+            ctx.drawImage(assets.explosion, player.x, player.y, player.width, player.height);
+
+            // Guardar récord
+            const timeSurvived = Math.floor(gameState.elapsedTime);
+            if (timeSurvived > gameState.recordTime) {
+                gameState.recordTime = timeSurvived;
+                localStorage.setItem(RECORD_KEY, gameState.recordTime.toString());
+            }
+            
+            // Mostrar estadísticas
+            statTime.textContent = timeSurvived;
+            statRecord.textContent = gameState.recordTime;
+            
+            // Pequeña demora antes de mostrar la pantalla
+            setTimeout(() => {
+                showScreen('gameOver');
+            }, 1000); // 1 segundo para ver la explosión
         }
 
-        function tryShoot() {
-            if (projectileCooldown === 0 && gameState === 'PLAYING') {
-                projectiles.push(new Projectile(player.x + player.width - 30, player.y + player.height / 2 - 15));
-                projectileCooldown = 20; 
+        // Pausar/Reanudar el juego
+        function togglePause() {
+            if (!gameState.running) return;
+            
+            gameState.paused = !gameState.paused;
+            if (gameState.paused) {
+                screens.pause.classList.add('active');
+            } else {
+                screens.pause.classList.remove('active');
+                // Re-enganchar el tiempo para evitar saltos
+                lastTime = performance.now();
             }
         }
-
-        function handleCollisions() {
-            for (let i = projectiles.length - 1; i >= 0; i--) {
+        
+        // Generar un nuevo enemigo
+        function spawnEnemy() {
+            const y = Math.random() * (canvas.height - 50); // 50 es el alto del enemigo
+            const x = canvas.width;
+            enemies.push(new Enemy(x, y));
+        }
+        
+        // Crear explosión (de partículas o imagen)
+        function createExplosion(x, y, isPlayer = false) {
+            if (isPlayer) {
+                // Explosión grande del jugador (imagen)
+                particles.push({
+                    img: assets.explosion,
+                    x: x - assets.explosion.width / 2,
+                    y: y - assets.explosion.height / 2,
+                    life: 0.5, // Duración de la imagen
+                    active: true,
+                    update: function(dt) {
+                        this.life -= dt;
+                        if (this.life <= 0) this.active = false;
+                    },
+                    draw: function(ctx) {
+                        ctx.globalAlpha = this.life * 2;
+                        ctx.drawImage(this.img, this.x, this.y);
+                    }
+                });
+            } else {
+                // Explosión normal (partículas)
+                // AJUSTAR: Número de partículas
+                for (let i = 0; i < 15; i++) { 
+                    particles.push(new Particle(x, y, '#ff8800'));
+                }
+            }
+        }
+        
+        // Lógica de colisiones
+        function checkCollisions() {
+            // Misiles vs Enemigos
+            for (let i = missiles.length - 1; i >= 0; i--) {
+                const missile = missiles[i];
                 for (let j = enemies.length - 1; j >= 0; j--) {
-                    if (projectiles[i] && enemies[j] && checkCollision(projectiles[i], enemies[j])) {
-                        explosions.push(new Explosion(enemies[j].x, enemies[j].y));
-                        score += 100;
-                        scoreEl.textContent = score;
-                        projectiles.splice(i, 1);
-                        enemies.splice(j, 1);
-                        break;
+                    const enemy = enemies[j];
+                    
+                    if (missile.collidesWith(enemy)) {
+                        // Colisión detectada
+                        missile.active = false;
+                        enemy.active = false;
+                        
+                        // AJUSTAR: Puntos por enemigo
+                        gameState.score += 100;
+                        
+                        // Crear explosión
+                        createExplosion(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2);
+                        break; // El misil solo puede golpear a un enemigo
                     }
                 }
             }
-            for (let i = enemies.length - 1; i >= 0; i--) {
-                if (checkCollision(enemies[i], player)) {
-                    gameOver();
+            
+            // Enemigos vs Jugador
+            if (!player.isHit) { // Solo si no es invulnerable
+                for (let i = enemies.length - 1; i >= 0; i--) {
+                    const enemy = enemies[i];
+                    if (player.collidesWith(enemy)) {
+                        enemy.active = false;
+                        player.hit();
+                        break; // Solo recibe un golpe a la vez
+                    }
                 }
             }
         }
 
-        function checkCollision(rect1, rect2) {
-            return (
-                rect1.x < rect2.x + rect2.width &&
-                rect1.x + rect1.width > rect2.x &&
-                rect1.y < rect2.y + rect2.height &&
-                rect1.y + rect1.height > rect2.y
-            );
-        }
+        // --- 7. MANEJO DE NAVEGACIÓN Y PANTALLAS ---
 
-        function togglePause() {
-            if (gameState === 'PLAYING') {
-                gameState = 'PAUSED';
-                pauseScreen.style.display = 'flex';
-                // Detener el movimiento del jugador si estaba activo con joystick
-                if (gameMode === 'mobile') handleJoystickEnd();
-            } else if (gameState === 'PAUSED') {
-                gameState = 'PLAYING';
-                pauseScreen.style.display = 'none';
+        // Mostrar una pantalla específica y ocultar las demás
+        function showScreen(screenId) {
+            Object.keys(screens).forEach(key => {
+                if (key === screenId) {
+                    screens[key].classList.add('active');
+                } else {
+                    screens[key].classList.remove('active');
+                }
+            });
+            // Ocultar pantalla de pausa siempre que se cambia de pantalla
+            if (screenId !== 'game') {
+                screens.pause.classList.remove('active');
             }
         }
-
-        function gameOver() {
-            gameState = 'GAMEOVER';
-            gameOverScreen.style.display = 'flex';
-            // Desactivar controles de movimiento al morir
-            player.keys.up = false;
-            player.keys.down = false;
-        }
-
-        function goToMenu() {
-            gameOverScreen.style.display = 'none';
-            gameContainer.style.display = 'none';
-            pauseScreen.style.display = 'none';
-            menuScreen.style.display = 'flex';
-            gameState = 'MENU';
-            // Asegurarse de limpiar los controles al volver al menú
-            if (gameMode === 'pc') {
-                window.removeEventListener('keydown', handlePCKeyDown);
-                window.removeEventListener('keyup', handlePCKeyUp);
+        
+        // Cargar récord guardado
+        function loadRecord() {
+            const savedRecord = localStorage.getItem(RECORD_KEY);
+            if (savedRecord) {
+                gameState.recordTime = parseInt(savedRecord, 10);
             } else {
-                joystickArea.removeEventListener('touchstart', handleJoystickStart);
-                fireButton.removeEventListener('touchstart', handleFireTouch);
+                gameState.recordTime = 0;
             }
+            menuRecord.textContent = gameState.recordTime;
+        }
+        
+        // Actualizar iconos de vidas en el HUD
+        function updateHUDLives() {
+            hudLives.innerHTML = '';
+            for (let i = 0; i < gameState.lives; i++) {
+                const lifeImg = assets.life.cloneNode();
+                hudLives.appendChild(lifeImg);
+            }
+        }
+        
+        // Secuencia de Intro
+        function runIntro() {
+            // 1. Inicia con fondo negro y estrellas CSS
+            showScreen('intro');
+            
+            // 2. Fade in logo
+            setTimeout(() => {
+                introLogo.style.display = 'block';
+                introLogo.style.animation = 'fadeIn 2s forwards';
+            }, 500); // 0.5s de espera
+            
+            // 3. Aparece FBGAMES
+            setTimeout(() => {
+                introFbGames.style.display = 'block';
+                introFbGames.style.animation = 'fadeIn 1s forwards, blink 1.5s linear infinite 1s';
+            }, 2500); // 2s después del logo
+            
+            // 4. Todo se desvanece
+            setTimeout(() => {
+                introLogo.style.animation = 'fadeOut 1.5s forwards';
+                introFbGames.style.animation = 'fadeOut 1.5s forwards';
+            }, 5000); // 2.5s de parpadeo
+            
+            // 5. Aparece título
+            setTimeout(() => {
+                introTitle.style.display = 'block';
+                introTitle.style.animation = 'fadeIn 1s forwards';
+            }, 6500); // Al desaparecer lo anterior
+            
+            // 6. Barra de carga
+            setTimeout(() => {
+                introLoading.style.display = 'block';
+                introLoading.style.animation = 'fadeIn 1s forwards';
+                // La animación CSS 'load' dura 3 segundos
+            }, 7000); // 0.5s después del título
+            
+            // 7. Entrar al Menú
+            setTimeout(() => {
+                showScreen('menu');
+                loadRecord(); // Cargar récord al entrar al menú
+            }, 10000); // 3s de barra de carga
         }
 
 
-        // --- Controladores de Eventos y Lógica de Menús ---
+        // --- 8. MANEJO DE ENTRADAS (Input) ---
+        
+        // Teclado (PC)
+        function setupKeyboardListeners() {
+            document.addEventListener('keydown', (e) => {
+                keys[e.key.toLowerCase()] = true;
+                
+                // Pausa
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    togglePause();
+                }
+                
+                // Evitar scroll con espacio/flechas
+                if ([' ', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key.toLowerCase())) {
+                    e.preventDefault();
+                }
+            });
+            
+            document.addEventListener('keyup', (e) => {
+                keys[e.key.toLowerCase()] = false;
+            });
+            
+            // Si el usuario cambia de pestaña, pausar
+            window.addEventListener('blur', () => {
+                if (gameState.running && !gameState.paused) {
+                    togglePause();
+                }
+            });
+        }
+        
+        // Táctil (Móvil)
+        function setupTouchListeners() {
+            // Joystick
+            joystickZone.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                if (!joystick.active) {
+                    const touch = e.changedTouches[0];
+                    joystick.touchId = touch.identifier;
+                    joystick.active = true;
+                    joystick.startX = touch.clientX;
+                    joystick.startY = touch.clientY;
+                    joystick.currentX = touch.clientX;
+                    joystick.currentY = touch.clientY;
+                }
+            }, { passive: false });
+            
+            document.addEventListener('touchmove', (e) => {
+                if (joystick.active) {
+                    const touch = Array.from(e.changedTouches).find(t => t.identifier === joystick.touchId);
+                    if (touch) {
+                        e.preventDefault();
+                        joystick.currentX = touch.clientX;
+                        joystick.currentY = touch.clientY;
+                        
+                        let dx = joystick.currentX - joystick.startX;
+                        let dy = joystick.currentY - joystick.startY;
+                        
+                        const mag = Math.sqrt(dx*dx + dy*dy);
+                        if (mag > joystick.maxDistance) {
+                            dx = (dx / mag) * joystick.maxDistance;
+                            dy = (dy / mag) * joystick.maxDistance;
+                        }
+                        
+                        // Actualizar knob visual
+                        joystickKnob.style.transform = `translate(${dx}px, ${dy}px)`;
+                        
+                        // Actualizar movimiento normalizado para el jugador
+                        joystick.deltaX = dx / joystick.maxDistance;
+                        joystick.deltaY = dy / joystick.maxDistance;
+                    }
+                }
+            }, { passive: false });
+            
+            document.addEventListener('touchend', (e) => {
+                const touch = Array.from(e.changedTouches).find(t => t.identifier === joystick.touchId);
+                if (touch) {
+                    joystick.active = false;
+                    joystick.touchId = null;
+                    joystick.deltaX = 0;
+                    joystick.deltaY = 0;
+                    joystickKnob.style.transform = `translate(0px, 0px)`;
+                }
+            });
+            
+            // Botón de disparo
+            shootButton.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                isShootingMobile = true;
+            }, { passive: false });
+            
+            shootButton.addEventListener('touchend', (e) => {
+                e.preventDefault();
+                isShootingMobile = false;
+            });
+        }
 
-        // 1. Intro de fabialancho games
-        window.addEventListener('load', () => {
-            setTimeout(() => {
-                introScreen.style.opacity = '0';
-                setTimeout(() => {
-                    introScreen.style.display = 'none';
-                    menuScreen.style.display = 'flex';
-                    gameState = 'MENU';
-                }, 1000); // 1 segundo de transición de opacidad
-            }, 3000); // 3 segundos de duración de la intro
+
+        // --- 9. ASIGNACIÓN DE EVENTOS A BOTONES ---
+        
+        // Menú
+        btnPlayPC.addEventListener('click', () => {
+            controlMode = 'pc';
+            startGame();
+        });
+        
+        btnPlayMobile.addEventListener('click', () => {
+            controlMode = 'mobile';
+            startGame();
+        });
+        
+        // Game Over
+        btnRetry.addEventListener('click', () => {
+            // Re-inicia el juego con el modo de control anterior
+            startGame();
+        });
+        
+        btnMenu.addEventListener('click', () => {
+            loadRecord(); // Actualizar el récord en el menú
+            showScreen('menu');
+        });
+        
+        btnWeb.addEventListener('click', () => {
+            // AJUSTAR: URL de tu web
+            window.open('https://fabialanchogames.com', '_blank');
+        });
+        
+        // Responsive: reajustar canvas si cambia tamaño de ventana
+        window.addEventListener('resize', () => {
+            if (gameState.running) {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+                
+                // Reiniciar estrellas para que se ajusten al nuevo tamaño
+                stars = [];
+                for (let i = 0; i < 100; i++) {
+                    stars.push(new Star());
+                }
+            }
         });
 
-        // 2. Menú
-        pcButton.addEventListener('click', () => startGame('pc'));
-        mobileButton.addEventListener('click', () => startGame('mobile'));
-
-        function startGame(mode) {
-            gameMode = mode;
-            menuScreen.style.display = 'none';
-            gameContainer.style.display = 'block';
-
-            if (mode === 'pc') {
-                mobileControls.style.display = 'none';
-                setupPCControls();
-            } else {
-                mobileControls.style.display = 'block';
-                setupMobileControls();
-            }
-            
-            initGame();
-        }
-
-        // 3. Botones de Pausa/Reanudar
-        pauseButton.addEventListener('click', togglePause);
-        resumeButton.addEventListener('click', togglePause);
-        menuFromPauseButton.addEventListener('click', goToMenu);
-        restartButton.addEventListener('click', goToMenu);
-
-
-        // 4. Controles de PC (Teclado)
-        function setupPCControls() {
-            // --- LIMPIEZA MÓVIL AL CAMBIAR A PC ---
-            joystickArea.removeEventListener('touchstart', handleJoystickStart);
-            fireButton.removeEventListener('touchstart', handleFireTouch);
-
-            // Limpiar los listeners de PC (por si se vuelve a llamar)
-            window.removeEventListener('keydown', handlePCKeyDown);
-            window.removeEventListener('keyup', handlePCKeyUp);
-
-            // --- AÑADIR CONTROLES DE PC ---
-            window.addEventListener('keydown', handlePCKeyDown);
-            window.addEventListener('keyup', handlePCKeyUp);
-        }
-
-        function handlePCKeyDown(e) {
-            if (gameMode !== 'pc' || gameState !== 'PLAYING') return;
-            if (e.key === 'ArrowUp' || e.key.toLowerCase() === 'w') player.keys.up = true;
-            if (e.key === 'ArrowDown' || e.key.toLowerCase() === 's') player.keys.down = true;
-            if (e.key === ' ') tryShoot();
-            if (e.key === 'p' || e.key === 'P') togglePause();
-        }
-
-        function handlePCKeyUp(e) {
-            if (gameMode !== 'pc') return;
-            if (e.key === 'ArrowUp' || e.key.toLowerCase() === 'w') player.keys.up = false;
-            if (e.key === 'ArrowDown' || e.key.toLowerCase() === 's') player.keys.down = false;
-        }
-
-        // 5. Controles Móviles (Joystick y Botón)
-
-        // Función con nombre para poder eliminarla más tarde
-        function handleFireTouch(e) {
-            e.preventDefault();
-            tryShoot();
-        }
         
-        function setupMobileControls() {
-            // --- LIMPIEZA PC AL CAMBIAR A MÓVIL ---
-            window.removeEventListener('keydown', handlePCKeyDown);
-            window.removeEventListener('keyup', handlePCKeyUp);
-
-            // --- AÑADIR CONTROLES MÓVILES ---
-            fireButton.addEventListener('touchstart', handleFireTouch, { passive: false });
-            joystickArea.addEventListener('touchstart', handleJoystickStart, { passive: false });
-        }
+        // --- 10. INICIALIZACIÓN ---
         
-        function handleJoystickStart(e) {
-            e.preventDefault();
-            if (gameState !== 'PLAYING') return;
-            joystickActive = true;
-            const touch = e.touches[0];
-            joystickStartY = touch.clientY;
+        function init() {
+            // Configurar listeners
+            setupKeyboardListeners();
+            setupTouchListeners();
             
-            // Adjuntar listeners de movimiento y finalización
-            joystickArea.addEventListener('touchmove', handleJoystickMove, { passive: false });
-            joystickArea.addEventListener('touchend', handleJoystickEnd);
-            joystickArea.addEventListener('touchcancel', handleJoystickEnd);
+            // Cargar assets y luego iniciar la intro
+            loadAssets(() => {
+                console.log("Assets cargados. Iniciando intro...");
+                runIntro();
+            });
         }
 
-        function handleJoystickMove(e) {
-            e.preventDefault();
-            if (!joystickActive || gameState !== 'PLAYING') return;
-            const touch = e.touches[0];
-            const deltaY = touch.clientY - joystickStartY;
-            // Limitar el movimiento visual del knob
-            let move = Math.min(Math.max(deltaY, -joystickMaxMove), joystickMaxMove);
-            
-            // Lógica de movimiento del jugador
-            player.keys.up = move < -5; // Threshold para subir
-            player.keys.down = move > 5; // Threshold para bajar
-
-            // Mover el knob visualmente
-            joystickKnob.style.transform = `translateY(${move}px)`;
-        }
-
-        function handleJoystickEnd(e) {
-            joystickActive = false;
-            // Detener el movimiento del jugador
-            player.keys.up = false;
-            player.keys.down = false;
-            // Resetear la posición visual del knob
-            joystickKnob.style.transform = 'translateY(0px)';
-            
-            // Eliminar listeners de movimiento/finalización para evitar colisiones de eventos
-            joystickArea.removeEventListener('touchmove', handleJoystickMove);
-            joystickArea.removeEventListener('touchend', handleJoystickEnd);
-            joystickArea.removeEventListener('touchcancel', handleJoystickEnd);
-        }
-
+        init();
+    });
     </script>
+
 </body>
 </html>
