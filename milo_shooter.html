@@ -62,7 +62,7 @@
             color: rgba(255, 255, 255, 0.6);
             z-index: 100;
             text-shadow: 1px 1px 2px #000;
-            display: none; /* OCULTO por defecto (solo se muestra en el menú/gameover) */
+            display: none; 
         }
         #bottom-left { left: 15px; }
         #bottom-right { right: 15px; }
@@ -99,7 +99,7 @@
             font-size: 2.5rem;
             opacity: 0;
             animation: fadeIn 1s forwards;
-            text-shadow: 0 0 10px #fff;
+            text-shadow: 0 0 10px #fff; 
         }
 
         #intro-loading {
@@ -124,14 +124,24 @@
             width: 0%;
             height: 100%;
             background-color: #fff;
-            animation: load 2s linear forwards; /* Animación de 2 segundos */
+            animation: load 2s linear forwards; 
         }
 
-        /* --- BOTONES (TAMAÑO MEDIANO FIJO) --- */
+        /* --- MENU --- */
+        #menu-screen h1 {
+            font-size: 2.8rem;
+            color: #ffffff;
+            /* Restaurado: Sombra 3D e iluminación */
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 4px 4px 0px #333; 
+            margin-bottom: 20px;
+            letter-spacing: 2px;
+        }
+
+        /* --- BOTONES --- */
         .game-button {
             font-family: 'Press Start 2P', cursive;
             font-size: 14px; 
-            width: 300px; /* Ancho fijo para que sean iguales */
+            width: 300px; 
             height: 60px; 
             background-color: #333;
             color: #fff;
@@ -154,7 +164,7 @@
             transform: translateY(3px);
         }
 
-        /* --- ORIENTATION LOCK (NUEVO) --- */
+        /* --- ORIENTATION LOCK --- */
         #orientation-warning {
             display: none;
             position: fixed;
@@ -173,7 +183,6 @@
             text-shadow: 2px 2px #f00;
         }
 
-        /* Mostrar la advertencia SÓLO si es un juego móvil activo y está en PORTRAIT */
         @media screen and (orientation: portrait) {
             #orientation-warning.mobile-game-active {
                 display: flex;
@@ -184,6 +193,68 @@
                 display: none;
             }
         }
+
+        /* ============================= */
+        /* === CAMBIO SOLICITADO: HUD SUPERIOR === */
+        /* ============================= */
+        #hud {
+            position: fixed; 
+            top: 10px; /* Posicionado arriba */
+            left: 10px;
+            right: 10px;
+            display: flex;
+            justify-content: space-between; /* Espacia los 3 elementos */
+            align-items: center;
+            font-size: 0.9rem;
+            color: #fff;
+            z-index: 20;
+            text-shadow: 1px 1px 2px #000;
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.4); 
+            border-radius: 5px;
+            /* Importante: Asegurar que los corazones no se vean pixelados */
+        }
+        
+        #hud-lives img {
+            height: 25px; /* Tamaño fijo para el corazón */
+            width: auto;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        
+        #hud-lives {
+            min-width: 80px; /* Ancho mínimo para que no se mueva */
+        }
+        /* ============================= */
+
+        /* --- CONTROL MÓVIL (Asegurar que no colisione con el HUD) --- */
+        #mobile-controls {
+            position: fixed;
+            bottom: 0; /* Mantiene los controles en la parte inferior */
+            left: 0;
+            width: 100%;
+            height: 30%; /* Altura para dejar espacio en el centro */
+            z-index: 15;
+            display: none;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: linear-gradient(to top, rgba(0,0,0,0.6), rgba(0,0,0,0));
+        }
+        #mobile-controls.active {
+            display: flex;
+        }
+
+        #joystick-zone { position: relative; width: 150px; height: 150px; margin-left: 20px; }
+        #joystick-base { width: 100%; height: 100%; border-radius: 50%; background: rgba(255, 255, 255, 0.2); position: absolute; }
+        #joystick-knob { width: 60px; height: 60px; border-radius: 50%; background: rgba(255, 255, 255, 0.8); position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+        #shoot-button { width: 100px; height: 100px; border-radius: 50%; background: #f00; border: 3px solid #fff; margin-right: 20px; box-shadow: 0 0 10px #f00; }
+        #mobile-pause-button { position: fixed; top: 10px; right: 10px; z-index: 25; background: rgba(255, 255, 255, 0.2); color: #fff; border: none; font-size: 1.5rem; padding: 5px 15px; border-radius: 5px; cursor: pointer; display: none; }
+        /* --- FIN DE CONTROL MÓVIL --- */
+
+        /* --- PAUSE SCREEN --- */
+        #pause-screen { background-color: rgba(0, 0, 0, 0.8); z-index: 50; }
+        .pause-menu { display: flex; flex-direction: column; align-items: center; }
 
         /* --- ANIMACIONES --- */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -228,11 +299,13 @@
     <div id="game-screen" class="screen">
         <canvas id="game-canvas"></canvas>
         <button id="mobile-pause-button">⏸</button>
+
         <div id="hud">
             <div id="hud-lives"></div>
             <div id="hud-time">Tiempo: 0s</div>
             <div id="hud-score">Puntos: 0</div>
         </div>
+        
         <div id="mobile-controls">
             <div id="joystick-zone">
                 <div id="joystick-base"></div>
@@ -240,6 +313,7 @@
             </div>
             <div id="shoot-button"></div>
         </div>
+        
         <div id="pause-screen" class="screen">
             <div class="pause-menu">
                 <h2>PAUSA</h2>
@@ -297,8 +371,7 @@
         const joystickKnob = document.getElementById('joystick-knob');
         const shootButton = document.getElementById('shoot-button');
         const cornerTexts = document.querySelectorAll('.corner-text');
-        
-        const orientationWarning = document.getElementById('orientation-warning'); // NUEVO
+        const orientationWarning = document.getElementById('orientation-warning'); 
 
         // --- 2. CONFIGURACIÓN Y ESTADO DEL JUEGO ---
         let controlMode = 'pc'; 
@@ -315,14 +388,14 @@
         };
 
         const ENEMY_CAP = 12; 
-        const BOSS_SCORE_THRESHOLD = 5000; // NUEVO: Puntaje para invocar al jefe
+        const BOSS_SCORE_THRESHOLD = 5000; 
         
         let player;
-        let missiles = []; // Misiles del Jugador
+        let missiles = []; 
         let enemies = [];
         let particles = [];
-        let boss = null; // NUEVO: Objeto Jefe
-        let bossProjectiles = []; // NUEVO: Proyectiles del Jefe
+        let boss = null; 
+        let bossProjectiles = []; 
         
         let keys = {}; 
         let joystick = {
@@ -412,7 +485,6 @@
             draw(ctx) {
                 if (this.img) ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
                 else {
-                    // Si no hay imagen (ej: proyectil del jefe), dibujar un placeholder simple
                     ctx.fillStyle = this.color || '#fff';
                     ctx.fillRect(this.x, this.y, this.width, this.height);
                 }
@@ -500,11 +572,10 @@
             update(dt) { this.x += this.speed * dt; if (this.x > canvas.width) this.active = false; }
         }
 
-        // NUEVA CLASE: Proyectil del Jefe
         class BossProjectile extends Entity {
             constructor(x, y, targetX, targetY) {
                 super(x, y, 15, 15, null); 
-                this.color = '#ff00ff'; // Morado
+                this.color = '#ff00ff'; 
                 this.speed = 250; 
                 
                 const dx = targetX - x;
@@ -524,39 +595,33 @@
             }
         }
 
-        // NUEVA CLASE: Jefe
         class BossEnemy extends Entity {
             constructor(x, y) {
-                // Tamaño grande para el jefe
                 super(x, y, 150, 150, null); 
-                this.health = 6; // 6 disparos para matar
+                this.health = 6; 
                 this.maxHealth = 6;
                 this.speedY = 100; 
                 this.shootCooldown = 0;
-                this.shootInterval = 1.5; // Dispara cada 1.5s
-                this.color = '#ff0000'; // Rojo
-                // Posición de aparición en la derecha
+                this.shootInterval = 1.5; 
+                this.color = '#ff0000'; 
                 this.x = canvas.width - this.width - 10;
                 this.y = y;
             }
             
             draw(ctx) {
-                // Dibujar el rectángulo del Jefe
                 ctx.fillStyle = this.color;
                 ctx.fillRect(this.x, this.y, this.width, this.height);
                 
-                // Dibujar la barra de vida
                 const barWidth = this.width;
                 const barHeight = 10;
                 const healthRatio = this.health / this.maxHealth;
                 ctx.fillStyle = '#333';
                 ctx.fillRect(this.x, this.y - barHeight - 5, barWidth, barHeight);
                 ctx.fillStyle = healthRatio > 0.5 ? '#0f0' : (healthRatio > 0.2 ? '#ff0' : '#f00');
-                ctx.fillRect(this.x, this.y - barHeight - 5, barWidth * healthRatio, barHeight);
+                ctx.fillRect(this.x, this.y - barWidth - 5, barWidth * healthRatio, barHeight);
             }
             
             update(dt) {
-                // Movimiento vertical de rebote
                 this.y += this.speedY * dt;
                 
                 if (this.y < 0) {
@@ -568,7 +633,6 @@
                     this.speedY *= -1;
                 }
 
-                // Disparo
                 this.shootCooldown -= dt;
                 if (this.shootCooldown <= 0) {
                     this.shoot();
@@ -577,10 +641,8 @@
             }
             
             shoot() {
-                // Dispara hacia el centro del jugador
                 const targetX = player.x + player.width / 2;
                 const targetY = player.y + player.height / 2;
-                // Dispara desde el centro del lado izquierdo del Jefe
                 const startX = this.x;
                 const startY = this.y + this.height / 2;
                 bossProjectiles.push(new BossProjectile(startX, startY, targetX, targetY));
@@ -590,8 +652,8 @@
                 this.health--;
                 if (this.health <= 0) {
                     this.active = false;
-                    gameState.score += 5000; // Bonificación por Jefe
-                    createExplosion(this.x + this.width / 2, this.y + this.height / 2, false, true); // Gran explosión
+                    gameState.score += 5000; 
+                    createExplosion(this.x + this.width / 2, this.y + this.height / 2, false, true); 
                 }
             }
         }
@@ -622,9 +684,7 @@
         }
 
         function update(dt) {
-            // Chequeo de Orientación Móvil (se detiene si es portrait)
             if (controlMode === 'mobile' && window.innerWidth < window.innerHeight) {
-                 // Pausa lógica si el juego ya estaba corriendo y el jugador giró
                  if (!gameState.paused) togglePause();
                  return;
             }
@@ -634,9 +694,7 @@
             enemies = enemies.filter(e => e.active); enemies.forEach(e => e.update(dt));
             particles = particles.filter(p => p.active); particles.forEach(p => p.update(dt));
             
-            // Lógica del Jefe
             if (gameState.score >= BOSS_SCORE_THRESHOLD && boss === null) {
-                // Aparece centrado verticalmente
                 boss = new BossEnemy(canvas.width - 160, canvas.height / 2 - 75); 
             }
             if (boss !== null) {
@@ -644,15 +702,14 @@
                 if (!boss.active) boss = null;
             }
 
-            // Proyectiles del Jefe
             bossProjectiles = bossProjectiles.filter(p => p.active); 
             bossProjectiles.forEach(p => p.update(dt)); 
 
-            // Spawn de enemigos normales
             gameState.spawnTimer -= dt;
-            if (gameState.spawnTimer <= 0 && boss === null) { // NO spawnea enemigos si el jefe está activo
+            if (gameState.spawnTimer <= 0 && boss === null) { 
                 spawnEnemy();
-                gameState.spawnInterval = Math.max(0.7, gameState.spawnInterval * 0.99); 
+                // OPTIMIZACIÓN: Aumentamos el intervalo mínimo de aparición de enemigos (0.7s -> 0.8s)
+                gameState.spawnInterval = Math.max(0.8, gameState.spawnInterval * 0.99); 
                 gameState.spawnTimer = gameState.spawnInterval;
             }
 
@@ -671,8 +728,8 @@
             missiles.forEach(m => m.draw(ctx));
             enemies.forEach(e => e.draw(ctx));
             
-            if (boss !== null) boss.draw(ctx); // Dibujar Jefe
-            bossProjectiles.forEach(p => p.draw(ctx)); // Dibujar proyectiles del Jefe
+            if (boss !== null) boss.draw(ctx); 
+            bossProjectiles.forEach(p => p.draw(ctx)); 
             
             particles.forEach(p => p.draw(ctx));
             ctx.globalAlpha = 1;
@@ -684,7 +741,6 @@
             cornerTexts.forEach(el => { el.style.display = show ? 'block' : 'none'; });
         }
 
-        // NUEVO: Chequeo de Orientación (solo para modo móvil)
         function checkOrientation(isMobileGame, isRunning) {
             if (!isMobileGame) {
                 orientationWarning.classList.remove('mobile-game-active');
@@ -701,7 +757,7 @@
 
         function startGame() {
             if (controlMode === 'mobile' && !checkOrientation(true, true)) {
-                 return; // Detiene si no está en horizontal
+                 return; 
             }
 
             canvas.width = window.innerWidth;
@@ -725,7 +781,7 @@
             gameState.spawnInterval = 2.0; 
             gameState.spawnTimer = gameState.spawnInterval;
             
-            missiles = []; enemies = []; particles = []; boss = null; bossProjectiles = []; // Reset Jefe
+            missiles = []; enemies = []; particles = []; boss = null; bossProjectiles = []; 
             player = new Player(50, canvas.height / 2 - 40); 
             updateHUDLives();
             hudScore.textContent = 'Puntos: 0';
@@ -740,7 +796,6 @@
             mobilePauseButton.style.display = 'none'; 
             toggleCornerText(true); 
             
-            // ... (código de explosión y stats)
             const timeSurvived = Math.floor(gameState.elapsedTime);
             if (timeSurvived > gameState.recordTime) {
                 gameState.recordTime = timeSurvived;
@@ -771,7 +826,6 @@
             enemies.push(new Enemy(x, y));
         }
         
-        // Función de explosión (Añadido flag isBoss para gran explosión)
         function createExplosion(x, y, isPlayer = false, isBoss = false) {
             if (isBoss && assets.explosion) {
                 const w = assets.explosion.width * 3; 
@@ -784,7 +838,6 @@
                     draw: function(ctx) { ctx.globalAlpha = this.life; ctx.drawImage(this.img, this.x, this.y, this.w, this.h); }
                 });
             } else if (isPlayer && assets.explosion) {
-                // Explosión de golpe de jugador (1.5x)
                 const w = assets.explosion.width * 1.5; const h = assets.explosion.height * 1.5;
                 const posX = x - w / 2; const posY = y - h / 2;
                 particles.push({
@@ -793,17 +846,15 @@
                     draw: function(ctx) { ctx.globalAlpha = this.life * 2; ctx.drawImage(this.img, this.x, this.y, this.w, this.h); }
                 });
             } else {
-                // Explosión normal (REDUCIDO A 6 PARTÍCULAS para optimización)
+                // Optimización: 6 partículas por explosión normal
                 for (let i = 0; i < 6; i++) particles.push(new Particle(x, y, '#ff8800'));
             }
         }
         
         function checkCollisions() {
-            // Misiles (Player) vs Enemigos (Normal y Jefe)
             for (let i = missiles.length - 1; i >= 0; i--) {
                 const missile = missiles[i];
                 
-                // 1. Misil vs Enemigos normales
                 for (let j = enemies.length - 1; j >= 0; j--) {
                     const enemy = enemies[j];
                     if (missile.collidesWith(enemy)) {
@@ -813,7 +864,6 @@
                     }
                 }
 
-                // 2. Misil vs Jefe
                 if (boss !== null && boss.active && missile.collidesWith(boss)) {
                     missile.active = false;
                     boss.hit();
@@ -821,7 +871,6 @@
                 }
             }
             
-            // 3. Proyectiles del Jefe vs Jugador
             if (!player.isHit) {
                  for (let i = bossProjectiles.length - 1; i >= 0; i--) {
                     const proj = bossProjectiles[i];
@@ -832,7 +881,6 @@
                     }
                 }
 
-                // 4. Enemigos (Normal) vs Jugador
                 for (let i = enemies.length - 1; i >= 0; i--) {
                     const enemy = enemies[i];
                     if (player.collidesWith(enemy)) {
@@ -840,7 +888,6 @@
                     }
                 }
 
-                // 5. Jefe vs Jugador
                 if (boss !== null && boss.active && player.collidesWith(boss)) {
                     player.hit(); 
                 }
@@ -866,7 +913,10 @@
         function updateHUDLives() {
             hudLives.innerHTML = ''; if (!assets.life) return; 
             for (let i = 0; i < gameState.lives; i++) {
-                const lifeImg = assets.life.cloneNode(); hudLives.appendChild(lifeImg);
+                const lifeImg = assets.life.cloneNode(); 
+                lifeImg.style.width = 'auto'; // Asegurar el escalado
+                lifeImg.style.height = '25px'; // Tamaño del CSS
+                hudLives.appendChild(lifeImg);
             }
         }
         
@@ -960,18 +1010,15 @@
             screens.pause.classList.remove('active'); loadRecord(); showScreen('menu'); toggleCornerText(true);
         });
 
-        // Evento de cambio de tamaño/orientación para manejar la advertencia
         window.addEventListener('resize', () => { 
             if (gameState.running) {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
                 checkOrientation(controlMode === 'mobile', gameState.running);
-                // Si la orientación es incorrecta, pausar
                 if (controlMode === 'mobile' && window.innerWidth < window.innerHeight && !gameState.paused) {
                     togglePause();
                 }
             } else {
-                 // Si está en el menú móvil, asegurar que la advertencia se muestre si es necesario
                  if (controlMode === 'mobile' && screens.menu.classList.contains('active')) {
                     checkOrientation(true, false);
                  }
