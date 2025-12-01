@@ -27,10 +27,10 @@
             background-color: #000;
             color: #fff;
             font-family: 'Press Start 2P', cursive;
-            overflow: hidden; /* Evita barras de scroll */
+            overflow: hidden;
         }
 
-        /* --- EFECTO DE FONDO (STARFIELD) --- */
+        /* --- FONDO DE ESTRELLAS --- */
         @keyframes move-stars {
             from { background-position: 0 0; }
             to { background-position: -10000px 5000px; }
@@ -54,21 +54,22 @@
             animation: move-stars 200s linear infinite;
         }
 
-        /* --- TEXTOS DE ESQUINAS (NUEVO) --- */
+        /* --- TEXTOS DE ESQUINAS --- */
         .corner-text {
             position: fixed;
             bottom: 15px;
             font-size: 0.8rem;
             color: rgba(255, 255, 255, 0.6);
-            z-index: 100; /* Por encima de casi todo */
+            z-index: 100;
             text-shadow: 1px 1px 2px #000;
+            display: none; /* OCULTO por defecto (solo se muestra en el menú/gameover) */
         }
         #bottom-left { left: 15px; }
         #bottom-right { right: 15px; }
 
-        /* --- CONTENEDOR DE PANTALLAS --- */
+        /* --- PANTALLAS --- */
         .screen {
-            display: none; /* Oculto por defecto */
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
@@ -83,10 +84,10 @@
         }
 
         .screen.active {
-            display: flex; /* Visible cuando está activo */
+            display: flex;
         }
 
-        /* --- PANTALLA DE INTRO --- */
+        /* --- INTRO Y BARRA DE CARGA --- */
         #intro-screen img {
             max-width: 80%;
             width: 300px;
@@ -94,76 +95,51 @@
             animation: fadeIn 2s forwards;
         }
         
-        #intro-screen .title {
+        #intro-screen .title, #intro-screen .subtitle {
             font-size: 2.5rem;
             opacity: 0;
             animation: fadeIn 1s forwards;
             text-shadow: 0 0 10px #fff;
         }
-        
-        #intro-screen .subtitle {
-            font-size: 2.5rem; 
-            margin-top: 20px;
-            opacity: 0;
-            animation: fadeIn 1s forwards, blink 0.8s linear infinite 1s;
+
+        #intro-loading {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 30px;
         }
 
-        /* Barra de carga */
         #loading-bar {
-            width: 80%;
-            max-width: 300px;
-            height: 30px;
-            border: 2px solid #fff;
-            border-radius: 5px;
-            margin-top: 30px;
+            width: 300px; 
+            height: 25px; 
+            border: 3px solid #fff; 
+            border-radius: 4px;
+            padding: 2px; 
             opacity: 0;
-            animation: fadeIn 1s forwards;
+            animation: fadeIn 0.5s forwards;
         }
 
         #loading-bar-fill {
             width: 0%;
             height: 100%;
             background-color: #fff;
-            animation: load 3s linear forwards;
+            animation: load 2s linear forwards; /* Animación de 2 segundos */
         }
 
-        /* --- PANTALLA DE MENÚ Y GAME OVER --- */
-        
-        /* Título del Menú (Modificado para resaltar en blanco) */
-        #menu-screen h1 {
-            font-size: 2.8rem; /* Grande, pero no enorme */
-            color: #ffffff;
-            text-shadow: 0 0 15px rgba(255, 255, 255, 0.8), 4px 4px 0px #333;
-            margin-bottom: 20px;
-            letter-spacing: 2px;
-        }
-        
-        #game-over-screen h1 {
-            font-size: 2.5rem;
-            color: #ff0000;
-            text-shadow: 0 0 10px #ff0000;
-            animation: blink 1s linear infinite;
-        }
-
-        .record-text {
-            font-size: 1.2rem;
-            margin: 20px 0;
-            color: #ffdd00;
-        }
-        
-        #game-over-screen .stats {
-             font-size: 1.2rem;
-             line-height: 2;
-        }
-
+        /* --- BOTONES (TAMAÑO MEDIANO FIJO) --- */
         .game-button {
             font-family: 'Press Start 2P', cursive;
-            font-size: 1rem;
+            font-size: 14px; 
+            width: 300px; /* Ancho fijo para que sean iguales */
+            height: 60px; 
             background-color: #333;
             color: #fff;
             border: 2px solid #fff;
             border-radius: 8px;
-            padding: 20px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             margin: 15px;
             cursor: pointer;
             transition: all 0.2s ease;
@@ -178,168 +154,42 @@
             transform: translateY(3px);
         }
 
-        /* --- PANTALLA DE JUEGO --- */
-        #game-canvas {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1; 
-            background-color: #000; 
-        }
-
-        /* --- HUD (Heads-Up Display) --- */
-        #hud {
+        /* --- ORIENTATION LOCK (NUEVO) --- */
+        #orientation-warning {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            padding: 10px 20px;
-            z-index: 20;
-            display: flex;
-            justify-content: space-between;
+            height: 100%;
+            background-color: #000;
+            color: #fff;
+            z-index: 1000;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            font-size: 1rem;
-            color: #fff;
-            background: rgba(0,0,0,0.3);
-            pointer-events: none; 
-        }
-        
-        #hud-lives {
-            display: flex;
-        }
-        
-        #hud-lives img {
-            width: 30px;
-            height: 30px;
-            margin-right: 5px;
-        }
-        
-        #hud-score, #hud-time {
-             min-width: 100px;
-             text-align: right;
-        }
-        
-        /* Botón de Pausa Móvil */
-        #mobile-pause-button {
-            display: none; /* Oculto por defecto */
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            z-index: 21; 
-            width: 50px;
-            height: 50px;
             font-size: 1.5rem;
-            line-height: 48px; 
-            text-align: center;
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid #fff;
-            border-radius: 50%;
-            color: #fff;
-            cursor: pointer;
-            pointer-events: auto; 
-        }
-        
-        #mobile-pause-button:active {
-            background: rgba(255, 255, 255, 0.5);
+            padding: 20px;
+            text-shadow: 2px 2px #f00;
         }
 
-        /* --- CONTROLES MÓVILES --- */
-        #mobile-controls {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 19;
-            display: none; 
-            pointer-events: none; 
+        /* Mostrar la advertencia SÓLO si es un juego móvil activo y está en PORTRAIT */
+        @media screen and (orientation: portrait) {
+            #orientation-warning.mobile-game-active {
+                display: flex;
+            }
         }
-        
-        #mobile-controls.active {
-            display: block;
-        }
-        
-        #joystick-zone {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            width: 150px;
-            height: 150px;
-            pointer-events: auto; 
-        }
-        
-        #joystick-base {
-            position: absolute;
-            width: 120px;
-            height: 120px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 50%;
-            left: 15px;
-            top: 15px;
-        }
-        
-        #joystick-knob {
-            position: absolute;
-            width: 70px;
-            height: 70px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            left: 40px;
-            top: 40px;
-            transition: transform 0.05s linear;
-        }
-        
-        #shoot-button {
-            position: absolute;
-            bottom: 30px;
-            right: 30px;
-            width: 100px;
-            height: 100px;
-            background: rgba(255, 0, 0, 0.4);
-            border: 2px solid rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            pointer-events: auto; 
-        }
-        
-        #shoot-button:active {
-            background: rgba(255, 0, 0, 0.7);
-        }
-        
-        /* PANTALLA DE PAUSA (Nuevo Menú) */
-        #pause-screen {
-            background: rgba(0, 0, 0, 0.85); 
-            z-index: 30; 
-        }
-        
-        .pause-menu h2 {
-            font-size: 2rem;
-            color: #ffdd00;
-            text-shadow: 0 0 10px #ffdd00;
-            margin-bottom: 30px;
+        @media screen and (orientation: landscape) {
+            #orientation-warning.mobile-game-active {
+                display: none;
+            }
         }
 
-        /* --- ANIMACIONES CSS --- */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-        
-        @keyframes load {
-            from { width: 0%; }
-            to { width: 100%; }
-        }
+        /* --- ANIMACIONES --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes load { from { width: 0%; } to { width: 100%; } }
 
     </style>
 </head>
@@ -350,10 +200,17 @@
     <div id="bottom-left" class="corner-text">@fabialancho</div>
     <div id="bottom-right" class="corner-text">v0.1.4</div>
 
+    <div id="orientation-warning">
+        <p>¡Gira tu dispositivo!</p>
+        <p>El juego solo funciona en modo horizontal (Landscape).</p>
+    </div>
+
     <div id="intro-screen" class="screen active">
         <img id="intro-logo" src="fabi_alancho_games.png" alt="Fabialancho Games Logo" style="display: none;">
         <div id="intro-fbgames" class="subtitle" style="display: none;">FBGAMES</div>
+        
         <div id="intro-title" class="title" style="display: none;">MILO SHOOTER</div>
+        
         <div id="intro-loading" style="display: none;">
             <div id="loading-bar">
                 <div id="loading-bar-fill"></div>
@@ -364,16 +221,15 @@
     <div id="menu-screen" class="screen">
         <h1>MILO SHOOTER</h1>
         <div class="record-text">⏱️ Tiempo récord: <span id="menu-record">0</span> s</div>
-        <button id="btn-play-mobile" class="game-button">JUGAR EN CELULAR</button>
-        <button id="btn-play-pc" class="game-button">JUGAR EN PC</button>
+        <div id="btn-play-mobile" class="game-button">JUGAR EN CELULAR</div>
+        <div id="btn-play-pc" class="game-button">JUGAR EN PC</div>
     </div>
 
     <div id="game-screen" class="screen">
         <canvas id="game-canvas"></canvas>
         <button id="mobile-pause-button">⏸</button>
         <div id="hud">
-            <div id="hud-lives">
-                </div>
+            <div id="hud-lives"></div>
             <div id="hud-time">Tiempo: 0s</div>
             <div id="hud-score">Puntos: 0</div>
         </div>
@@ -387,8 +243,8 @@
         <div id="pause-screen" class="screen">
             <div class="pause-menu">
                 <h2>PAUSA</h2>
-                <button id="btn-resume" class="game-button">🔄 Volver</button>
-                <button id="btn-pause-menu" class="game-button">🏠 Ir al menú principal</button>
+                <div id="btn-resume" class="game-button">🔄 Volver</div>
+                <div id="btn-pause-menu" class="game-button">🏠 Ir al menú principal</div>
             </div>
         </div>
     </div>
@@ -399,16 +255,16 @@
             <div>⏱️ Tiempo sobrevivido: <span id="stat-time">0</span> s</div>
             <div class="record-text">🏆 Récord: <span id="stat-record">0</span> s</div>
         </div>
-        <button id="btn-retry" class="game-button">🔁 Reintentar</button>
-        <button id="btn-menu" class="game-button">🏠 Salir al Menú</button>
-        <button id="btn-web" class="game-button">🌐 Ir a la Web Principal</button>
+        <div id="btn-retry" class="game-button">🔁 Reintentar</div>
+        <div id="btn-menu" class="game-button">🏠 Salir al Menú</div>
+        <div id="btn-web" class="game-button">🌐 Ir a la Web Principal</div>
     </div>
 
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
 
-        // --- 1. REFERENCIAS A ELEMENTOS DEL DOM ---
+        // --- 1. REFERENCIAS ---
         const screens = {
             intro: document.getElementById('intro-screen'),
             menu: document.getElementById('menu-screen'),
@@ -440,9 +296,9 @@
         const joystickZone = document.getElementById('joystick-zone');
         const joystickKnob = document.getElementById('joystick-knob');
         const shootButton = document.getElementById('shoot-button');
-        
-        // Elementos de UI de esquina
         const cornerTexts = document.querySelectorAll('.corner-text');
+        
+        const orientationWarning = document.getElementById('orientation-warning'); // NUEVO
 
         // --- 2. CONFIGURACIÓN Y ESTADO DEL JUEGO ---
         let controlMode = 'pc'; 
@@ -458,13 +314,15 @@
             spawnInterval: 2, 
         };
 
-        // OPTIMIZACIÓN LAG: Reducido de 15 a 12
         const ENEMY_CAP = 12; 
+        const BOSS_SCORE_THRESHOLD = 5000; // NUEVO: Puntaje para invocar al jefe
         
         let player;
-        let missiles = [];
+        let missiles = []; // Misiles del Jugador
         let enemies = [];
         let particles = [];
+        let boss = null; // NUEVO: Objeto Jefe
+        let bossProjectiles = []; // NUEVO: Proyectiles del Jefe
         
         let keys = {}; 
         let joystick = {
@@ -481,7 +339,7 @@
         let isShootingMobile = false;
 
         let lastTime = 0;
-        const RECORD_KEY = 'milo_shouter_record_v4'; // Nueva key para nueva versión
+        const RECORD_KEY = 'milo_shouter_record_v4';
 
         // --- 3. ASSETS (IMÁGENES) ---
         const assetPaths = {
@@ -524,7 +382,6 @@
                     if (assetsLoaded === totalAssets) onComplete();
                 };
                 img.onerror = () => {
-                    console.error(`Error al cargar asset: ${assetPaths[key]}`);
                     let placeholder;
                     switch(key) {
                         case 'player': placeholder = createPlaceholder(80, 80, 'MILO', '#00f'); break; 
@@ -543,7 +400,6 @@
         
 
         // --- 4. CLASES DEL JUEGO ---
-
         class Entity {
             constructor(x, y, width, height, img) {
                 this.x = x;
@@ -553,19 +409,18 @@
                 this.img = img;
                 this.active = true; 
             }
-            
             draw(ctx) {
-                if (this.img) {
-                    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+                if (this.img) ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+                else {
+                    // Si no hay imagen (ej: proyectil del jefe), dibujar un placeholder simple
+                    ctx.fillStyle = this.color || '#fff';
+                    ctx.fillRect(this.x, this.y, this.width, this.height);
                 }
             }
             
-            // --- OPTIMIZACIÓN: HITBOX REDUCIDA ---
+            // Hitbox optimizada (margen de 5px)
             collidesWith(other) {
-                // Margen para hacer la hitbox más pequeña que la imagen
-                // Esto reduce la sensación de lag o injusticia
-                const margin = 12; // 12 pixeles de "perdón" por lado
-                
+                const margin = 5; 
                 return this.x + margin < other.x + other.width - margin &&
                        this.x + this.width - margin > other.x + margin &&
                        this.y + margin < other.y + other.height - margin &&
@@ -585,11 +440,9 @@
                 this.isHit = false;
                 this.hitTimer = 1.5; 
             }
-            
             update(dt) {
                 let moveX = 0;
                 let moveY = 0;
-
                 if (controlMode === 'pc') {
                     if (keys['w'] || keys['ArrowUp']) moveY -= 1;
                     if (keys['s'] || keys['ArrowDown']) moveY += 1;
@@ -599,16 +452,11 @@
                     moveX = joystick.deltaX;
                     moveY = joystick.deltaY;
                 }
-                
                 const mag = Math.sqrt(moveX * moveX + moveY * moveY);
-                if (mag > 0) {
-                    moveX /= mag;
-                    moveY /= mag;
-                }
+                if (mag > 0) { moveX /= mag; moveY /= mag; }
                 
                 this.x += moveX * this.speed * dt;
                 this.y += moveY * this.speed * dt;
-
                 if (this.x < 0) this.x = 0;
                 if (this.x + this.width > canvas.width) this.x = canvas.width - this.width;
                 if (this.y < 0) this.y = 0;
@@ -616,30 +464,20 @@
 
                 this.shootCooldown -= dt;
                 const canShoot = this.shootCooldown <= 0;
-                const isShooting = (controlMode === 'pc' && keys[' ']) || 
-                                   (controlMode === 'mobile' && isShootingMobile);
-                                   
+                const isShooting = (controlMode === 'pc' && keys[' ']) || (controlMode === 'mobile' && isShootingMobile);
                 if (isShooting && canShoot) {
                     this.shoot();
                     this.shootCooldown = this.shootInterval;
                 }
-                
                 if (this.isHit) {
                     this.hitTimer -= dt;
-                    if (this.hitTimer <= 0) {
-                        this.isHit = false;
-                        this.hitTimer = 1.5;
-                    }
+                    if (this.hitTimer <= 0) { this.isHit = false; this.hitTimer = 1.5; }
                 }
             }
-            
             draw(ctx) {
-                if (this.isHit && Math.floor(this.hitTimer * 10) % 2 === 0) {
-                    return; 
-                }
+                if (this.isHit && Math.floor(this.hitTimer * 10) % 2 === 0) return; 
                 super.draw(ctx);
             }
-
             shoot() {
                 const missileWidth = 40;
                 const missileHeight = 20;
@@ -647,121 +485,178 @@
                 const y = this.y + this.height / 2 - missileHeight / 2;
                 missiles.push(new Missile(x, y, missileWidth, missileHeight));
             }
-            
             hit() {
                 if (this.isHit) return; 
-                
                 gameState.lives--;
                 updateHUDLives();
-                
-                if (gameState.lives <= 0) {
-                    gameOver();
-                } else {
-                    this.isHit = true;
-                    this.hitTimer = 1.5; 
-                }
-                
+                if (gameState.lives <= 0) gameOver();
+                else { this.isHit = true; this.hitTimer = 1.5; }
                 createExplosion(this.x + this.width / 2, this.y + this.height / 2, true);
             }
         }
         
         class Missile extends Entity {
-            constructor(x, y, width, height) {
-                super(x, y, width, height, assets.missile);
-                this.speed = 500; 
+            constructor(x, y, width, height) { super(x, y, width, height, assets.missile); this.speed = 500; }
+            update(dt) { this.x += this.speed * dt; if (this.x > canvas.width) this.active = false; }
+        }
+
+        // NUEVA CLASE: Proyectil del Jefe
+        class BossProjectile extends Entity {
+            constructor(x, y, targetX, targetY) {
+                super(x, y, 15, 15, null); 
+                this.color = '#ff00ff'; // Morado
+                this.speed = 250; 
+                
+                const dx = targetX - x;
+                const dy = targetY - y;
+                const mag = Math.sqrt(dx * dx + dy * dy);
+                this.dirX = dx / mag;
+                this.dirY = dy / mag;
             }
             
             update(dt) {
-                this.x += this.speed * dt;
-                if (this.x > canvas.width) {
+                this.x += this.dirX * this.speed * dt;
+                this.y += this.dirY * this.speed * dt;
+                
+                if (this.x < -this.width || this.x > canvas.width || this.y < -this.height || this.y > canvas.height) {
                     this.active = false;
+                }
+            }
+        }
+
+        // NUEVA CLASE: Jefe
+        class BossEnemy extends Entity {
+            constructor(x, y) {
+                // Tamaño grande para el jefe
+                super(x, y, 150, 150, null); 
+                this.health = 6; // 6 disparos para matar
+                this.maxHealth = 6;
+                this.speedY = 100; 
+                this.shootCooldown = 0;
+                this.shootInterval = 1.5; // Dispara cada 1.5s
+                this.color = '#ff0000'; // Rojo
+                // Posición de aparición en la derecha
+                this.x = canvas.width - this.width - 10;
+                this.y = y;
+            }
+            
+            draw(ctx) {
+                // Dibujar el rectángulo del Jefe
+                ctx.fillStyle = this.color;
+                ctx.fillRect(this.x, this.y, this.width, this.height);
+                
+                // Dibujar la barra de vida
+                const barWidth = this.width;
+                const barHeight = 10;
+                const healthRatio = this.health / this.maxHealth;
+                ctx.fillStyle = '#333';
+                ctx.fillRect(this.x, this.y - barHeight - 5, barWidth, barHeight);
+                ctx.fillStyle = healthRatio > 0.5 ? '#0f0' : (healthRatio > 0.2 ? '#ff0' : '#f00');
+                ctx.fillRect(this.x, this.y - barHeight - 5, barWidth * healthRatio, barHeight);
+            }
+            
+            update(dt) {
+                // Movimiento vertical de rebote
+                this.y += this.speedY * dt;
+                
+                if (this.y < 0) {
+                    this.y = 0;
+                    this.speedY *= -1;
+                }
+                if (this.y + this.height > canvas.height) {
+                    this.y = canvas.height - this.height;
+                    this.speedY *= -1;
+                }
+
+                // Disparo
+                this.shootCooldown -= dt;
+                if (this.shootCooldown <= 0) {
+                    this.shoot();
+                    this.shootCooldown = this.shootInterval;
+                }
+            }
+            
+            shoot() {
+                // Dispara hacia el centro del jugador
+                const targetX = player.x + player.width / 2;
+                const targetY = player.y + player.height / 2;
+                // Dispara desde el centro del lado izquierdo del Jefe
+                const startX = this.x;
+                const startY = this.y + this.height / 2;
+                bossProjectiles.push(new BossProjectile(startX, startY, targetX, targetY));
+            }
+            
+            hit() {
+                this.health--;
+                if (this.health <= 0) {
+                    this.active = false;
+                    gameState.score += 5000; // Bonificación por Jefe
+                    createExplosion(this.x + this.width / 2, this.y + this.height / 2, false, true); // Gran explosión
                 }
             }
         }
         
         class Enemy extends Entity {
-            constructor(x, y) {
-                const img = assets.enemy;
-                const width = 50;
-                const height = 50;
-                super(x, y, width, height, img);
-                this.speed = Math.random() * 100 + 100; 
-            }
-            
-            update(dt) {
-                this.x -= this.speed * dt;
-                if (this.x + this.width < 0) {
-                    this.active = false;
-                }
-            }
+            constructor(x, y) { super(x, y, 50, 50, assets.enemy); this.speed = Math.random() * 100 + 100; }
+            update(dt) { this.x -= this.speed * dt; if (this.x + this.width < 0) this.active = false; }
         }
         
         class Particle {
             constructor(x, y, color) {
-                this.x = x;
-                this.y = y;
-                this.size = Math.random() * 5 + 2;
-                this.speedX = (Math.random() - 0.5) * 8;
-                this.speedY = (Math.random() - 0.5) * 8;
-                this.life = Math.random() * 0.5 + 0.5; 
-                this.color = color || `rgb(${Math.random()*255}, ${Math.random()*255}, 0)`;
+                this.x = x; this.y = y; this.size = Math.random() * 5 + 2;
+                this.speedX = (Math.random() - 0.5) * 8; this.speedY = (Math.random() - 0.5) * 8;
+                this.life = Math.random() * 0.5 + 0.5; this.color = color || `rgb(${Math.random()*255}, ${Math.random()*255}, 0)`;
                 this.active = true;
             }
-            
-            update(dt) {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                this.life -= dt;
-                if (this.life <= 0) {
-                    this.active = false;
-                }
-            }
-            
-            draw(ctx) {
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = this.life * 2; 
-                ctx.fillRect(this.x, this.y, this.size, this.size);
-            }
+            update(dt) { this.x += this.speedX; this.y += this.speedY; this.life -= dt; if (this.life <= 0) this.active = false; }
+            draw(ctx) { ctx.fillStyle = this.color; ctx.globalAlpha = this.life * 2; ctx.fillRect(this.x, this.y, this.size, this.size); }
         }
 
-        // --- 5. LÓGICA DEL JUEGO (Game Loop) ---
-
+        // --- 5. LOGICA PRINCIPAL ---
         function gameLoop(timestamp) {
             if (!gameState.running) return;
-            
-            const dt = (timestamp - lastTime) / 1000; 
-            lastTime = timestamp;
-
-            if (!gameState.paused) {
-                update(dt);
-            }
-            
+            const dt = (timestamp - lastTime) / 1000; lastTime = timestamp;
+            if (!gameState.paused) update(dt);
             draw();
-            
             requestAnimationFrame(gameLoop);
         }
 
         function update(dt) {
-            player.update(dt);
-            
-            missiles = missiles.filter(m => m.active);
-            missiles.forEach(m => m.update(dt));
-            
-            enemies = enemies.filter(e => e.active);
-            enemies.forEach(e => e.update(dt));
-            
-            particles = particles.filter(p => p.active);
-            particles.forEach(p => p.update(dt));
+            // Chequeo de Orientación Móvil (se detiene si es portrait)
+            if (controlMode === 'mobile' && window.innerWidth < window.innerHeight) {
+                 // Pausa lógica si el juego ya estaba corriendo y el jugador giró
+                 if (!gameState.paused) togglePause();
+                 return;
+            }
 
+            player.update(dt);
+            missiles = missiles.filter(m => m.active); missiles.forEach(m => m.update(dt));
+            enemies = enemies.filter(e => e.active); enemies.forEach(e => e.update(dt));
+            particles = particles.filter(p => p.active); particles.forEach(p => p.update(dt));
+            
+            // Lógica del Jefe
+            if (gameState.score >= BOSS_SCORE_THRESHOLD && boss === null) {
+                // Aparece centrado verticalmente
+                boss = new BossEnemy(canvas.width - 160, canvas.height / 2 - 75); 
+            }
+            if (boss !== null) {
+                boss.update(dt);
+                if (!boss.active) boss = null;
+            }
+
+            // Proyectiles del Jefe
+            bossProjectiles = bossProjectiles.filter(p => p.active); 
+            bossProjectiles.forEach(p => p.update(dt)); 
+
+            // Spawn de enemigos normales
             gameState.spawnTimer -= dt;
-            if (gameState.spawnTimer <= 0) {
+            if (gameState.spawnTimer <= 0 && boss === null) { // NO spawnea enemigos si el jefe está activo
                 spawnEnemy();
                 gameState.spawnInterval = Math.max(0.7, gameState.spawnInterval * 0.99); 
                 gameState.spawnTimer = gameState.spawnInterval;
             }
-            
+
             checkCollisions();
-            
             gameState.elapsedTime = (Date.now() - gameState.startTime) / 1000;
             hudTime.textContent = `Tiempo: ${Math.floor(gameState.elapsedTime)}s`;
             hudScore.textContent = `Puntos: ${gameState.score}`;
@@ -775,24 +670,42 @@
             player.draw(ctx);
             missiles.forEach(m => m.draw(ctx));
             enemies.forEach(e => e.draw(ctx));
-            particles.forEach(p => p.draw(ctx));
             
+            if (boss !== null) boss.draw(ctx); // Dibujar Jefe
+            bossProjectiles.forEach(p => p.draw(ctx)); // Dibujar proyectiles del Jefe
+            
+            particles.forEach(p => p.draw(ctx));
             ctx.globalAlpha = 1;
         }
-        
-        // --- 6. FUNCIONES AUXILIARES DEL JUEGO ---
 
+        // --- 6. FUNCIONES AUXILIARES ---
+        
         function toggleCornerText(show) {
-            cornerTexts.forEach(el => {
-                el.style.display = show ? 'block' : 'none';
-            });
+            cornerTexts.forEach(el => { el.style.display = show ? 'block' : 'none'; });
+        }
+
+        // NUEVO: Chequeo de Orientación (solo para modo móvil)
+        function checkOrientation(isMobileGame, isRunning) {
+            if (!isMobileGame) {
+                orientationWarning.classList.remove('mobile-game-active');
+                return true;
+            }
+            if (isRunning && window.innerWidth < window.innerHeight) {
+                orientationWarning.classList.add('mobile-game-active');
+                return false; 
+            } else {
+                orientationWarning.classList.remove('mobile-game-active');
+                return true;
+            }
         }
 
         function startGame() {
+            if (controlMode === 'mobile' && !checkOrientation(true, true)) {
+                 return; // Detiene si no está en horizontal
+            }
+
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            
-            // Ocultar textos de esquina durante el juego para que no molesten
             toggleCornerText(false);
 
             if (controlMode === 'mobile') {
@@ -812,18 +725,12 @@
             gameState.spawnInterval = 2.0; 
             gameState.spawnTimer = gameState.spawnInterval;
             
-            missiles = [];
-            enemies = [];
-            particles = [];
-            
+            missiles = []; enemies = []; particles = []; boss = null; bossProjectiles = []; // Reset Jefe
             player = new Player(50, canvas.height / 2 - 40); 
-            
             updateHUDLives();
             hudScore.textContent = 'Puntos: 0';
             hudTime.textContent = 'Tiempo: 0s';
-            
             showScreen('game');
-            
             lastTime = performance.now();
             gameLoop(lastTime);
         }
@@ -831,221 +738,187 @@
         function gameOver() {
             gameState.running = false;
             mobilePauseButton.style.display = 'none'; 
-            toggleCornerText(true); // Mostrar esquinas de nuevo
+            toggleCornerText(true); 
             
-            if (assets.explosion) {
-                const w = player.width * 2;
-                const h = player.height * 2;
-                const x = player.x - (w - player.width) / 2;
-                const y = player.y - (h - player.height) / 2;
-                ctx.drawImage(assets.explosion, x, y, w, h);
-            }
-
+            // ... (código de explosión y stats)
             const timeSurvived = Math.floor(gameState.elapsedTime);
             if (timeSurvived > gameState.recordTime) {
                 gameState.recordTime = timeSurvived;
                 localStorage.setItem(RECORD_KEY, gameState.recordTime.toString());
             }
-            
             statTime.textContent = timeSurvived;
             statRecord.textContent = gameState.recordTime;
-            
-            setTimeout(() => {
-                showScreen('gameOver');
-            }, 1000); 
+            setTimeout(() => { showScreen('gameOver'); }, 1000); 
         }
 
         function togglePause() {
-            if (!gameState.running) return;
-            
+            if (!gameState.running || controlMode === 'mobile' && window.innerWidth < window.innerHeight) return; 
+
             gameState.paused = !gameState.paused;
             if (gameState.paused) {
                 screens.pause.classList.add('active');
-                toggleCornerText(true); // Mostrar al pausar
+                toggleCornerText(true); 
             } else {
                 screens.pause.classList.remove('active');
-                toggleCornerText(false); // Ocultar al volver
+                toggleCornerText(false); 
                 lastTime = performance.now();
             }
         }
         
         function spawnEnemy() {
-            if (enemies.length >= ENEMY_CAP) {
-                return; 
-            }
-            const y = Math.random() * (canvas.height - 50); 
-            const x = canvas.width;
+            if (enemies.length >= ENEMY_CAP) return; 
+            const y = Math.random() * (canvas.height - 50); const x = canvas.width;
             enemies.push(new Enemy(x, y));
         }
         
-        function createExplosion(x, y, isPlayer = false) {
-            if (isPlayer && assets.explosion) {
-                const w = assets.explosion.width * 1.5;
-                const h = assets.explosion.height * 1.5;
+        // Función de explosión (Añadido flag isBoss para gran explosión)
+        function createExplosion(x, y, isPlayer = false, isBoss = false) {
+            if (isBoss && assets.explosion) {
+                const w = assets.explosion.width * 3; 
+                const h = assets.explosion.height * 3;
                 const posX = x - w / 2;
                 const posY = y - h / 2;
-
                 particles.push({
-                    img: assets.explosion,
-                    x: posX,
-                    y: posY,
-                    w: w,
-                    h: h,
-                    life: 0.5, 
-                    active: true,
-                    update: function(dt) {
-                        this.life -= dt;
-                        if (this.life <= 0) this.active = false;
-                    },
-                    draw: function(ctx) {
-                        ctx.globalAlpha = this.life * 2;
-                        ctx.drawImage(this.img, this.x, this.y, this.w, this.h);
-                    }
+                    img: assets.explosion, x: posX, y: posY, w: w, h: h, life: 1.0, active: true,
+                    update: function(dt) { this.life -= dt; if (this.life <= 0) this.active = false; },
+                    draw: function(ctx) { ctx.globalAlpha = this.life; ctx.drawImage(this.img, this.x, this.y, this.w, this.h); }
+                });
+            } else if (isPlayer && assets.explosion) {
+                // Explosión de golpe de jugador (1.5x)
+                const w = assets.explosion.width * 1.5; const h = assets.explosion.height * 1.5;
+                const posX = x - w / 2; const posY = y - h / 2;
+                particles.push({
+                    img: assets.explosion, x: posX, y: posY, w: w, h: h, life: 0.5, active: true,
+                    update: function(dt) { this.life -= dt; if (this.life <= 0) this.active = false; },
+                    draw: function(ctx) { ctx.globalAlpha = this.life * 2; ctx.drawImage(this.img, this.x, this.y, this.w, this.h); }
                 });
             } else {
-                // OPTIMIZACIÓN: Reducido de 10 a 6 partículas para mejorar lag
-                for (let i = 0; i < 6; i++) { 
-                    particles.push(new Particle(x, y, '#ff8800'));
-                }
+                // Explosión normal (REDUCIDO A 6 PARTÍCULAS para optimización)
+                for (let i = 0; i < 6; i++) particles.push(new Particle(x, y, '#ff8800'));
             }
         }
         
         function checkCollisions() {
+            // Misiles (Player) vs Enemigos (Normal y Jefe)
             for (let i = missiles.length - 1; i >= 0; i--) {
                 const missile = missiles[i];
+                
+                // 1. Misil vs Enemigos normales
                 for (let j = enemies.length - 1; j >= 0; j--) {
                     const enemy = enemies[j];
-                    
                     if (missile.collidesWith(enemy)) {
-                        missile.active = false;
-                        enemy.active = false;
-                        gameState.score += 100;
-                        createExplosion(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2);
+                        missile.active = false; enemy.active = false;
+                        gameState.score += 100; createExplosion(enemy.x + enemy.width / 2, enemy.y + enemy.height / 2);
                         break; 
                     }
                 }
+
+                // 2. Misil vs Jefe
+                if (boss !== null && boss.active && missile.collidesWith(boss)) {
+                    missile.active = false;
+                    boss.hit();
+                    createExplosion(boss.x + boss.width/2, boss.y + boss.height/2);
+                }
             }
             
-            if (!player.isHit) { 
-                for (let i = enemies.length - 1; i >= 0; i--) {
-                    const enemy = enemies[i];
-                    if (player.collidesWith(enemy)) {
-                        enemy.active = false;
+            // 3. Proyectiles del Jefe vs Jugador
+            if (!player.isHit) {
+                 for (let i = bossProjectiles.length - 1; i >= 0; i--) {
+                    const proj = bossProjectiles[i];
+                    if (player.collidesWith(proj)) {
+                        proj.active = false;
                         player.hit();
                         break; 
                     }
                 }
+
+                // 4. Enemigos (Normal) vs Jugador
+                for (let i = enemies.length - 1; i >= 0; i--) {
+                    const enemy = enemies[i];
+                    if (player.collidesWith(enemy)) {
+                        enemy.active = false; player.hit(); break; 
+                    }
+                }
+
+                // 5. Jefe vs Jugador
+                if (boss !== null && boss.active && player.collidesWith(boss)) {
+                    player.hit(); 
+                }
             }
         }
 
-        // --- 7. MANEJO DE NAVEGACIÓN Y PANTALLAS ---
-
         function showScreen(screenId) {
             Object.keys(screens).forEach(key => {
-                if (key === screenId) {
-                    screens[key].classList.add('active');
-                } else {
-                    screens[key].classList.remove('active');
-                }
+                if (key === screenId) screens[key].classList.add('active');
+                else screens[key].classList.remove('active');
             });
             if (screenId !== 'game') {
-                screens.pause.classList.remove('active');
-                mobilePauseButton.style.display = 'none'; 
+                screens.pause.classList.remove('active'); mobilePauseButton.style.display = 'none'; 
             }
         }
         
         function loadRecord() {
             const savedRecord = localStorage.getItem(RECORD_KEY);
-            if (savedRecord) {
-                gameState.recordTime = parseInt(savedRecord, 10);
-            } else {
-                gameState.recordTime = 0;
-            }
+            gameState.recordTime = savedRecord ? parseInt(savedRecord, 10) : 0;
             menuRecord.textContent = gameState.recordTime;
         }
         
         function updateHUDLives() {
-            hudLives.innerHTML = '';
-            if (!assets.life) return; 
+            hudLives.innerHTML = ''; if (!assets.life) return; 
             for (let i = 0; i < gameState.lives; i++) {
-                const lifeImg = assets.life.cloneNode();
-                hudLives.appendChild(lifeImg);
+                const lifeImg = assets.life.cloneNode(); hudLives.appendChild(lifeImg);
             }
         }
         
         function runIntro() {
             showScreen('intro');
-            
+            toggleCornerText(false);
+
             setTimeout(() => {
-                introLogo.style.display = 'block';
-                introLogo.style.animation = 'fadeIn 2s forwards';
+                introLogo.style.display = 'block'; introLogo.style.animation = 'fadeIn 2s forwards';
             }, 500); 
             
             setTimeout(() => {
-                introFbGames.style.display = 'block';
-                introFbGames.style.animation = 'fadeIn 1s forwards, blink 0.8s linear infinite 1s';
-                // La versión ya no se muestra aquí
+                introFbGames.style.display = 'block'; introFbGames.style.animation = 'fadeIn 1s forwards, blink 0.8s linear infinite 1s';
             }, 2500); 
             
             setTimeout(() => {
-                introLogo.style.animation = 'fadeOut 1.5s forwards';
-                introFbGames.style.animation = 'fadeOut 1.5s forwards';
+                introLogo.style.animation = 'fadeOut 1.5s forwards'; introFbGames.style.animation = 'fadeOut 1.5s forwards';
             }, 5000); 
             
             setTimeout(() => {
-                introTitle.style.display = 'block';
-                introTitle.style.animation = 'fadeIn 1s forwards';
+                introTitle.style.display = 'block'; introTitle.style.animation = 'fadeIn 1s forwards';
             }, 6500); 
             
             setTimeout(() => {
-                introLoading.style.display = 'block';
-                introLoading.style.animation = 'fadeIn 1s forwards';
+                introLoading.style.display = 'flex'; introLoading.style.animation = 'fadeIn 1s forwards';
             }, 7000); 
             
             setTimeout(() => {
                 showScreen('menu');
                 loadRecord(); 
-            }, 10000); 
+                toggleCornerText(true);
+            }, 9500); 
         }
 
-        // --- 8. MANEJO DE ENTRADAS (Input) ---
-        
+        // --- INPUTS Y EVENTOS ---
         function setupKeyboardListeners() {
             document.addEventListener('keydown', (e) => {
                 keys[e.key.toLowerCase()] = true;
-                
-                if (e.key === 'Escape') {
-                    e.preventDefault();
-                    togglePause();
-                }
-                
-                if ([' ', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key.toLowerCase())) {
-                    e.preventDefault();
-                }
+                if (e.key === 'Escape') { e.preventDefault(); togglePause(); }
+                if ([' ', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(e.key.toLowerCase())) e.preventDefault();
             });
-            
-            document.addEventListener('keyup', (e) => {
-                keys[e.key.toLowerCase()] = false;
-            });
-            
-            window.addEventListener('blur', () => {
-                if (gameState.running && !gameState.paused) {
-                    togglePause();
-                }
-            });
+            document.addEventListener('keyup', (e) => { keys[e.key.toLowerCase()] = false; });
+            window.addEventListener('blur', () => { if (gameState.running && !gameState.paused) togglePause(); });
         }
         
         function setupTouchListeners() {
             joystickZone.addEventListener('touchstart', (e) => {
                 e.preventDefault();
                 if (!joystick.active) {
-                    const touch = e.changedTouches[0];
-                    joystick.touchId = touch.identifier;
-                    joystick.active = true;
-                    joystick.startX = touch.clientX;
-                    joystick.startY = touch.clientY;
-                    joystick.currentX = touch.clientX;
-                    joystick.currentY = touch.clientY;
+                    const touch = e.changedTouches[0]; joystick.touchId = touch.identifier;
+                    joystick.active = true; joystick.startX = touch.clientX; joystick.startY = touch.clientY;
+                    joystick.currentX = touch.clientX; joystick.currentY = touch.clientY;
                 }
             }, { passive: false });
             
@@ -1053,23 +926,12 @@
                 if (joystick.active) {
                     const touch = Array.from(e.changedTouches).find(t => t.identifier === joystick.touchId);
                     if (touch) {
-                        e.preventDefault();
-                        joystick.currentX = touch.clientX;
-                        joystick.currentY = touch.clientY;
-                        
-                        let dx = joystick.currentX - joystick.startX;
-                        let dy = joystick.currentY - joystick.startY;
-                        
+                        e.preventDefault(); joystick.currentX = touch.clientX; joystick.currentY = touch.clientY;
+                        let dx = joystick.currentX - joystick.startX; let dy = joystick.currentY - joystick.startY;
                         const mag = Math.sqrt(dx*dx + dy*dy);
-                        if (mag > joystick.maxDistance) {
-                            dx = (dx / mag) * joystick.maxDistance;
-                            dy = (dy / mag) * joystick.maxDistance;
-                        }
-                        
+                        if (mag > joystick.maxDistance) { dx = (dx / mag) * joystick.maxDistance; dy = (dy / mag) * joystick.maxDistance; }
                         joystickKnob.style.transform = `translate(${dx}px, ${dy}px)`;
-                        
-                        joystick.deltaX = dx / joystick.maxDistance;
-                        joystick.deltaY = dy / joystick.maxDistance;
+                        joystick.deltaX = dx / joystick.maxDistance; joystick.deltaY = dy / joystick.maxDistance;
                     }
                 }
             }, { passive: false });
@@ -1077,83 +939,48 @@
             document.addEventListener('touchend', (e) => {
                 const touch = Array.from(e.changedTouches).find(t => t.identifier === joystick.touchId);
                 if (touch) {
-                    joystick.active = false;
-                    joystick.touchId = null;
-                    joystick.deltaX = 0;
-                    joystick.deltaY = 0;
+                    joystick.active = false; joystick.touchId = null; joystick.deltaX = 0; joystick.deltaY = 0;
                     joystickKnob.style.transform = `translate(0px, 0px)`;
                 }
             });
             
-            shootButton.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                isShootingMobile = true;
-            }, { passive: false });
-            
-            shootButton.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                isShootingMobile = false;
-            });
-
+            shootButton.addEventListener('touchstart', (e) => { e.preventDefault(); isShootingMobile = true; }, { passive: false });
+            shootButton.addEventListener('touchend', (e) => { e.preventDefault(); isShootingMobile = false; });
             mobilePauseButton.addEventListener('click', togglePause);
         }
 
-
-        // --- 9. ASIGNACIÓN DE EVENTOS A BOTONES ---
-        
-        btnPlayPC.addEventListener('click', () => {
-            controlMode = 'pc';
-            startGame();
-        });
-        
-        btnPlayMobile.addEventListener('click', () => {
-            controlMode = 'mobile';
-            startGame();
-        });
-        
-        btnRetry.addEventListener('click', () => {
-            startGame();
-        });
-        
-        btnMenu.addEventListener('click', () => {
-            loadRecord(); 
-            showScreen('menu');
-        });
-        
-        btnWeb.addEventListener('click', () => {
-            window.open('index.html', '_blank'); // Redirigir al index local por si acaso
-        });
-
+        btnPlayPC.addEventListener('click', () => { controlMode = 'pc'; startGame(); });
+        btnPlayMobile.addEventListener('click', () => { controlMode = 'mobile'; startGame(); });
+        btnRetry.addEventListener('click', () => { startGame(); });
+        btnMenu.addEventListener('click', () => { loadRecord(); showScreen('menu'); toggleCornerText(true); });
+        btnWeb.addEventListener('click', () => { window.open('index.html', '_blank'); });
         btnResume.addEventListener('click', togglePause);
-        
         btnPauseMenu.addEventListener('click', () => {
-            gameState.running = false; 
-            gameState.paused = false; 
-            screens.pause.classList.remove('active'); 
-            loadRecord(); 
-            showScreen('menu');
-            toggleCornerText(true); 
+            gameState.running = false; gameState.paused = false; 
+            screens.pause.classList.remove('active'); loadRecord(); showScreen('menu'); toggleCornerText(true);
         });
-        
-        
-        window.addEventListener('resize', () => {
+
+        // Evento de cambio de tamaño/orientación para manejar la advertencia
+        window.addEventListener('resize', () => { 
             if (gameState.running) {
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
+                checkOrientation(controlMode === 'mobile', gameState.running);
+                // Si la orientación es incorrecta, pausar
+                if (controlMode === 'mobile' && window.innerWidth < window.innerHeight && !gameState.paused) {
+                    togglePause();
+                }
+            } else {
+                 // Si está en el menú móvil, asegurar que la advertencia se muestre si es necesario
+                 if (controlMode === 'mobile' && screens.menu.classList.contains('active')) {
+                    checkOrientation(true, false);
+                 }
             }
         });
 
-        
-        // --- 10. INICIALIZACIÓN ---
-        
         function init() {
-            setupKeyboardListeners();
-            setupTouchListeners();
-            
-            loadAssets(() => {
-                console.log("Assets cargados. Iniciando intro...");
-                runIntro();
-            });
+            setupKeyboardListeners(); setupTouchListeners();
+            loadAssets(() => { console.log("Assets cargados. Iniciando intro..."); runIntro(); });
         }
 
         init();
