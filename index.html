@@ -3,8 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fabialancho Games 🎮</title>
-  <link rel="icon" href="cleip_milo.png" type="image/png">
+  <title>FB Games 🎮</title> <link rel="icon" href="cleip_milo.png" type="image/png">
   <script src="https://cdn.tailwindcss.com"></script>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,11 +16,9 @@
     body {
       background: url("fondodeaurasalanochecer.jpeg") no-repeat center center fixed;
       background-size: cover;
-      /* Fuente base más pequeña en móviles */
       font-size: 14px;
     }
     
-    /* Fuentes más grandes en pantallas medianas y superiores */
     @media (min-width: 768px) {
       body {
         font-size: 16px;
@@ -42,48 +39,40 @@
       transform: translateX(0);
     }
     
-    /* Estilos para la barra de opciones en móviles */
     @media (max-width: 767px) {
         .mobile-nav {
-            order: -1; /* Pone el nav arriba en móvil */
+            order: -1;
             width: 100%;
             flex-direction: row;
             justify-content: center;
-            gap: 0.5rem; /* Espacio reducido entre botones */
+            gap: 0.5rem;
             margin-bottom: 1rem;
             padding: 0.75rem;
-            background: rgba(0, 0, 0, 0.7); /* Fondo un poco más oscuro */
+            background: rgba(0, 0, 0, 0.7);
             border-radius: 0.75rem;
-            
-            /* Posición fija */
             position: sticky;
             top: 1rem;
             z-index: 10;
-            /* Se eliminó la transición de opacidad */
         }
         
-        /* Botones del nav móvil más pequeños */
         .mobile-nav .category-btn {
-            padding: 0.75rem 0.5rem; /* Padding reducido */
-            font-size: 0.75rem; /* Texto más pequeño */
+            padding: 0.75rem 0.5rem;
+            font-size: 0.75rem;
         }
     }
     
-    /* Estilos de fuentes 'Gamer' y espaciado */
     h1, h2, h3 {
       font-family: 'Orbitron', sans-serif;
       padding-top: 0.5rem;
       padding-bottom: 0.5rem;
     }
     
-    /* Efecto táctil para botones de categoría */
     .category-btn:active {
         transform: scale(0.96);
         filter: brightness(1.2);
         transition: all 0.1s ease-out;
     }
     
-    /* Estilo para el select */
     select.appearance-none {
         background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
         background-position: right 0.5rem center;
@@ -92,7 +81,6 @@
         padding-right: 2.5rem;
     }
     
-    /* Estilos para el Modal */
     .modal-backdrop {
         position: fixed;
         top: 0;
@@ -101,7 +89,7 @@
         height: 100%;
         background: rgba(0, 0, 0, 0.7);
         z-index: 40;
-        display: none; /* Oculto por defecto */
+        display: none;
         opacity: 0;
         transition: opacity 0.3s ease;
     }
@@ -110,16 +98,16 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%) scale(0.9);
-        background: #1f2937; /* bg-gray-800 */
+        background: #1f2937;
         color: white;
         padding: 1.5rem;
-        border-radius: 1rem; /* rounded-2xl */
+        border-radius: 1rem;
         z-index: 50;
         width: 90%;
         max-width: 600px;
-        max-height: 80vh; /* Altura máxima */
-        overflow-y: auto; /* Scroll si el contenido es muy largo */
-        display: none; /* Oculto por defecto */
+        max-height: 80vh;
+        overflow-y: auto;
+        display: none;
         opacity: 0;
         transition: opacity 0.3s ease, transform 0.3s ease;
     }
@@ -132,19 +120,17 @@
         transform: translate(-50%, -50%) scale(1);
     }
     
-    /* Contenido del modal (para el <pre>) */
     .modal-info {
-        background-color: #374151; /* bg-gray-700 */
+        background-color: #374151;
         padding: 1rem;
         border-radius: 0.5rem;
         font-family: monospace;
-        white-space: pre-wrap; /* Mantiene el formato y ajusta líneas */
+        white-space: pre-wrap;
         word-wrap: break-word;
-        font-size: 0.875rem; /* text-sm */
-        line-height: 1.6; /* Interlineado para legibilidad */
+        font-size: 0.875rem;
+        line-height: 1.6;
     }
     
-    /* Animación de giro (NUEVA) */
     @keyframes spin-full {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
@@ -153,14 +139,13 @@
       animation: spin-full 1s ease-in-out;
     }
 
-    /* NUEVA: Animación Askew */
     @keyframes skew-it {
       from { transform: rotate(0deg); }
-      to { transform: rotate(4deg); } /* Inclinado a la derecha */
+      to { transform: rotate(4deg); }
     }
     .askew-page {
-      animation: skew-it 2s ease-in-out forwards; /* 'forwards' mantiene el estado final */
-      transform-origin: center center; /* Asegura que gire desde el centro */
+      animation: skew-it 2s ease-in-out forwards;
+      transform-origin: center center;
     }
 
   </style>
@@ -171,9 +156,9 @@
     <img src="fabi_alancho_games.png" alt="Fabialancho Games Logo" class="w-48 md:w-64 rounded-full opacity-92">
     <div class="text-center md:text-left px-4">
       <h1 class="text-4xl md:text-6xl font-extrabold tracking-wider">
-        🔥 Fabialancho Games 🔥
+        🔥 FB Games 🔥
       </h1>
-      <p class="text-lg md:text-xl mt-2">Tus juegos y apps geniales en un solo lugar 🚀</p>
+      <p class="text-lg md:text-xl mt-2">Grandes proyectos como tu :)</p>
     </div>
   </header>
 
@@ -210,8 +195,7 @@
             <p class="text-sm text-cyan-400 mt-4">Creado por @fabialancho</p>
         </div>
 
-        <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 flex flex-col items-center mb-8 border-2 border-cyan-500">
-            <h3 class="text-xl md:text-2xl font-bold mb-2 text-cyan-300">¡NUEVO JUEGO! 🚀</h3>
+        <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 flex flex-col items-center mb-8">
             <h3 class="text-2xl md:text-3xl font-bold mb-2">MILO SHOOTER</h3>
             <p class="text-gray-300 mb-4 text-center">¡Un shooter espacial hecho en HTML! Elige tu modo de control (PC o Celular) dentro del juego.</p>
             
@@ -265,6 +249,15 @@
       <section id="apps" class="category show">
         <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">JUEGOS</h2>
         
+        <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 mb-8 border-2 border-dashed border-purple-500/50">
+            <h3 class="text-xl md:text-2xl font-bold mb-2">⚔️ Masmorroww</h3>
+            <p class="text-sm text-purple-400 font-bold mb-2">Próximamente...</p>
+            <p class="text-gray-300 mb-4">Se acerca una nueva aventura épica. ¡Prepárate!</p>
+            <button class="bg-gray-600 cursor-not-allowed px-4 py-2 rounded-lg font-bold block text-center w-full opacity-70">
+                🔒 En desarrollo
+            </button>
+        </div>
+
         <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 mb-8">
           <h3 class="text-xl md:text-2xl font-bold mb-2">🚀 Cleip Escapa! - Selecciona Versión</h3>
           <p class="text-sm text-cyan-400 mb-4">Creado por @fabialancho</p>
@@ -803,8 +796,6 @@ Son archivos de configuración extra para ahorrarse tiempo. Contiene las configu
         promoCodeInput.value = '';
       });
     }
-    
-    // --- (Se eliminó el script de desvanecer nav móvil) ---
     
     // --- Script para Modals ---
     const openButtons = document.querySelectorAll('.modal-open-btn');
