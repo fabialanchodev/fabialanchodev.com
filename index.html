@@ -13,10 +13,12 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
   <style>
+    /* --- CAMBIO: Nuevo fondo y ajuste para Celular/PC --- */
     body {
-      background: url("fondodeaurasalanochecer.jpeg") no-repeat center center fixed;
-      background-size: cover;
+      background: url("vapfondo.jpg") no-repeat center center fixed;
+      background-size: cover; /* Esto asegura que la imagen cubra todo sin deformarse */
       font-size: 14px;
+      min-height: 100vh;
     }
     
     @media (min-width: 768px) {
@@ -147,6 +149,15 @@
       animation: skew-it 2s ease-in-out forwards;
       transform-origin: center center;
     }
+    
+    /* Animación para el efecto Neon del código MUA */
+    @keyframes neon-pulse {
+      0% { text-shadow: 0 0 10px #ff00de, 0 0 20px #ff00de, 0 0 30px #ff00de; transform: scale(1); }
+      100% { text-shadow: 0 0 20px #ff00de, 0 0 40px #ff00de, 0 0 60px #ff00de; transform: scale(1.05); }
+    }
+    .neon-text {
+      animation: neon-pulse 1.5s infinite alternate;
+    }
 
   </style>
 </head>
@@ -250,7 +261,7 @@
         <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">JUEGOS</h2>
         
         <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 mb-8 border-2 border-dashed border-purple-500/50">
-            <h3 class="text-xl md:text-2xl font-bold mb-2">⚔️ Masmorroww</h3>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">⚔️ Masmorrow</h3>
             <p class="text-sm text-purple-400 font-bold mb-2">Próximamente...</p>
             <p class="text-gray-300 mb-4">Se acerca una nueva aventura épica. ¡Prepárate!</p>
             <button class="bg-gray-600 cursor-not-allowed px-4 py-2 rounded-lg font-bold block text-center w-full opacity-70">
@@ -658,6 +669,10 @@ Son archivos de configuración extra para ahorrarse tiempo. Contiene las configu
     <p id="fb-overlay-text" style="font-family: 'Orbitron', sans-serif; font-size: 2rem; color: white; opacity: 0; transition: opacity 1.5s ease; margin-top: 1rem;">FB GAMES</p>
   </div>
 
+  <div id="love-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 9999; display: none; opacity: 0; transition: opacity 1s ease; justify-content: center; align-items: center;">
+    <h1 class="neon-text" style="color: #ff00de; font-family: 'Orbitron', sans-serif; font-size: 4rem; text-align: center;">Te amo 💖</h1>
+  </div>
+
   <script>
     // --- Script para cambiar categorías ---
     const buttons = document.querySelectorAll('.category-btn');
@@ -720,25 +735,46 @@ Son archivos de configuración extra para ahorrarse tiempo. Contiene las configu
             if (Date.now() < end) { requestAnimationFrame(frame); }
           }());
           
-        } else if (code === 'siguegirando') { // CÓDIGO NUEVO
+        } else if (code === 'siguegirando') {
           promoStatus.textContent = '¡Wiiii! 💫';
           promoStatus.className = 'text-sm mt-2 h-4 text-cyan-400';
           
-          // Añade la clase para girar
           document.body.classList.add('spin-page');
-          
-          // Quita la clase después de que termine la animación (1s)
           setTimeout(() => {
             document.body.classList.remove('spin-page');
           }, 1000);
 
-        // NUEVO CÓDIGO ASKEW
         } else if (code === 'askew') {
           promoStatus.textContent = '¡Inclinando! 😵';
           promoStatus.className = 'text-sm mt-2 h-4 text-yellow-400';
           document.body.classList.add('askew-page');
         
-        // NUEVO CÓDIGO FB
+        // --- CAMBIO: Lógica para código MUA ---
+        } else if (code === 'mua') {
+            promoStatus.textContent = '💖';
+            promoStatus.className = 'text-sm mt-2 h-4 text-pink-500';
+
+            const loveOverlay = document.getElementById('love-overlay');
+            if (loveOverlay) {
+                // 1. Mostrar (Fade in)
+                loveOverlay.style.display = 'flex';
+                // Pequeño timeout para que el display:flex aplique antes de la opacidad
+                setTimeout(() => {
+                    loveOverlay.style.opacity = '1';
+                }, 10);
+
+                // 2. Esperar y Ocultar (Fade out)
+                // Dura aprox 5 seg en total (1s in + 3s stay + 1s out)
+                setTimeout(() => {
+                    loveOverlay.style.opacity = '0';
+                }, 4000);
+
+                // 3. Quitar display block
+                setTimeout(() => {
+                    loveOverlay.style.display = 'none';
+                }, 5000);
+            }
+
         } else if (code === 'fb') {
           promoStatus.textContent = 'Iniciando secuencia... 🌌';
           promoStatus.className = 'text-sm mt-2 h-4 text-purple-400';
@@ -748,43 +784,36 @@ Son archivos de configuración extra para ahorrarse tiempo. Contiene las configu
           const overlayText = document.getElementById('fb-overlay-text');
 
           if (overlay && overlayImg && overlayText) {
-            // 0. Reset styles and show
             overlay.style.display = 'flex';
             overlay.style.background = 'rgba(0,0,0,0)';
             overlayImg.style.opacity = '0';
             overlayText.style.opacity = '0';
 
-            // 1. Fade to black (starts at 100ms, ends at 2.1s)
             setTimeout(() => {
               overlay.style.background = 'rgba(0,0,0,1)';
             }, 100); 
 
-            // 2. Fade in Image (starts at 2.1s, ends at 3.6s)
             setTimeout(() => {
               overlayImg.style.opacity = '1';
-            }, 2100); // After black fade-in
+            }, 2100);
 
-            // 3. Fade in Text (starts at 3.1s, ends at 4.6s)
             setTimeout(() => {
               overlayText.style.opacity = '1';
-            }, 3100); // 1s after image starts
+            }, 3100); 
             
-            // 5. Fade out image and text (starts at 7s, ends at 8.5s)
             setTimeout(() => {
               overlayImg.style.opacity = '0';
               overlayText.style.opacity = '0';
             }, 7000);
 
-            // 6. Fade out black (starts at 8.5s, ends at 10.5s)
             setTimeout(() => {
               overlay.style.background = 'rgba(0,0,0,0)';
             }, 8500);
             
-            // Hide overlay completely after all animations
             setTimeout(() => {
               overlay.style.display = 'none';
-              promoStatus.textContent = ''; // Clear status
-            }, 10500); // 8.5s + 2s transition
+              promoStatus.textContent = '';
+            }, 10500);
           }
         
         } else {
