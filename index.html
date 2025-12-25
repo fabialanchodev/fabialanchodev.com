@@ -150,13 +150,22 @@
       transform-origin: center center;
     }
     
-    /* Animación para el efecto Neon del código MUA */
+    /* Animación para el efecto Neon */
     @keyframes neon-pulse {
       0% { text-shadow: 0 0 10px #ff00de, 0 0 20px #ff00de, 0 0 30px #ff00de; transform: scale(1); }
       100% { text-shadow: 0 0 20px #ff00de, 0 0 40px #ff00de, 0 0 60px #ff00de; transform: scale(1.05); }
     }
     .neon-text {
       animation: neon-pulse 1.5s infinite alternate;
+    }
+    
+    /* Neon especial para el código YT (Cyan) */
+    @keyframes neon-pulse-cyan {
+      0% { text-shadow: 0 0 10px #00eaff, 0 0 20px #00eaff, 0 0 30px #00eaff; transform: scale(1); }
+      100% { text-shadow: 0 0 20px #00eaff, 0 0 40px #00eaff, 0 0 60px #00eaff; transform: scale(1.05); }
+    }
+    .neon-text-cyan {
+      animation: neon-pulse-cyan 1.5s infinite alternate;
     }
 
   </style>
@@ -167,11 +176,11 @@
     <img src="fabi_alancho_games.png" alt="Fabialancho Games Logo" class="w-48 md:w-64 rounded-full opacity-92">
     <div class="text-center md:text-left px-4">
       <h1 class="text-4xl md:text-6xl font-extrabold tracking-wider">
-        🔥 FB Games 🔥
+        🎄 FB Games 🎄
       </h1>
       <p class="text-lg md:text-xl mt-2">
         Grandes proyectos como tu :) <br>
-        <span class="text-yellow-400 font-bold text-xl">🎄 Felices fiestas :3 🎄</span>
+        <span class="text-yellow-400 font-bold text-xl">⭐ Felices fiestas :3 ⭐</span>
       </p>
     </div>
   </header>
@@ -209,17 +218,6 @@
             <p class="text-sm text-cyan-400 mt-4">Creado por @fabialancho</p>
         </div>
 
-        <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 flex flex-col items-center mb-8">
-            <h3 class="text-2xl md:text-3xl font-bold mb-2">MILO SHOOTER</h3>
-            <p class="text-gray-300 mb-4 text-center">¡Un shooter espacial hecho en HTML! Elige tu modo de control (PC o Celular) dentro del juego.</p>
-            
-            <div class="w-full flex justify-center">
-                <a href="milo_shooter.html" class="w-full max-w-xs bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-bold block text-center text-white text-lg shadow-lg transition-all transform hover:scale-[1.02]">
-                    🎮 ¡Jugar Ahora!
-                </a>
-            </div>
-            <p class="text-sm text-cyan-400 mt-4">Creado por @fabialancho</p>
-        </div>
         <h3 class="text-2xl md:text-3xl font-bold mt-12 mb-8 text-center">Más Juegos Web</h3>
         
         <div class="grid gap-8 md:grid-cols-3">
@@ -263,6 +261,15 @@
       <section id="apps" class="category show">
         <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">JUEGOS</h2>
         
+        <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 mb-8 border-2 border-dashed border-pink-400/50">
+            <h3 class="text-xl md:text-2xl font-bold mb-2">🎧 Syrko Adventure</h3>
+            <p class="text-sm text-pink-400 font-bold mb-2">Próximamente...</p>
+            <p class="text-gray-300 mb-4">Muy pronto.. verás como el ASMR es relajante y divertido al mismo tiempo.</p>
+            <button class="bg-gray-600 cursor-not-allowed px-4 py-2 rounded-lg font-bold block text-center w-full opacity-70">
+                🔒 En desarrollo
+            </button>
+        </div>
+
         <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 mb-8 border-2 border-dashed border-purple-500/50">
             <h3 class="text-xl md:text-2xl font-bold mb-2">⚔️ Masmorrow</h3>
             <p class="text-sm text-purple-400 font-bold mb-2">Próximamente...</p>
@@ -627,6 +634,11 @@ Son archivos de configuración extra para ahorrarse tiempo. Contiene las configu
   <div id="love-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 9999; display: none; opacity: 0; transition: opacity 1s ease; justify-content: center; align-items: center;">
     <h1 class="neon-text" style="color: #ff00de; font-family: 'Orbitron', sans-serif; font-size: 4rem; text-align: center;">Te amo 💖</h1>
   </div>
+  
+  <div id="special-yt-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 10000; display: none; opacity: 0; transition: opacity 2s ease; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+    <h1 class="neon-text-cyan" style="color: #00ffea; font-family: 'Orbitron', sans-serif; font-size: 3rem; margin-bottom: 20px;">muchisima gracias por su apoyo</h1>
+    <p style="color: white; font-family: 'Orbitron', sans-serif; font-size: 1.5rem;">100 subs los quiero mucho <3</p>
+  </div>
 
   <script>
     // --- Script para cambiar categorías ---
@@ -721,6 +733,29 @@ Son archivos de configuración extra para ahorrarse tiempo. Contiene las configu
                     loveOverlay.style.display = 'none';
                 }, 5000);
             }
+        
+        } else if (code === 'especialyt') {
+          promoStatus.textContent = '¡Gracias! 💖';
+          promoStatus.className = 'text-sm mt-2 h-4 text-pink-500';
+
+          const ytOverlay = document.getElementById('special-yt-overlay');
+          if (ytOverlay) {
+            ytOverlay.style.display = 'flex';
+            // Pequeña pausa para que el navegador procese el display:flex antes de la opacidad
+            setTimeout(() => {
+              ytOverlay.style.opacity = '1';
+            }, 50);
+
+            // Esperar 6 segundos y desvanecer
+            setTimeout(() => {
+              ytOverlay.style.opacity = '0';
+            }, 6000);
+
+            // Ocultar completamente después de la transición
+            setTimeout(() => {
+              ytOverlay.style.display = 'none';
+            }, 8000);
+          }
 
         } else if (code === 'fb') {
           promoStatus.textContent = 'Iniciando secuencia... 🌌';
