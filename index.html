@@ -167,6 +167,15 @@
     .neon-text-cyan {
       animation: neon-pulse-cyan 1.5s infinite alternate;
     }
+    
+    /* Clases para transición de texto en el especial 500 subs */
+    .fade-text {
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+    }
+    .fade-text.visible {
+        opacity: 1;
+    }
 
   </style>
 </head>
@@ -175,12 +184,11 @@
   <header class="flex flex-col md:flex-row items-center justify-center gap-6 py-10 bg-black/50">
     <img src="fabi_alancho_games.png" alt="Fabialancho Games Logo" class="w-48 md:w-64 rounded-full opacity-92">
     <div class="text-center md:text-left px-4">
-      <h1 class="text-4xl md:text-6xl font-extrabold tracking-wider">
-        🎄 FB Games 🎄
+      <h1 class="text-4xl md:text-6xl font-extrabold tracking-wider text-orange-500">
+        🔥 FB Games 🔥
       </h1>
-      <p class="text-lg md:text-xl mt-2">
-        Grandes proyectos como tu :) <br>
-        <span class="text-yellow-400 font-bold text-xl">⭐ Felices fiestas :3 ⭐</span>
+      <p class="text-lg md:text-xl mt-2 font-bold">
+        Grandes proyectos como tu :)
       </p>
     </div>
   </header>
@@ -192,7 +200,6 @@
         <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="apps">🤖 Apps</button>
         <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="juegos-web">🕹️ Juegos Web</button>
         <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="webs-random">🌐 Webs Random</button>
-        <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="fbquiz-app">📓 FBQuiz</button>
         <button class="category-btn bg-gray-800/70 p-4 rounded-lg font-bold hover:bg-gray-700" data-target="otros">✨ Otros</button>
       </aside>
     </div>
@@ -522,21 +529,6 @@
         </div>
       </section>
       
-      <section id="fbquiz-app" class="category hidden">
-        <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">📓 FBQuiz</h2>
-        <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 flex flex-col items-center">
-            <h3 class="text-xl md:text-2xl font-bold mb-2">¡Cuestionarios modo Gamer!</h3>
-            <p class="text-gray-300 mb-4 text-center">
-              ¡Transforma tu manera de estudiar! FBQuiz es una herramienta innovadora que convierte tus cuestionarios tradicionales en desafíos interactivos, inspirados en la gamificación de plataformas como Duolingo. Carga tus preguntas, juega y refuerza tu conocimiento de una forma divertida y efectiva. ¡Prepárate para subir de nivel en tus estudios!
-              <br>Creado con ❤️ por fabialancho.
-            </p>
-            
-            <a href="fbquiz.html" class="w-full max-w-sm bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-bold block text-center text-white text-lg md:text-xl shadow-lg transition-all transform hover:scale-[1.02]">
-                🎮 ¡Empezar a jugar!
-            </a>
-        </div>
-      </section>
-
       <section id="otros" class="category hidden">
         <h2 class="text-3xl md:text-4xl font-bold mb-8 text-center">✨ Otros</h2>
         <div class="grid gap-8 md:grid-cols-2">
@@ -548,12 +540,28 @@
               ➡ Ir a YouTube
             </a>
           </div>
+          
+          <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+            <h3 class="text-xl md:text-2xl font-bold mb-2">📓 FBQuiz</h3>
+            <p class="text-gray-300 mb-4">Cuestionarios interactivos modo Gamer para estudiar jugando.</p>
+            <button data-modal="modal-fbquiz" class="modal-open-btn w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">
+              ➡ Ver más y Jugar
+            </button>
+          </div>
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
-            <h3 class="text-xl md:text-2xl font-bold mb-2">Desbloqueador de MC BE 1.21.130 +</h3>
-            <p class="text-gray-300 mb-4">Herramienta actualizada para desbloquear Minecraft. ¡Lee las instrucciones primero!</p>
+            <h3 class="text-xl md:text-2xl font-bold mb-2">Desbloqueador de MC BE 1.21.130 + (PC)</h3>
+            <p class="text-gray-300 mb-4">Herramienta actualizada para desbloquear Minecraft en PC.</p>
             <button data-modal="modal-mc" class="modal-open-btn w-full bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center">
               ⬇ Ver Instrucciones y Descargar
+            </button>
+          </div>
+          
+          <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6 hover:scale-105 transform transition">
+            <h3 class="text-xl md:text-2xl font-bold mb-2">Descargar MC BE 1.21.130 + (Móvil)</h3>
+            <p class="text-gray-300 mb-4">Descarga Minecraft Bedrock gratis para tu celular. <br>⚠️ Puede no funcionar en teléfonos antiguos.</p>
+            <button data-modal="modal-mc-mobile" class="modal-open-btn w-full bg-orange-600 hover:bg-orange-700 px-4 py-2 rounded-lg font-bold block text-center">
+              ⬇ Descargar
             </button>
           </div>
           
@@ -567,7 +575,7 @@
 
           <div class="bg-gray-800/70 rounded-2xl shadow-lg p-6">
             <h3 class="text-xl md:text-2xl font-bold mb-2">Códigos Promo</h3>
-            <p class="text-gray-300 mb-4">¿Tienes un código secreto? ¡Ingrésalo aquí!</p>
+            <p class="text-gray-300 mb-4">¿Tienes un código secreto? ¡Ingrésalo aquí! (Prueba: promo)</p>
             <div class="flex flex-col sm:flex-row gap-2">
               <input type="text" id="promo-code-input" placeholder="Escribe tu código..." class="flex-1 p-2 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-500">
               <button id="promo-btn" class="bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold">
@@ -586,7 +594,7 @@
   <div id="modal-backdrop" class="modal-backdrop"></div>
   
   <div id="modal-mc" class="modal-content">
-    <h2 class="text-2xl font-bold mb-4">Instrucciones MC 1.21.130 +</h2>
+    <h2 class="text-2xl font-bold mb-4">Instrucciones MC 1.21.130 + (PC)</h2>
     
     <a href="https://www.mediafire.com/file/v9urww5zjh5d6vi/Desbloqueador+de+Minecraft+Bedrock+PC+1.21.130+.zip/file" target="_blank" class="w-full bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center mb-4">
       ⬇ Descargar de Mediafire
@@ -610,6 +618,86 @@ Atte: fabi
     </button>
   </div>
   
+  <div id="modal-mc-mobile" class="modal-content">
+    <h2 class="text-2xl font-bold mb-4">Descargar MC Bedrock (Móvil)</h2>
+    
+    <div class="modal-info">
+Hola este es el enlace para poder descargarte el minecraft bedrock gratis y actulizable. Solo entra en el siguiente link y dale a download. Solo ten cuidado con los anuncios troll.
+
+NOTA: Puede que esta versión no funcione correctamente o se cierre inesperadamente si intentas instalarlo en teléfonos algo antiguos o de gama baja, ya que las nuevas versiones exigen más recursos.
+    </div>
+
+    <a href="https://mcpelife.com/minecraft-pe-1-21-131/" target="_blank" class="w-full bg-green-500 hover:bg-green-700 px-4 py-2 rounded-lg font-bold block text-center mt-4">
+      ⬇ Descargar Aquí
+    </a>
+    
+    <button class="modal-close-btn w-full bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-lg font-bold block text-center mt-4">
+      Cerrar
+    </button>
+  </div>
+
+  <div id="modal-fbquiz" class="modal-content">
+    <h2 class="text-2xl font-bold mb-4">📓 FBQuiz</h2>
+    
+    <div class="modal-info mb-4">
+¡Transforma tu manera de estudiar! FBQuiz es una herramienta innovadora que convierte tus cuestionarios tradicionales en desafíos interactivos, inspirados en la gamificación de plataformas como Duolingo. 
+
+Carga tus preguntas, juega y refuerza tu conocimiento de una forma divertida y efectiva. ¡Prepárate para subir de nivel en tus estudios!
+<br>Creado con ❤️ por fabialancho.
+    </div>
+
+    <div class="flex flex-col gap-3">
+        <a href="fbquiz.html" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg font-bold block text-center">
+            🎮 Probar
+        </a>
+        <button class="modal-close-btn w-full bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-lg font-bold block text-center">
+            Volver
+        </button>
+    </div>
+  </div>
+  
+  <div id="modal-promos" class="modal-content">
+    <h2 class="text-2xl font-bold mb-4">✨ Códigos Promocionales Secretos</h2>
+    <p class="mb-4 text-gray-300">Aquí tienes la lista de todos los códigos que puedes usar en la caja de texto:</p>
+    
+    <div class="bg-gray-700 rounded-lg overflow-hidden">
+        <table class="w-full text-left">
+            <thead class="bg-gray-600">
+                <tr>
+                    <th class="p-3">Código</th>
+                    <th class="p-3">Efecto</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-600">
+                <tr>
+                    <td class="p-3 font-mono text-cyan-400">confeti</td>
+                    <td class="p-3">¡Lanza confeti en la pantalla! 🎉</td>
+                </tr>
+                <tr>
+                    <td class="p-3 font-mono text-cyan-400">siguegirando</td>
+                    <td class="p-3">Hace girar toda la página web 😵</td>
+                </tr>
+                <tr>
+                    <td class="p-3 font-mono text-cyan-400">askew</td>
+                    <td class="p-3">Inclina la pantalla un poco 📐</td>
+                </tr>
+                <tr>
+                    <td class="p-3 font-mono text-cyan-400">especialyt</td>
+                    <td class="p-3">Mensaje especial de 500 subs 📺</td>
+                </tr>
+                <tr>
+                    <td class="p-3 font-mono text-cyan-400">fb</td>
+                    <td class="p-3">Animación secreta de introducción FB Games 🔥</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <button class="modal-close-btn w-full bg-gray-500 hover:bg-gray-600 px-4 py-2 rounded-lg font-bold block text-center mt-4">
+      OK, Entendido
+    </button>
+  </div>
+  
   <div id="modal-office" class="modal-content">
     <h2 class="text-2xl font-bold mb-4">Archivos Office LTSC 2021</h2>
     
@@ -630,14 +718,10 @@ Son archivos de configuración extra para ahorrarse tiempo. Contiene las configu
     <img id="fb-overlay-img" src="fabi_alancho_games.png" alt="Logo" style="width: 200px; border-radius: 50%; opacity: 0; transition: opacity 1.5s ease;">
     <p id="fb-overlay-text" style="font-family: 'Orbitron', sans-serif; font-size: 2rem; color: white; opacity: 0; transition: opacity 1.5s ease; margin-top: 1rem;">FB GAMES</p>
   </div>
-
-  <div id="love-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 9999; display: none; opacity: 0; transition: opacity 1s ease; justify-content: center; align-items: center;">
-    <h1 class="neon-text" style="color: #ff00de; font-family: 'Orbitron', sans-serif; font-size: 4rem; text-align: center;">Te amo 💖</h1>
-  </div>
   
-  <div id="special-yt-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 10000; display: none; opacity: 0; transition: opacity 2s ease; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
-    <h1 class="neon-text-cyan" style="color: #00ffea; font-family: 'Orbitron', sans-serif; font-size: 3rem; margin-bottom: 20px;">muchisima gracias por su apoyo</h1>
-    <p style="color: white; font-family: 'Orbitron', sans-serif; font-size: 1.5rem;">100 subs los quiero mucho <3</p>
+  <div id="special-yt-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: black; z-index: 10000; display: none; opacity: 0; transition: opacity 1s ease; justify-content: center; align-items: center; flex-direction: column; text-align: center;">
+    <h1 id="yt-main-text" class="neon-text-cyan fade-text" style="color: #00ffea; font-family: 'Orbitron', sans-serif; font-size: 3rem; margin-bottom: 20px;"></h1>
+    <p id="yt-sub-text" class="fade-text" style="color: white; font-family: 'Orbitron', sans-serif; font-size: 1.5rem;"></p>
   </div>
 
   <script>
@@ -716,45 +800,75 @@ Son archivos de configuración extra para ahorrarse tiempo. Contiene las configu
           promoStatus.className = 'text-sm mt-2 h-4 text-yellow-400';
           document.body.classList.add('askew-page');
         
-        } else if (code === 'mua') {
-            promoStatus.textContent = '💖';
-            promoStatus.className = 'text-sm mt-2 h-4 text-pink-500';
-
-            const loveOverlay = document.getElementById('love-overlay');
-            if (loveOverlay) {
-                loveOverlay.style.display = 'flex';
-                setTimeout(() => {
-                    loveOverlay.style.opacity = '1';
-                }, 10);
-                setTimeout(() => {
-                    loveOverlay.style.opacity = '0';
-                }, 4000);
-                setTimeout(() => {
-                    loveOverlay.style.display = 'none';
-                }, 5000);
-            }
-        
         } else if (code === 'especialyt') {
-          promoStatus.textContent = '¡Gracias! 💖';
+          // --- NUEVA SECUENCIA 500 SUBS ---
+          promoStatus.textContent = '¡Gracias a todos! 💖';
           promoStatus.className = 'text-sm mt-2 h-4 text-pink-500';
 
           const ytOverlay = document.getElementById('special-yt-overlay');
-          if (ytOverlay) {
-            ytOverlay.style.display = 'flex';
-            // Pequeña pausa para que el navegador procese el display:flex antes de la opacidad
-            setTimeout(() => {
-              ytOverlay.style.opacity = '1';
-            }, 50);
+          const mainText = document.getElementById('yt-main-text');
+          const subText = document.getElementById('yt-sub-text');
+          
+          // Función auxiliar para confeti
+          const launchConfetti = () => {
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+          };
 
-            // Esperar 6 segundos y desvanecer
+          if (ytOverlay && mainText && subText) {
+            ytOverlay.style.display = 'flex';
+            ytOverlay.style.opacity = '1';
+            
+            // Inicio: Confeti
+            launchConfetti();
+
+            // Secuencia de textos
+            const sequence = [
+                { text: "Risas 😂", delay: 0, duration: 2000 },
+                { text: "Recuerdos 💭", delay: 2500, duration: 2000 },
+                { text: "Cosas Épicas 🔥", delay: 5000, duration: 2000 },
+                { text: "Gracias... 🙏", delay: 7500, duration: 2000 },
+                { 
+                    text: "ESPECIAL 500 SUBS 🎉", 
+                    sub: "Gracias por tanto ❤️", 
+                    delay: 10000, 
+                    duration: 5000,
+                    final: true 
+                }
+            ];
+
+            sequence.forEach(step => {
+                setTimeout(() => {
+                    // Ocultar texto anterior
+                    mainText.classList.remove('visible');
+                    subText.classList.remove('visible');
+
+                    setTimeout(() => {
+                        // Cambiar texto
+                        mainText.textContent = step.text;
+                        subText.textContent = step.sub || "";
+                        
+                        // Mostrar texto nuevo
+                        mainText.classList.add('visible');
+                        if(step.sub) subText.classList.add('visible');
+
+                        if(step.final) {
+                             launchConfetti();
+                             setInterval(launchConfetti, 1000); // Lluvia continua al final
+                        }
+
+                    }, 500); // Pequeño delay para fade out/in
+
+                }, step.delay);
+            });
+
+            // Cerrar todo
             setTimeout(() => {
               ytOverlay.style.opacity = '0';
-            }, 6000);
-
-            // Ocultar completamente después de la transición
-            setTimeout(() => {
-              ytOverlay.style.display = 'none';
-            }, 8000);
+              setTimeout(() => {
+                  ytOverlay.style.display = 'none';
+                  location.reload(); // Recargar para limpiar el intervalo de confeti
+              }, 1000);
+            }, 16000);
           }
 
         } else if (code === 'fb') {
@@ -771,33 +885,19 @@ Son archivos de configuración extra para ahorrarse tiempo. Contiene las configu
             overlayImg.style.opacity = '0';
             overlayText.style.opacity = '0';
 
-            setTimeout(() => {
-              overlay.style.background = 'rgba(0,0,0,1)';
-            }, 100); 
-
-            setTimeout(() => {
-              overlayImg.style.opacity = '1';
-            }, 2100);
-
-            setTimeout(() => {
-              overlayText.style.opacity = '1';
-            }, 3100); 
-            
-            setTimeout(() => {
-              overlayImg.style.opacity = '0';
-              overlayText.style.opacity = '0';
-            }, 7000);
-
-            setTimeout(() => {
-              overlay.style.background = 'rgba(0,0,0,0)';
-            }, 8500);
-            
-            setTimeout(() => {
-              overlay.style.display = 'none';
-              promoStatus.textContent = '';
-            }, 10500);
+            setTimeout(() => { overlay.style.background = 'rgba(0,0,0,1)'; }, 100); 
+            setTimeout(() => { overlayImg.style.opacity = '1'; }, 2100);
+            setTimeout(() => { overlayText.style.opacity = '1'; }, 3100); 
+            setTimeout(() => { overlayImg.style.opacity = '0'; overlayText.style.opacity = '0'; }, 7000);
+            setTimeout(() => { overlay.style.background = 'rgba(0,0,0,0)'; }, 8500);
+            setTimeout(() => { overlay.style.display = 'none'; promoStatus.textContent = ''; }, 10500);
           }
         
+        } else if (code === 'promo') {
+            openModal('modal-promos');
+            promoStatus.textContent = 'Abriendo lista... 📜';
+            promoStatus.className = 'text-sm mt-2 h-4 text-white';
+
         } else {
           promoStatus.textContent = 'Cod no válido :(';
           promoStatus.className = 'text-sm mt-2 h-4 text-red-500';
@@ -812,7 +912,7 @@ Son archivos de configuración extra para ahorrarse tiempo. Contiene las configu
     const closeButtons = document.querySelectorAll('.modal-close-btn');
     const backdrop = document.getElementById('modal-backdrop');
 
-    const openModal = (modalId) => {
+    window.openModal = (modalId) => {
       const modal = document.getElementById(modalId);
       if (modal && backdrop) {
         backdrop.classList.add('show');
